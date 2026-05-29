@@ -1,7 +1,7 @@
 'use client'
 
-import Navbar from '@/components/Navbar'
-import Hero from '@/components/Hero'
+import Navbar from '@/components/navbar'
+import Hero from '@/components/hero'
 import WhatWeDo from '@/components/WhatWeDo'
 import EventCategories from '@/components/EventCategories'
 import FirstEvent from '@/components/FirstEvent'
