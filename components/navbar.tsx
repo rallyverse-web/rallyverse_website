@@ -95,7 +95,7 @@ export default function Navbar() {
           {/* Logo */}
           <button
             type="button"
-            onClick={() => handleNavClick('#hero')}
+            onClick={() => router.push('/')}
             className="flex shrink-0 items-center gap-2"
           >
             <Image
@@ -198,7 +198,7 @@ export default function Navbar() {
               <div className="flex items-center justify-between mb-8">
                 <button
                   type="button"
-                  onClick={() => handleNavClick('#hero')}
+                  onClick={() => router.push('/')}
                   className="flex items-center gap-2"
                 >
                   <Image

@@ -27,10 +27,9 @@ export async function POST(req: NextRequest) {
       city,
       collegeOrOrg,
       utrNumber,
-      screenshotUrl,
     } = body
 
-    if (!player1Name || !player1Phone || !player1SkillLevel || !category || !city || !utrNumber || !screenshotUrl) {
+    if (!player1Name || !player1Phone || !player1SkillLevel || !category || !city || !utrNumber) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
@@ -80,17 +79,16 @@ export async function POST(req: NextRequest) {
       player2SkillLevel || '',
       city,
       collegeOrOrg || '',
-      'Pending Verification',
+      'Confirmed',
       '',
       utrNumber || '',
-      screenshotUrl || '',
-      'Unverified',
+      'Verified',
       '',
     ]
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: `${sheetTabName}!A:T`,
+      range: `${sheetTabName}!A:S`,
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: [row] },
     })
@@ -111,7 +109,6 @@ export async function POST(req: NextRequest) {
               <p>Your registration for RallyVerse Rally Series #01 has been received.</p>
               <p><strong>Registration ID:</strong> ${registrationId}</p>
               <p><strong>Category:</strong> ${category}</p>
-              <p><strong>Payment Status:</strong> Pending Verification</p>
               <p>We'll reach out on WhatsApp within 24 hours with confirmation and next steps.</p>
               <p style="color: #FF5E00; font-weight: bold;">Show up. Play hard. Build something.</p>
               <p>- RallyVerse Team</p>

@@ -1,7 +1,7 @@
 'use client'
 
 import { ChangeEvent, FormEvent, useMemo, useState } from 'react'
-import { CheckCircle, Upload } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
 
@@ -33,8 +33,6 @@ const skillLevels = ['Beginner', 'Intermediate', 'Advanced']
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const utrRegex = /^[a-zA-Z0-9]{8,}$/
-const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
-const maxFileSize = 5 * 1024 * 1024
 
 const inputClass =
   'w-full min-h-[48px] bg-surface border border-subtle text-primary placeholder:text-muted font-body text-sm px-4 py-3 rounded-md focus:outline-none focus:border-orange transition-colors duration-200'
@@ -73,7 +71,6 @@ function FieldError({ message }: { message?: string }) {
 export default function RegistrationForm() {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<FormDataState>(initialFormData)
-  const [screenshot, setScreenshot] = useState<File | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitError, setSubmitError] = useState('')
   const [loadingMessage, setLoadingMessage] = useState('')
@@ -87,12 +84,6 @@ export default function RegistrationForm() {
     const { name, value } = event.target
     setFormData((current) => ({ ...current, [name]: value }))
     setErrors((current) => ({ ...current, [name]: '' }))
-  }
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null
-    setScreenshot(file)
-    setErrors((current) => ({ ...current, screenshot: '' }))
   }
 
   const validateStep = (stepToValidate: number) => {
@@ -129,13 +120,6 @@ export default function RegistrationForm() {
       if (!utrRegex.test(formData.utrNumber.trim())) {
         nextErrors.utrNumber = 'Enter an alphanumeric UTR or transaction ID of at least 8 characters.'
       }
-      if (!screenshot) {
-        nextErrors.screenshot = 'Upload your payment screenshot.'
-      } else if (!allowedFileTypes.includes(screenshot.type)) {
-        nextErrors.screenshot = 'Only JPG, PNG, or WEBP screenshots are allowed.'
-      } else if (screenshot.size > maxFileSize) {
-        nextErrors.screenshot = 'Screenshot must be 5MB or smaller.'
-      }
     }
 
     setErrors(nextErrors)
@@ -156,32 +140,14 @@ export default function RegistrationForm() {
     event.preventDefault()
     setSubmitError('')
 
-    if (!validateStep(3) || !screenshot) return
+    if (!validateStep(3)) return
 
     try {
-      setLoadingMessage('Uploading your screenshot...')
-      const uploadFormData = new FormData()
-      uploadFormData.append('screenshot', screenshot)
-      uploadFormData.append('registrationId', `RV-PAYMENT-${Date.now()}`)
-
-      const uploadResponse = await fetch('/api/upload-screenshot', {
-        method: 'POST',
-        body: uploadFormData,
-      })
-      const uploadResult = await uploadResponse.json()
-
-      if (!uploadResponse.ok) {
-        throw new Error(uploadResult.error || 'Screenshot upload failed.')
-      }
-
       setLoadingMessage('Saving registration...')
       const registerResponse = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          screenshotUrl: uploadResult.fileUrl,
-        }),
+        body: JSON.stringify(formData),
       })
       const registerResult = await registerResponse.json()
 
@@ -212,10 +178,10 @@ export default function RegistrationForm() {
           Registration ID: {registrationId}
         </p>
         <p className="mt-5 max-w-[430px] font-body text-base leading-relaxed text-muted">
-          We&apos;ve received your payment screenshot. Our team will verify and confirm within 24 hours.
+          Your registration has been successfully recorded. Check your email for confirmation details.
         </p>
         <p className="mt-3 max-w-[430px] font-body text-base leading-relaxed text-muted">
-          Watch for our WhatsApp message.
+          Watch for our WhatsApp message with further instructions.
         </p>
       </div>
       <Link
@@ -413,7 +379,7 @@ export default function RegistrationForm() {
               Step 3 / Payment
             </p>
             <p className="mt-2 font-body text-sm leading-relaxed text-muted">
-              Complete the payment, then upload the screenshot for verification.
+              Complete the payment and enter your transaction details below.
             </p>
           </div>
 
@@ -431,20 +397,6 @@ export default function RegistrationForm() {
             </label>
             <input id="utrNumber" name="utrNumber" value={formData.utrNumber} onChange={handleChange} className={inputClass} placeholder="Minimum 8 alphanumeric characters" />
             <FieldError message={errors.utrNumber} />
-          </div>
-
-          <div>
-            <label htmlFor="screenshot" className={labelClass}>
-              Payment Screenshot <span className="text-orange">*</span>
-            </label>
-            <label htmlFor="screenshot" className="flex min-h-[120px] cursor-pointer flex-col items-center justify-center gap-3 rounded-md border border-dashed border-subtle bg-surface px-4 py-6 text-center transition-colors hover:border-orange">
-              <Upload size={24} className="text-orange" />
-              <span className="font-body text-sm text-primary">
-                {screenshot ? screenshot.name : 'Upload JPG, PNG, or WEBP up to 5MB'}
-              </span>
-            </label>
-            <input id="screenshot" name="screenshot" type="file" accept="image/jpeg,image/png,image/jpg,image/webp" onChange={handleFileChange} className="sr-only" />
-            <FieldError message={errors.screenshot} />
           </div>
         </div>
       )}
@@ -512,7 +464,7 @@ export default function RegistrationForm() {
 
         <AnimatedSection delay={0.15}>
           <p className="mt-4 mb-12 font-body text-base leading-relaxed text-muted">
-            Register for RallyVerse Rally Series #01. Payment verification happens manually after your screenshot is received.
+            Register for RallyVerse Rally Series #01. A confirmation email will be sent after your registration is submitted.
           </p>
         </AnimatedSection>
 
