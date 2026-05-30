@@ -12,7 +12,7 @@ export default function FirstEvent() {
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-16 px-6 md:grid-cols-2 md:items-start">
         <AnimatedSection>
           <p className="mb-5 font-body text-[11px] uppercase tracking-widest text-muted">
-            FIRST WAVE &middot; BANGALORE &middot; 2026
+            BADMINTON TOURNAMENTS &mdash; BENGALURU
           </p>
 
           <div className="font-display text-[88px] leading-none uppercase text-primary md:text-[100px]">
@@ -26,13 +26,10 @@ export default function FirstEvent() {
 
           <div className="mt-7 space-y-5 font-body text-base leading-[1.85] text-muted">
             <p>
-              We are launching a series of small-scale, competitive badminton tournaments across Bangalore &mdash; starting with a focused first event and building from there.
+              We are planning our inaugural badminton tournament in Bengaluru &mdash; starting focused and building from there. Competitive brackets across skill levels. Men&apos;s Singles, Women&apos;s Singles, Doubles, Mixed.
             </p>
             <p>
-              Men&apos;s singles. Women&apos;s singles. Doubles. Multiple skill levels. Whether you play recreationally or train seriously, there is a bracket for you.
-            </p>
-            <p>
-              Spots are limited to keep each tournament tight, well-run, and worth your time.
+              Spots will be limited to keep each tournament tight, well-run, and worth your time.
             </p>
           </div>
 
@@ -42,7 +39,7 @@ export default function FirstEvent() {
               onClick={() => router.push('/register')}
               className="group relative overflow-hidden rounded-md bg-orange px-8 py-3 font-body text-sm font-bold text-carbon transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
             >
-              <span className="relative z-10">Register Your Spot</span>
+              <span className="relative z-10">Join the Waitlist</span>
               <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'linear-gradient(135deg, #FF5E00 0%, #00E5FF 100%)' }} />
             </button>
           </div>

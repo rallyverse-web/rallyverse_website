@@ -5,22 +5,30 @@ const categories = [
   {
     icon: Swords,
     name: 'BADMINTON',
-    desc: 'Competitive tournaments for all levels',
+    desc: 'Launching 2026. Bengaluru\'s first structured amateur tournament series.',
+    status: 'Launching 2026',
+    statusColor: 'orange',
   },
   {
     icon: Mountain,
     name: 'TREKS',
-    desc: 'Curated trail experiences with your community',
+    desc: 'Curated trail experiences around Karnataka.',
+    status: 'Coming Soon',
+    statusColor: 'gray',
   },
   {
     icon: Timer,
     name: 'MARATHONS',
-    desc: 'From 5K fun runs to half marathons',
+    desc: '5K to half marathon community runs.',
+    status: 'Coming Soon',
+    statusColor: 'gray',
   },
   {
     icon: Bike,
     name: 'CYCLING',
-    desc: 'Group rides and timed cycling events',
+    desc: 'Group rides and timed events across Bangalore.',
+    status: 'Coming Soon',
+    statusColor: 'gray',
   },
 ]
 
@@ -50,6 +58,13 @@ export default function EventCategories() {
                   <p className="mt-2 max-w-[160px] font-body text-[13px] leading-relaxed text-muted">
                     {cat.desc}
                   </p>
+                  <span className={`mt-3 inline-block rounded-full px-3 py-1 font-body text-[11px] font-semibold uppercase tracking-wider ${
+                    cat.statusColor === 'orange'
+                      ? 'bg-orange/15 text-orange'
+                      : 'bg-white/10 text-muted'
+                  }`}>
+                    {cat.status}
+                  </span>
                 </div>
               </AnimatedSection>
             )

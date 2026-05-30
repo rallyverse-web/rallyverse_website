@@ -20,11 +20,15 @@ export default function Footer() {
             </span>
           </Link>
 
+          <p className="font-body text-xs text-muted/60">
+            Organizing competitive sports and community events across Bengaluru since 2026.
+          </p>
+
           <p className="text-center font-body text-sm text-muted">
             Badminton &middot; Treks &middot; Marathons &middot; Cycling
           </p>
 
-          <p className="font-body text-sm text-muted">Bengaluru, India</p>
+          <p className="font-body text-sm text-muted">Bengaluru, Karnataka, India</p>
         </div>
 
         <div className="mt-8 border-t border-subtle pt-6 text-center">

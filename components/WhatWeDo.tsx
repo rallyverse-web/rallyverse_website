@@ -22,13 +22,13 @@ export default function WhatWeDo() {
         <AnimatedSection delay={0.15}>
           <div className="font-body text-[17px] leading-[1.85] text-muted">
             <p className="mb-5">
-              Too many local badminton tournaments feel like an afterthought. Poorly organised brackets, no atmosphere, courts booked at the last minute.
+              Most local badminton tournaments in Bengaluru are an afterthought &mdash; booked last minute, poorly bracketed, no atmosphere.
             </p>
             <p className="mb-5">
-              RallyVerse is different. We handle everything &mdash; venue booking, bracket management, match scheduling, and a community of players who are serious about showing up.
+              RallyVerse is being built differently. Structured formats, verified venues, fair draws, and a community that takes showing up seriously.
             </p>
             <p className="mb-5">
-              Every RallyVerse tournament has a clear format, a fair draw, and an energy that makes you want to come back for the next one.
+              Our first event is coming. And we&apos;re doing it right.
             </p>
             <p className="font-medium text-primary">
               Beginner. Intermediate. Advanced. Singles. Doubles. Mixed. There is a bracket for you.

@@ -17,17 +17,32 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'RallyVerse \u2014 Where Every Event Is A New Verse',
-  description:
-    'RallyVerse organizes badminton tournaments, treks, marathons, and cycling events across India.',
+  title: 'RallyVerse — Badminton Tournaments & Community Sports Events in Bengaluru',
+  description: 'Competitive badminton tournaments, community treks, marathons and cycling events in Bengaluru. RallyVerse is building Bangalore\'s best amateur sports tournament series. Register your interest for 2026.',
+  keywords: [
+    'badminton tournaments in Bengaluru',
+    'competitive badminton Bangalore',
+    'amateur badminton league Bangalore',
+    'badminton doubles tournament Bengaluru',
+    'badminton tournaments happening in Bangalore',
+    'best badminton tournaments Bangalore 2026',
+    'community sports events Bangalore',
+    'treks near Bangalore',
+    'cycling events Bangalore 2026',
+    'marathons Bangalore 2026'
+  ],
   openGraph: {
-    title: 'RallyVerse \u2014 Where Every Event Is A New Verse',
-    description:
-      'RallyVerse organizes badminton tournaments, treks, marathons, and cycling events across India.',
+    title: 'RallyVerse — Bengaluru\'s Home for Competitive Sports',
+    description: 'Badminton tournaments, treks, marathons and cycling events. Built for players who show up.',
+    url: 'https://www.rallyverse.in',
     siteName: 'RallyVerse',
     locale: 'en_IN',
     type: 'website',
   },
+  robots: {
+    index: true,
+    follow: true,
+  }
 }
 
 export default function RootLayout({
@@ -37,6 +52,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${bebasNeue.variable} ${inter.variable}`}>
+      <head>
+        <link rel="canonical" href="https://www.rallyverse.in" />
+      </head>
       <body>
         <Navbar />
         <main>{children}</main>

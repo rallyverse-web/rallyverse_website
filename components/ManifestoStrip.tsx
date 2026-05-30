@@ -11,7 +11,7 @@ export default function ManifestoStrip() {
             PLAY HARD. BUILD SOMETHING.
           </div>
           <p className="mt-5 font-body text-[15px] text-carbon opacity-60">
-            RallyVerse &middot; Bangalore Badminton Series &middot; 2026
+            RallyVerse &middot; Bengaluru Badminton Series &middot; 2026 &middot; First event registrations opening soon.
           </p>
         </AnimatedSection>
       </div>
