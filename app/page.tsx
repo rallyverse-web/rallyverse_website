@@ -1,4 +1,5 @@
 import Hero from '@/components/hero'
+import HeroIntro from '@/components/HeroIntro'
 import WhatWeDo from '@/components/WhatWeDo'
 import EventCategories from '@/components/EventCategories'
 import WhoThisIsFor from '@/components/WhoThisIsFor'
@@ -10,6 +11,7 @@ export default function Page() {
   return (
     <>
       <Hero />
+      <HeroIntro />
       <WhatWeDo />
       <EventCategories />
       <WhoThisIsFor />
