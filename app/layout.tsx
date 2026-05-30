@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Bebas_Neue, Inter } from 'next/font/google'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/Footer'
+import ScrollReset from '@/components/ScrollReset'
 import './globals.css'
 
 const bebasNeue = Bebas_Neue({
@@ -51,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${bebasNeue.variable} ${inter.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`${bebasNeue.variable} ${inter.variable}`}>
       <head>
         <link rel="canonical" href="https://www.rallyverse.in" />
         <script
@@ -98,6 +99,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <ScrollReset />
         <Navbar />
         <main>{children}</main>
         <Footer />

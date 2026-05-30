@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { ChevronDown } from 'lucide-react'
 import { motion } from 'motion/react'
+import BlurText from './BlurText'
 
 export default function Hero() {
   const router = useRouter()
@@ -12,12 +13,22 @@ export default function Hero() {
   const [phase2Done, setPhase2Done] = useState(false)
 
   useEffect(() => {
-    const phase1Timer = window.setTimeout(() => setPhase1Done(true), 1400)
     const phase2Timer = window.setTimeout(() => setPhase2Done(true), 2000)
 
     return () => {
-      window.clearTimeout(phase1Timer)
       window.clearTimeout(phase2Timer)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    const timer = window.setTimeout(() => {
+      document.body.style.overflow = ''
+    }, 100)
+
+    return () => {
+      window.clearTimeout(timer)
+      document.body.style.overflow = ''
     }
   }, [])
 
@@ -53,37 +64,18 @@ export default function Hero() {
         </motion.p>
 
         <div className="relative">
-          <div className="flex items-center justify-center gap-0">
-            <motion.div
-              initial={{ x: -300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
-              className="font-display text-[80px] uppercase leading-none text-primary md:text-[120px] lg:text-[160px]"
-            >
-              RALLY
-            </motion.div>
-            <motion.div
-              initial={{ x: 300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
-              className={`font-display text-[80px] uppercase leading-none md:text-[120px] lg:text-[160px] ${
-                phase1Done ? 'text-brand-gradient' : 'text-primary'
-              }`}
-            >
-              VERSE
-            </motion.div>
-          </div>
-
-          <motion.div
-            aria-hidden="true"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: [0, 0, 3], opacity: [0, 1, 0] }}
-            transition={{
-              duration: 1.4,
-              times: [0, 0.64, 1],
-              ease: 'easeOut',
+          <BlurText
+            text="RALLYVERSE"
+            animateBy="letters"
+            direction="top"
+            delay={80}
+            stepDuration={0.4}
+            threshold={0}
+            rootMargin="0px"
+            onAnimationComplete={() => {
+              setTimeout(() => setPhase1Done(true), 300)
             }}
-            className="pointer-events-none absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-orange/70 md:h-40 md:w-40"
+            className="font-display text-[80px] md:text-[120px] lg:text-[160px] leading-none tracking-tight text-white rallyverse-gradient-text"
           />
         </div>
 

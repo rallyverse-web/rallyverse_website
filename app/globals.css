@@ -39,10 +39,6 @@
     padding: 0;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
     background-color: #0B0D10;
     color: #F5F5F5;
@@ -72,4 +68,11 @@
       scroll-behavior: auto !important;
     }
   }
+}
+
+.rallyverse-gradient-text span {
+  background: linear-gradient(90deg, #FF5E00 0%, #FF8C00 25%, #c8b560 50%, #00C9A7 75%, #00E5FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
