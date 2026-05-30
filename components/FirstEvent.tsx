@@ -1,11 +1,23 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { MapPin, Calendar } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
+import Magnet from '@/components/Magnet'
+import ShinyText from '@/components/ShinyText'
 
 export default function FirstEvent() {
   const router = useRouter()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const updateViewportState = () => setIsMobile(window.innerWidth < 768)
+
+    updateViewportState()
+    window.addEventListener('resize', updateViewportState)
+    return () => window.removeEventListener('resize', updateViewportState)
+  }, [])
 
   return (
     <section id="events" className="bg-carbon py-20 md:py-28">
@@ -34,14 +46,24 @@ export default function FirstEvent() {
           </div>
 
           <div className="mt-9">
-            <button
-              type="button"
-              onClick={() => router.push('/register')}
-              className="group relative overflow-hidden rounded-md bg-orange px-8 py-3 font-body text-sm font-bold text-carbon transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
-            >
-              <span className="relative z-10">Join the Waitlist</span>
-              <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'linear-gradient(135deg, #FF5E00 0%, #00E5FF 100%)' }} />
-            </button>
+            <Magnet padding={50} disabled={isMobile}>
+              <button
+                type="button"
+                onClick={() => router.push('/register')}
+                className="group relative overflow-hidden rounded-md bg-orange px-8 py-3 font-body text-sm font-bold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
+              >
+                <span className="relative z-10">
+                  <ShinyText
+                    text="Join the Waitlist"
+                    disabled={false}
+                    speed={3}
+                    className="font-semibold"
+                    shineColor="rgba(255,255,255,0.6)"
+                  />
+                </span>
+                <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'linear-gradient(135deg, #FF5E00 0%, #00E5FF 100%)' }} />
+              </button>
+            </Magnet>
 
             <p className="mt-5 flex items-center gap-2 font-body text-xs text-muted">
               <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-orange" />

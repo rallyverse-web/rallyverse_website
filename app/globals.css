@@ -77,3 +77,30 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+.rally-gradient-text {
+  background: linear-gradient(90deg, #FF5E00 0%, #FF8C00 30%, #00C9A7 70%, #00E5FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes shiny-text {
+  from {
+    background-position: 120% 0;
+  }
+
+  to {
+    background-position: -120% 0;
+  }
+}
+
+@keyframes gradient-text {
+  from {
+    background-position: 0% 50%;
+  }
+
+  to {
+    background-position: 220% 50%;
+  }
+}

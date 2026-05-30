@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'motion/react'
 import { Menu, X } from 'lucide-react'
+import GradientText from '@/components/GradientText'
+import Magnet from '@/components/Magnet'
+import ShinyText from '@/components/ShinyText'
 
 const navLinks = [
   { label: 'Home', href: '#hero' },
@@ -21,6 +24,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
+  const [isMobile, setIsMobile] = useState(false)
 
   // Scroll background toggle
   useEffect(() => {
@@ -29,6 +33,14 @@ export default function Navbar() {
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const updateViewportState = () => setIsMobile(window.innerWidth < 768)
+
+    updateViewportState()
+    window.addEventListener('resize', updateViewportState)
+    return () => window.removeEventListener('resize', updateViewportState)
   }, [])
 
   // IntersectionObserver for active section tracking
@@ -84,7 +96,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => handleNavClick('#hero')}
-            className="flex shrink-0 items-center"
+            className="flex shrink-0 items-center gap-2"
           >
             <Image
               src="/logo/logo_transparent.png"
@@ -94,6 +106,17 @@ export default function Navbar() {
               className="h-8 w-auto object-contain"
               priority
             />
+            <span className="hidden font-display text-lg leading-none tracking-tight sm:inline-flex">
+              <span className="text-white">RALLY</span>
+              <GradientText
+                colors={['#FF5E00', '#FF8C00', '#00C9A7', '#00E5FF', '#FF5E00']}
+                animationSpeed={6}
+                showBorder={false}
+                className="font-display tracking-tight"
+              >
+                VERSE
+              </GradientText>
+            </span>
           </button>
 
           {/* Desktop nav links */}
@@ -119,13 +142,23 @@ export default function Navbar() {
           </nav>
 
           {/* Desktop Register button */}
-          <button
-            type="button"
-            onClick={() => router.push('/register')}
-            className="hidden md:block shrink-0 whitespace-nowrap rounded-md bg-brand-gradient px-4 py-2 text-sm font-semibold text-carbon transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
-          >
-            Register Now
-          </button>
+          <div className="hidden shrink-0 md:block">
+            <Magnet padding={30} disabled={isMobile}>
+              <button
+                type="button"
+                onClick={() => router.push('/register')}
+                className="whitespace-nowrap rounded-md bg-brand-gradient px-4 py-2 text-sm font-semibold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
+              >
+                <ShinyText
+                  text="Register Now"
+                  disabled={false}
+                  speed={3}
+                  className="text-sm font-semibold"
+                  shineColor="rgba(255,255,255,0.6)"
+                />
+              </button>
+            </Magnet>
+          </div>
 
           {/* Mobile hamburger */}
           <button
@@ -166,7 +199,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => handleNavClick('#hero')}
-                  className="flex items-center"
+                  className="flex items-center gap-2"
                 >
                   <Image
                     src="/logo/logo_transparent.png"
@@ -175,6 +208,17 @@ export default function Navbar() {
                     height={40}
                     className="h-8 w-auto object-contain"
                   />
+                  <span className="inline-flex font-display text-lg leading-none tracking-tight">
+                    <span className="text-white">RALLY</span>
+                    <GradientText
+                      colors={['#FF5E00', '#FF8C00', '#00C9A7', '#00E5FF', '#FF5E00']}
+                      animationSpeed={6}
+                      showBorder={false}
+                      className="font-display tracking-tight"
+                    >
+                      VERSE
+                    </GradientText>
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -217,16 +261,24 @@ export default function Navbar() {
                 transition={{ delay: 0.3, duration: 0.2 }}
                 className="mt-8"
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen(false)
-                    router.push('/register')
-                  }}
-                  className="w-full rounded-md bg-brand-gradient py-3 text-sm font-semibold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
-                >
-                  Register Now
-                </button>
+                <Magnet padding={30} disabled={isMobile}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false)
+                      router.push('/register')
+                    }}
+                    className="w-full rounded-md bg-brand-gradient py-3 text-sm font-semibold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
+                  >
+                    <ShinyText
+                      text="Register Now"
+                      disabled={false}
+                      speed={3}
+                      className="text-sm font-semibold"
+                      shineColor="rgba(255,255,255,0.6)"
+                    />
+                  </button>
+                </Magnet>
               </motion.div>
             </motion.div>
           </>

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import GradientText from '@/components/GradientText'
 
 export default function Footer() {
   return (
@@ -14,9 +15,16 @@ export default function Footer() {
               height={40}
               className="w-auto h-10 object-contain"
             />
-            <span className="font-display text-[22px]">
-              <span className="text-primary">Rally</span>
-              <span className="text-orange">Verse</span>
+            <span className="font-display text-[22px] leading-none">
+              <span className="font-display tracking-tight text-white">RALLY</span>
+              <GradientText
+                colors={['#FF5E00', '#FF8C00', '#00C9A7', '#00E5FF', '#FF5E00']}
+                animationSpeed={6}
+                showBorder={false}
+                className="font-display tracking-tight"
+              >
+                VERSE
+              </GradientText>
             </span>
           </Link>
 
