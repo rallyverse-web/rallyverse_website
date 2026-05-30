@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
     const fileName = `${registrationId}_payment_${Date.now()}.${extension}`
 
     const driveResponse = await drive.files.create({
+      supportsAllDrives: true,
       requestBody: {
         name: fileName,
         parents: [process.env.GOOGLE_DRIVE_FOLDER_ID],
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
     }
 
     await drive.permissions.create({
+      supportsAllDrives: true,
       fileId: driveResponse.data.id,
       requestBody: {
         role: 'reader',
@@ -68,6 +70,18 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     console.error('Drive upload error:', error)
+    const message = error instanceof Error ? error.message : ''
+
+    if (message.includes('Service Accounts do not have storage quota')) {
+      return NextResponse.json(
+        {
+          error:
+            'Google Drive upload failed because the configured folder is not in a Shared Drive accessible to the service account.',
+        },
+        { status: 500 },
+      )
+    }
+
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
   }
 }
