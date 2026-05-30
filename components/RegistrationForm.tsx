@@ -6,10 +6,10 @@ import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
 
 const inputClass =
-  'w-full bg-surface border border-subtle text-primary placeholder:text-muted font-body text-sm px-4 py-3 rounded-md focus:outline-none focus:border-orange transition-colors duration-200'
+  'w-full min-h-[48px] bg-surface border border-subtle text-primary placeholder:text-muted font-body text-sm px-4 py-3 rounded-md focus:outline-none focus:border-orange transition-colors duration-200'
 
 const selectClass =
-  'w-full bg-surface border border-subtle text-primary font-body text-sm px-4 py-3 rounded-md focus:outline-none focus:border-orange transition-colors duration-200 appearance-none cursor-pointer'
+  'w-full min-h-[48px] bg-surface border border-subtle text-primary font-body text-sm px-4 py-3 rounded-md focus:outline-none focus:border-orange transition-colors duration-200 appearance-none cursor-pointer'
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -254,7 +254,7 @@ export default function RegistrationForm() {
         onClick={handleSubmit}
         disabled={loading}
         aria-busy={loading}
-        className="group relative w-full overflow-hidden rounded-md bg-brand-gradient py-4 font-body text-sm font-bold tracking-wide text-carbon transition-all duration-200 hover:scale-[1.02] hover:glow-orange active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="group relative w-full min-h-[48px] overflow-hidden rounded-md bg-brand-gradient py-4 font-body text-sm font-bold tracking-wide text-carbon transition-all duration-200 hover:scale-[1.02] hover:glow-orange active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
         {loading ? (
           <div className="flex items-center justify-center gap-2">

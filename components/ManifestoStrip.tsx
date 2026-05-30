@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
 
 export default function ManifestoStrip() {
@@ -13,6 +14,13 @@ export default function ManifestoStrip() {
           <p className="mt-5 font-body text-[15px] text-carbon opacity-60">
             RallyVerse &middot; Bengaluru Badminton Series &middot; 2026 &middot; First event registrations opening soon.
           </p>
+
+          <Link
+            href="/register"
+            className="mt-8 inline-block rounded-md border-2 border-carbon bg-carbon px-8 py-3 font-body text-sm font-bold text-orange transition-all duration-200 hover:bg-transparent hover:text-carbon"
+          >
+            Join the Waitlist
+          </Link>
         </AnimatedSection>
       </div>
     </section>

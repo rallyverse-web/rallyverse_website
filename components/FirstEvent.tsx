@@ -42,15 +42,28 @@ export default function FirstEvent() {
               <span className="relative z-10">Join the Waitlist</span>
               <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'linear-gradient(135deg, #FF5E00 0%, #00E5FF 100%)' }} />
             </button>
+
+            <p className="mt-5 flex items-center gap-2 font-body text-xs text-muted">
+              <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-orange" />
+              Spots are limited per tournament. Early registrations get priority bracket selection.
+            </p>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={0.15}>
           <div className="group">
-            <div className="flex aspect-[3/4] w-full items-center justify-center rounded-xl border border-subtle bg-surface transition-all duration-300 group-hover:border-orange/30 group-hover:glow-orange">
-              <span className="font-display text-lg tracking-wider text-muted transition-colors duration-300 group-hover:text-orange">
-                EVENT PHOTO COMING SOON
-              </span>
+            <div className="flex aspect-[3/4] w-full flex-col items-center justify-center gap-6 rounded-xl border border-subtle bg-surface transition-all duration-300 group-hover:border-orange/30 group-hover:glow-orange">
+              <div className="font-display text-[80px] leading-none tracking-wide text-subtle transition-colors duration-300 group-hover:text-orange/30">
+                RV
+              </div>
+              <div className="text-center">
+                <p className="font-display text-[18px] tracking-wider text-primary">
+                  RALLY SERIES #01
+                </p>
+                <p className="mt-1 font-body text-xs uppercase tracking-widest text-muted">
+                  BENGALURU &middot; 2026
+                </p>
+              </div>
             </div>
 
             <div className="mt-4 flex items-center justify-between">

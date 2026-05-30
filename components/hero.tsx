@@ -28,7 +28,7 @@ export default function Hero() {
             initial={{ x: -200, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="font-display text-[64px] uppercase leading-none text-primary md:text-[120px]"
+            className="font-display text-[56px] uppercase leading-none text-primary md:text-[80px] lg:text-[120px]"
           >
             RALLY
           </motion.div>
@@ -37,7 +37,7 @@ export default function Hero() {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
             onAnimationComplete={() => setCollisionDone(true)}
-            className="font-display text-[64px] uppercase leading-none text-primary md:text-[120px]"
+            className="font-display text-[56px] uppercase leading-none text-primary md:text-[80px] lg:text-[120px]"
             style={
               collisionDone
                 ? {
@@ -73,7 +73,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={collisionDone ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.9, ease: 'easeOut' }}
-          className="font-display text-[64px] uppercase leading-none text-primary md:text-[120px]"
+          className="font-display text-[36px] uppercase leading-none text-primary md:text-[80px] lg:text-[120px]"
         >
           PLAY.
         </motion.div>
@@ -81,7 +81,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={collisionDone ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 1.1, ease: 'easeOut' }}
-          className="font-display text-[64px] uppercase leading-none text-primary md:text-[120px]"
+          className="font-display text-[36px] uppercase leading-none text-primary md:text-[80px] lg:text-[120px]"
         >
           COMPETE.
         </motion.div>
@@ -89,7 +89,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={collisionDone ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 1.3, ease: 'easeOut' }}
-          className="font-display text-[64px] uppercase leading-none text-brand-gradient md:text-[120px]"
+          className="font-display text-[36px] uppercase leading-none text-brand-gradient md:text-[80px] lg:text-[120px]"
         >
           RALLY.
         </motion.div>

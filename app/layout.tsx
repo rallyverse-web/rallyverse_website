@@ -51,9 +51,51 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${bebasNeue.variable} ${inter.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${bebasNeue.variable} ${inter.variable}`}>
       <head>
         <link rel="canonical" href="https://www.rallyverse.in" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "RallyVerse",
+              "url": "https://www.rallyverse.in",
+              "logo": "https://www.rallyverse.in/logo_transparent.png",
+              "description": "Competitive badminton tournaments, community treks, marathons and cycling events in Bengaluru.",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Bengaluru",
+                "addressRegion": "Karnataka",
+                "addressCountry": "IN"
+              },
+              "sameAs": []
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SportsEvent",
+              "name": "Rally Series #01 — Badminton Tournament Bengaluru",
+              "description": "Competitive badminton tournament in Bengaluru with brackets for all skill levels. Men's Singles, Women's Singles, Doubles, Mixed.",
+              "location": {
+                "@type": "Place",
+                "name": "Bengaluru, Karnataka, India"
+              },
+              "organizer": {
+                "@type": "Organization",
+                "name": "RallyVerse",
+                "url": "https://www.rallyverse.in"
+              },
+              "eventStatus": "https://schema.org/EventScheduled",
+              "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode"
+            })
+          }}
+        />
       </head>
       <body>
         <Navbar />

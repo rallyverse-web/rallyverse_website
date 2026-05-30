@@ -5,11 +5,11 @@ export default function Footer() {
   return (
     <footer className="border-t border-subtle bg-carbon py-12">
       <div className="mx-auto max-w-[1100px] px-6">
-        <div className="flex flex-wrap items-center justify-center gap-6 md:justify-between">
+        <div className="flex flex-col items-center gap-8 text-center lg:flex-row lg:justify-between lg:text-left">
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo_transparent.png"
-              alt="RallyVerse"
+              alt="RallyVerse logo"
               width={28}
               height={28}
               className="w-auto h-8 object-contain"

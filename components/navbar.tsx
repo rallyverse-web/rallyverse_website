@@ -12,7 +12,7 @@ export default function Navbar() {
         <button type="button" onClick={() => router.push('/')} className="flex items-center">
           <Image
             src="/logo_transparent.png"
-            alt="RallyVerse"
+            alt="RallyVerse logo"
             width={32}
             height={32}
             className="w-auto h-8 object-contain"
@@ -26,7 +26,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => router.push('/register')}
-          className="rounded-md bg-brand-gradient px-4 py-2 text-sm font-semibold text-carbon transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
+          className="shrink-0 whitespace-nowrap rounded-md bg-brand-gradient px-4 py-2 text-sm font-semibold text-carbon transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
         >
           Register Now
         </button>
