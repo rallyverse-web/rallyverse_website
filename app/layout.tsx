@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Script from 'next/script'
 import { Bebas_Neue, Inter } from 'next/font/google'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/Footer'
@@ -54,16 +53,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${bebasNeue.variable} ${inter.variable}`}>
       <head>
-        <Script id="disable-scroll-restoration" strategy="beforeInteractive">
-          {`
-            if ('scrollRestoration' in window.history) {
-              window.history.scrollRestoration = 'manual';
-            }
-            if (window.location.pathname === '/' && window.location.hash) {
-              window.history.replaceState(null, '', window.location.pathname + window.location.search);
-            }
-          `}
-        </Script>
         <link rel="canonical" href="https://www.rallyverse.in" />
         <script
           type="application/ld+json"

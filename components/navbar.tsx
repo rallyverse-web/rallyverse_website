@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'motion/react'
@@ -67,11 +67,7 @@ export default function Navbar() {
 
   const handleNavClick = (href: string) => {
     setMenuOpen(false)
-    const id = href.replace('#', '')
-    const el = document.getElementById(id)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
-    }
+    setActiveSection(href.replace('#', ''))
   }
 
   return (

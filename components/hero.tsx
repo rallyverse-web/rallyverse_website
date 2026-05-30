@@ -22,9 +22,9 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative h-screen overflow-hidden bg-carbon px-4 text-center"
+      className="relative min-h-[100svh] bg-carbon px-4 text-center"
     >
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <div className="flex min-h-[100svh] flex-col items-center justify-center py-20">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -66,65 +66,61 @@ export default function Hero() {
           />
         </div>
 
-        {phase1Done && (
-          <div className="mt-12 flex flex-col items-center gap-0 md:mt-16">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="font-display text-[48px] uppercase leading-none text-primary md:text-[72px] lg:text-[96px]"
-            >
-              PLAY.
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
-              className="font-display text-[48px] uppercase leading-none text-primary md:text-[72px] lg:text-[96px]"
-            >
-              COMPETE.
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
-              className="font-display text-[48px] uppercase leading-none text-brand-gradient md:text-[72px] lg:text-[96px]"
-            >
-              RALLY.
-            </motion.div>
-          </div>
-        )}
+        <div className="mt-12 flex flex-col items-center gap-0 md:mt-16">
+          <motion.div
+            initial={false}
+            animate={phase1Done ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="font-display text-[48px] uppercase leading-none text-primary md:text-[72px] lg:text-[96px]"
+          >
+            PLAY.
+          </motion.div>
+          <motion.div
+            initial={false}
+            animate={phase1Done ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.5, delay: phase1Done ? 0.2 : 0, ease: 'easeOut' }}
+            className="font-display text-[48px] uppercase leading-none text-primary md:text-[72px] lg:text-[96px]"
+          >
+            COMPETE.
+          </motion.div>
+          <motion.div
+            initial={false}
+            animate={phase1Done ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.5, delay: phase1Done ? 0.4 : 0, ease: 'easeOut' }}
+            className="font-display text-[48px] uppercase leading-none text-brand-gradient md:text-[72px] lg:text-[96px]"
+          >
+            RALLY.
+          </motion.div>
+        </div>
 
-        {phase2Done && (
-          <>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
-              className="mx-auto mt-10 max-w-[520px] px-2 font-body text-sm leading-relaxed text-muted md:text-base"
-            >
-              Bangalore&apos;s newest badminton tournament series. Competitive brackets. Real courts. A community that shows up and plays hard.
-            </motion.p>
+        <>
+          <motion.p
+            initial={false}
+            animate={phase2Done ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: phase2Done ? 0.3 : 0, ease: 'easeOut' }}
+            className="mx-auto mt-10 max-w-[520px] px-2 font-body text-sm leading-relaxed text-muted md:text-base"
+          >
+            Bangalore&apos;s newest badminton tournament series. Competitive brackets. Real courts. A community that shows up and plays hard.
+          </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
-              className="mt-8"
+          <motion.div
+            initial={false}
+            animate={phase2Done ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: phase2Done ? 0.5 : 0, ease: 'easeOut' }}
+            className="mt-8"
+          >
+            <button
+              type="button"
+              onClick={() => router.push('/register')}
+              className="group relative overflow-hidden rounded-md border border-orange bg-transparent px-8 py-3 font-body text-sm font-semibold text-orange transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
             >
-              <button
-                type="button"
-                onClick={() => router.push('/register')}
-                className="group relative overflow-hidden rounded-md border border-orange bg-transparent px-8 py-3 font-body text-sm font-semibold text-orange transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
-              >
-                <span className="relative z-10 transition-colors duration-200 group-hover:text-carbon">
-                  Register Your Interest
-                </span>
-                <span className="absolute inset-0 -translate-x-full bg-brand-gradient transition-transform duration-300 group-hover:translate-x-0" />
-              </button>
-            </motion.div>
-          </>
-        )}
+              <span className="relative z-10 transition-colors duration-200 group-hover:text-carbon">
+                Register Your Interest
+              </span>
+              <span className="absolute inset-0 -translate-x-full bg-brand-gradient transition-transform duration-300 group-hover:translate-x-0" />
+            </button>
+          </motion.div>
+        </>
       </div>
     </section>
   )
