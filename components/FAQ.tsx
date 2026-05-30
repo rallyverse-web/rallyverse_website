@@ -46,7 +46,7 @@ export default function FAQ() {
   }
 
   return (
-    <section className="border-t border-subtle bg-carbon py-32">
+    <section id="faq" className="border-t border-subtle bg-carbon py-32">
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-12 px-6 md:grid-cols-[1fr_1.5fr] md:gap-20">
         {/* Left column — heading */}
         <AnimatedSection>
