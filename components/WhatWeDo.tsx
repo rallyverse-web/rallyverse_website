@@ -2,7 +2,7 @@ import AnimatedSection from '@/components/AnimatedSection'
 
 export default function WhatWeDo() {
   return (
-    <section id="about" className="bg-carbon py-32">
+    <section id="about" className="bg-carbon py-20 md:py-28">
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-20 px-6 md:grid-cols-2 md:items-start">
         <AnimatedSection>
           <div className="flex items-center gap-3">

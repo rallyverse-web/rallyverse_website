@@ -13,9 +13,9 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col items-center justify-center bg-carbon px-6 text-center"
+      className="relative flex h-screen flex-col items-center justify-center overflow-hidden bg-carbon px-6 text-center"
     >
-      <div className="max-w-3xl mx-auto text-center">
+      <div className="max-w-3xl mx-auto text-center w-full">
         {/* Micro-label — fades in first at 0ms */}
         <motion.p
           initial={{ opacity: 0, y: -10 }}
@@ -57,7 +57,7 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Shockwave ring — fires at ~800ms (200ms delay + 600ms animation) */}
+          {/* Shockwave ring */}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <AnimatePresence>
               {collisionDone && (
@@ -74,8 +74,7 @@ export default function Hero() {
         </div>
 
         {/* Significant gap between RALLYVERSE and tagline */}
-        <div className="mt-10 md:mt-16 lg:mt-20 flex flex-col items-center gap-0 mb-0">
-          {/* PLAY. — fades up at ~1400ms (shockwave done + 600ms pause) */}
+        <div className="mt-10 md:mt-16 lg:mt-20 flex flex-col items-center gap-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
@@ -84,7 +83,6 @@ export default function Hero() {
           >
             PLAY.
           </motion.div>
-          {/* COMPETE. — at ~1600ms */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
@@ -93,7 +91,6 @@ export default function Hero() {
           >
             COMPETE.
           </motion.div>
-          {/* RALLY. — at ~1800ms, gradient */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
@@ -104,7 +101,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Subtext — at ~2200ms */}
+        {/* Subtext */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
@@ -114,7 +111,7 @@ export default function Hero() {
           Bangalore&apos;s newest badminton tournament series. Competitive brackets. Real courts. A community that shows up and plays hard.
         </motion.p>
 
-        {/* CTA button — at ~2200ms */}
+        {/* CTA button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
@@ -133,11 +130,19 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Scroll arrow */}
-      <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1">
-        <div className="mx-auto h-10 w-px bg-subtle" />
-        <ChevronDown size={16} className="text-muted" />
-      </div>
+      {/* Scroll indicator — bounces, fades in last at ~2500ms */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={shockwaveDone ? { opacity: 1 } : {}}
+        transition={{ duration: 0.6, delay: 1.9, ease: 'easeOut' }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
+      >
+        <div className="mx-auto h-8 w-px bg-subtle" />
+        <ChevronDown
+          size={16}
+          className="text-muted animate-bounce"
+        />
+      </motion.div>
     </section>
   )
 }

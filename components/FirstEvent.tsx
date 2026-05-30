@@ -8,7 +8,7 @@ export default function FirstEvent() {
   const router = useRouter()
 
   return (
-    <section id="events" className="bg-carbon py-32">
+    <section id="events" className="bg-carbon py-20 md:py-28">
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-16 px-6 md:grid-cols-2 md:items-start">
         <AnimatedSection>
           <p className="mb-5 font-body text-[11px] uppercase tracking-widest text-muted">

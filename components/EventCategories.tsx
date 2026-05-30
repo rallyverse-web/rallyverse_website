@@ -34,7 +34,7 @@ const categories = [
 
 export default function EventCategories() {
   return (
-    <section className="border-y border-subtle bg-surface py-24">
+    <section className="border-y border-subtle bg-surface py-20 md:py-28">
       <div className="mx-auto max-w-[1100px] px-6">
         <AnimatedSection>
           <div className="mb-12 flex flex-col items-center gap-3">

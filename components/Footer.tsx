@@ -10,9 +10,9 @@ export default function Footer() {
             <Image
               src="/logo/only_logo_white.png"
               alt="RallyVerse logo"
-              width={28}
-              height={28}
-              className="w-auto h-8 object-contain"
+              width={40}
+              height={40}
+              className="w-auto h-10 object-contain"
             />
             <span className="font-display text-[22px]">
               <span className="text-primary">Rally</span>

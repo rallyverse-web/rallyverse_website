@@ -23,7 +23,7 @@ const personas = [
 
 export default function WhoThisIsFor() {
   return (
-    <section className="bg-[#0d0d0d] py-32">
+    <section className="bg-[#0d0d0d] py-20 md:py-28">
       <div className="mx-auto max-w-[1100px] px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
