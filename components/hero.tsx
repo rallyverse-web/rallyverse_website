@@ -1,148 +1,164 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { ChevronDown } from 'lucide-react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion } from 'motion/react'
 
 export default function Hero() {
   const router = useRouter()
-  const [collisionDone, setCollisionDone] = useState(false)
-  const [shockwaveDone, setShockwaveDone] = useState(false)
+  const [phase1Done, setPhase1Done] = useState(false)
+  const [phase2Done, setPhase2Done] = useState(false)
+
+  useEffect(() => {
+    const phase1Timer = window.setTimeout(() => setPhase1Done(true), 1400)
+    const phase2Timer = window.setTimeout(() => setPhase2Done(true), 2000)
+
+    return () => {
+      window.clearTimeout(phase1Timer)
+      window.clearTimeout(phase2Timer)
+    }
+  }, [])
 
   return (
     <section
       id="hero"
-      className="relative flex h-screen flex-col items-center justify-center overflow-hidden bg-carbon px-6 text-center"
+      className="relative h-screen overflow-hidden bg-carbon px-4 text-center"
     >
-      <div className="max-w-3xl mx-auto text-center w-full">
-        {/* Micro-label — fades in first at 0ms */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="mb-6"
+        >
+          <Image
+            src="/logo/logo_transparent.png"
+            alt="RallyVerse"
+            width={120}
+            height={120}
+            className="mx-auto h-24 w-24 object-contain md:h-32 md:w-32"
+            priority
+          />
+        </motion.div>
+
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0, ease: 'easeOut' }}
-          className="mb-6 font-body text-xs uppercase tracking-widest text-muted"
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="mb-4 font-body text-[11px] uppercase tracking-widest text-muted"
         >
-          Bangalore &middot; Badminton &middot; 2026
+          BANGALORE &middot; BADMINTON &middot; 2026
         </motion.p>
 
-        {/* RALLY + VERSE split reveal — starts at ~200ms */}
         <div className="relative">
-          <div className="flex flex-row items-center justify-center gap-0">
+          <div className="flex items-center justify-center gap-0">
             <motion.div
-              initial={{ x: -200, opacity: 0 }}
+              initial={{ x: -300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-              className="font-display text-[56px] uppercase leading-none text-primary md:text-[80px] lg:text-[120px]"
+              transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+              className="font-display text-[80px] uppercase leading-none text-primary md:text-[120px] lg:text-[160px]"
             >
               RALLY
             </motion.div>
             <motion.div
-              initial={{ x: 200, opacity: 0 }}
+              initial={{ x: 300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-              onAnimationComplete={() => setCollisionDone(true)}
-              className="font-display text-[56px] uppercase leading-none text-primary md:text-[80px] lg:text-[120px]"
-              style={
-                collisionDone
-                  ? {
-                      background: 'linear-gradient(90deg, #FF5C00, #00E5C8)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    }
-                  : undefined
-              }
+              transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+              className={`font-display text-[80px] uppercase leading-none md:text-[120px] lg:text-[160px] ${
+                phase1Done ? 'text-brand-gradient' : 'text-primary'
+              }`}
             >
               VERSE
             </motion.div>
           </div>
 
-          {/* Shockwave ring */}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <AnimatePresence>
-              {collisionDone && (
-                <motion.div
-                  className="h-[120px] w-[120px] rounded-full border-2 border-orange/60"
-                  initial={{ scale: 0, opacity: 1 }}
-                  animate={{ scale: 2.5, opacity: 0 }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
-                  onAnimationComplete={() => setShockwaveDone(true)}
-                />
-              )}
-            </AnimatePresence>
+          <motion.div
+            aria-hidden="true"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: [0, 0, 3], opacity: [0, 1, 0] }}
+            transition={{
+              duration: 1.4,
+              times: [0, 0.64, 1],
+              ease: 'easeOut',
+            }}
+            className="pointer-events-none absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-orange/70 md:h-40 md:w-40"
+          />
+        </div>
+
+        {phase1Done && (
+          <div className="mt-12 flex flex-col items-center gap-0 md:mt-16">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className="font-display text-[48px] uppercase leading-none text-primary md:text-[72px] lg:text-[96px]"
+            >
+              PLAY.
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
+              className="font-display text-[48px] uppercase leading-none text-primary md:text-[72px] lg:text-[96px]"
+            >
+              COMPETE.
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
+              className="font-display text-[48px] uppercase leading-none text-brand-gradient md:text-[72px] lg:text-[96px]"
+            >
+              RALLY.
+            </motion.div>
           </div>
-        </div>
+        )}
 
-        {/* Significant gap between RALLYVERSE and tagline */}
-        <div className="mt-10 md:mt-16 lg:mt-20 flex flex-col items-center gap-0">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.6, ease: 'easeOut' }}
-            className="font-display text-[36px] uppercase leading-none mb-2 text-primary md:text-[80px] lg:text-[120px]"
-          >
-            PLAY.
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.8, ease: 'easeOut' }}
-            className="font-display text-[36px] uppercase leading-none mb-2 text-primary md:text-[80px] lg:text-[120px]"
-          >
-            COMPETE.
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 1.0, ease: 'easeOut' }}
-            className="font-display text-[36px] uppercase leading-none text-brand-gradient md:text-[80px] lg:text-[120px]"
-          >
-            RALLY.
-          </motion.div>
-        </div>
+        {phase2Done && (
+          <>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
+              className="mx-auto mt-10 max-w-[520px] px-2 font-body text-sm leading-relaxed text-muted md:text-base"
+            >
+              Bangalore&apos;s newest badminton tournament series. Competitive brackets. Real courts. A community that shows up and plays hard.
+            </motion.p>
 
-        {/* Subtext */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 1.4, ease: 'easeOut' }}
-          className="mt-10 mb-10 max-w-[480px] mx-auto text-center font-body text-base leading-relaxed text-muted"
-        >
-          Bangalore&apos;s newest badminton tournament series. Competitive brackets. Real courts. A community that shows up and plays hard.
-        </motion.p>
-
-        {/* CTA button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={shockwaveDone ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 1.6, ease: 'easeOut' }}
-        >
-          <button
-            type="button"
-            onClick={() => router.push('/register')}
-            className="group relative overflow-hidden rounded-md border border-orange bg-transparent px-8 py-3 font-body text-sm font-semibold text-orange transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
-          >
-            <span className="relative z-10 transition-colors duration-200 group-hover:text-carbon">
-              Register Your Interest
-            </span>
-            <span className="absolute inset-0 -translate-x-full bg-brand-gradient transition-transform duration-300 group-hover:translate-x-0" />
-          </button>
-        </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
+              className="mt-8"
+            >
+              <button
+                type="button"
+                onClick={() => router.push('/register')}
+                className="group relative overflow-hidden rounded-md border border-orange bg-transparent px-8 py-3 font-body text-sm font-semibold text-orange transition-all duration-200 hover:scale-105 hover:glow-orange active:scale-95"
+              >
+                <span className="relative z-10 transition-colors duration-200 group-hover:text-carbon">
+                  Register Your Interest
+                </span>
+                <span className="absolute inset-0 -translate-x-full bg-brand-gradient transition-transform duration-300 group-hover:translate-x-0" />
+              </button>
+            </motion.div>
+          </>
+        )}
       </div>
 
-      {/* Scroll indicator — bounces, fades in last at ~2500ms */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={shockwaveDone ? { opacity: 1 } : {}}
-        transition={{ duration: 0.6, delay: 1.9, ease: 'easeOut' }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
-      >
-        <div className="mx-auto h-8 w-px bg-subtle" />
-        <ChevronDown
-          size={16}
-          className="text-muted animate-bounce"
-        />
-      </motion.div>
+      {phase2Done && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.7, ease: 'easeOut' }}
+          className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1"
+        >
+          <div className="mx-auto h-8 w-px bg-subtle" />
+          <ChevronDown size={16} className="animate-bounce text-muted" />
+        </motion.div>
+      )}
     </section>
   )
 }

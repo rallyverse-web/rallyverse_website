@@ -11,10 +11,10 @@ const navLinks = [
   { label: 'About', href: '#about' },
   { label: 'Events', href: '#events' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '#footer' },
+  { label: 'Contact', href: '#contact' },
 ]
 
-const sectionIds = ['hero', 'about', 'events', 'faq', 'footer']
+const sectionIds = ['hero', 'about', 'events', 'faq', 'contact']
 
 export default function Navbar() {
   const router = useRouter()
@@ -25,7 +25,7 @@ export default function Navbar() {
   // Scroll background toggle
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 60)
+      setScrolled(window.scrollY > 80)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -77,34 +77,31 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 h-[60px] transition-all duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 h-16 transition-all duration-300 ${
           scrolled
-            ? 'border-b border-white/5 bg-[#0B0D10] backdrop-blur-sm'
+            ? 'border-b border-white/10 bg-[#0B0D10] backdrop-blur-sm'
             : 'bg-transparent'
         }`}
       >
-        <div className="flex h-full items-center justify-between px-6 md:px-12">
-          {/* Logo + Wordmark */}
+        <div className="relative flex h-full items-center justify-between px-6 md:px-12">
+          {/* Logo */}
           <button
             type="button"
             onClick={() => handleNavClick('#hero')}
-            className="flex items-center"
+            className="flex shrink-0 items-center"
           >
             <Image
-              src="/logo/only_logo_white.png"
+              src="/logo/logo_transparent.png"
               alt="RallyVerse logo"
-              width={32}
-              height={32}
+              width={120}
+              height={40}
               className="h-8 w-auto object-contain"
               priority
             />
-            <span className="ml-2 font-display text-xl text-primary md:text-2xl">
-              Rally<span className="text-orange">Verse</span>
-            </span>
           </button>
 
           {/* Desktop nav links */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
             {navLinks.map((link) => {
               const isActive = activeSection === link.href.replace('#', '')
               return (
@@ -176,15 +173,12 @@ export default function Navbar() {
                   className="flex items-center"
                 >
                   <Image
-                    src="/logo/only_logo_white.png"
+                    src="/logo/logo_transparent.png"
                     alt="RallyVerse logo"
-                    width={28}
-                    height={28}
+                    width={120}
+                    height={40}
                     className="h-8 w-auto object-contain"
                   />
-                  <span className="ml-2 font-display text-xl text-primary">
-                    Rally<span className="text-orange">Verse</span>
-                  </span>
                 </button>
                 <button
                   type="button"
