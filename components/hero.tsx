@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { ChevronDown } from 'lucide-react'
 import { motion } from 'motion/react'
 import BlurText from './BlurText'
 
@@ -17,18 +16,6 @@ export default function Hero() {
 
     return () => {
       window.clearTimeout(phase2Timer)
-    }
-  }, [])
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    const timer = window.setTimeout(() => {
-      document.body.style.overflow = ''
-    }, 100)
-
-    return () => {
-      window.clearTimeout(timer)
-      document.body.style.overflow = ''
     }
   }, [])
 
@@ -139,18 +126,6 @@ export default function Hero() {
           </>
         )}
       </div>
-
-      {phase2Done && (
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.7, ease: 'easeOut' }}
-          className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1"
-        >
-          <div className="mx-auto h-8 w-px bg-subtle" />
-          <ChevronDown size={16} className="animate-bounce text-muted" />
-        </motion.div>
-      )}
     </section>
   )
 }

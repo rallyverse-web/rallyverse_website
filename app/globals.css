@@ -43,6 +43,7 @@
     background-color: #0B0D10;
     color: #F5F5F5;
     font-family: var(--font-body);
+    overflow-anchor: none;
   }
 
   ::selection {
