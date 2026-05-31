@@ -173,9 +173,10 @@
 
 /* Hero gradient text — B&W theme */
 [data-theme="bw"] .rallyverse-gradient-text span {
-  background: none;
-  -webkit-text-fill-color: #0A0A0A;
-  color: #0A0A0A;
+  background: linear-gradient(90deg, #2A2A2A 0%, #666666 25%, #999999 50%, #666666 75%, #2A2A2A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Tagline gradient text — COLOR theme */
@@ -188,9 +189,10 @@
 
 /* Tagline gradient text — B&W theme */
 [data-theme="bw"] .rally-gradient-text {
-  background: none;
-  -webkit-text-fill-color: #0A0A0A;
-  color: #0A0A0A;
+  background: linear-gradient(90deg, #2A2A2A, #999999);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @import 'tailwindcss';
