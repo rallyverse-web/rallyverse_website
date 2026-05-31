@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useMemo, useState } from 'react'
 import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
+import PaymentQR from '@/components/PaymentQR'
 
 type FormDataState = {
   category: string
@@ -18,7 +19,7 @@ type FormDataState = {
   player2SkillLevel: string
   city: string
   collegeOrOrg: string
-  utrNumber: string
+  upiId: string
   paymentPhone: string
 }
 
@@ -33,7 +34,7 @@ const categories = [
 const skillLevels = ['Beginner', 'Intermediate', 'Advanced']
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const utrRegex = /^[a-zA-Z0-9]{8,}$/
+const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/
 
 const inputBaseStyle = {
   width: '100%',
@@ -71,7 +72,7 @@ const initialFormData: FormDataState = {
   player2SkillLevel: '',
   city: 'Bengaluru',
   collegeOrOrg: '',
-  utrNumber: '',
+  upiId: '',
   paymentPhone: '',
 }
 
@@ -139,8 +140,8 @@ export default function RegistrationForm() {
     }
 
     if (stepToValidate === 3) {
-      if (!utrRegex.test(formData.utrNumber.trim())) {
-        nextErrors.utrNumber = 'Enter an alphanumeric UTR or transaction ID of at least 8 characters.'
+      if (!upiRegex.test(formData.upiId.trim())) {
+        nextErrors.upiId = 'Enter a valid UPI ID (e.g. username@upi).'
       }
       if (!phoneRegex.test(formData.paymentPhone.trim())) {
         nextErrors.paymentPhone = 'Enter the phone number used for payment.'
@@ -459,7 +460,7 @@ export default function RegistrationForm() {
               Step 3 / Payment
             </p>
             <p className="mt-2 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              Complete the payment and enter your transaction details below.
+              Complete the payment by scanning the QR code below. Then enter the UPI ID you used to make the payment.
             </p>
           </div>
 
@@ -471,12 +472,19 @@ export default function RegistrationForm() {
             </div>
           </div>
 
+          <div className="flex flex-col items-center gap-4">
+            <p className="font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+              Scan to Pay
+            </p>
+            <PaymentQR />
+          </div>
+
           <div>
-            <label htmlFor="utrNumber" className={labelClass} style={{ color: 'var(--text-muted)' }}>
-              UTR Number / Transaction ID <span style={{ color: 'var(--accent-primary)' }}>*</span>
+            <label htmlFor="upiId" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+              UPI ID Used For Payment <span style={{ color: 'var(--accent-primary)' }}>*</span>
             </label>
-            <input id="utrNumber" name="utrNumber" value={formData.utrNumber} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="Minimum 8 alphanumeric characters" />
-            <FieldError message={errors.utrNumber} />
+            <input id="upiId" name="upiId" value={formData.upiId} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="e.g. yourname@upi" />
+            <FieldError message={errors.upiId} />
           </div>
 
           <div>

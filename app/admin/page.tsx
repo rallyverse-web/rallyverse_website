@@ -88,7 +88,7 @@ const EDIT_FIELDS: { label: string; colIndex: number }[] = [
   { label: 'City', colIndex: 12 },
   { label: 'College / Organization', colIndex: 13 },
   { label: 'Amount Paid', colIndex: 14 },
-  { label: 'Transaction ID', colIndex: 15 },
+  { label: 'UPI ID Used For Payment', colIndex: 15 },
   { label: 'Payment Phone', colIndex: 16 },
   { label: 'Remarks', colIndex: 17 },
 ]
@@ -102,7 +102,7 @@ const TABLE_COLUMNS: { key: string; label: string; sortable: boolean }[] = [
   { key: 'player1Phone', label: 'Phone', sortable: false },
   { key: 'player1Email', label: 'Email', sortable: false },
   { key: 'entryFee', label: 'Fee', sortable: true },
-  { key: 'utrNumber', label: 'UTR', sortable: false },
+  { key: 'upiId', label: 'UPI ID', sortable: false },
   { key: 'paymentStatus', label: 'Payment', sortable: true },
   { key: 'verificationStatus', label: 'Verification', sortable: true },
   { key: 'confirmationSent', label: 'Confirmed', sortable: true },
@@ -411,7 +411,7 @@ export default function AdminPage() {
                     <td style={s.td}>{row.player1Phone}</td>
                     <td style={{ ...s.td, fontSize: 12, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.player1Email}</td>
                     <td style={s.td}>{row.entryFee}</td>
-                    <td style={{ ...s.td, fontSize: 11, fontFamily: 'monospace', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.utrNumber}</td>
+                    <td style={{ ...s.td, fontSize: 11, fontFamily: 'monospace', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.upiId}</td>
                     <td style={s.td}>{statusBadge(row.paymentStatus)}</td>
                     <td style={s.td}>{statusBadge(row.verificationStatus)}</td>
                     <td style={s.td}>{statusBadge(row.confirmationSent)}</td>

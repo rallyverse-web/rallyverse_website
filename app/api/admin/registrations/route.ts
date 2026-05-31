@@ -11,7 +11,7 @@ const COLUMN_LABELS = [
   'registrationId', 'registrationDate', 'category', 'teamName',
   'player1Name', 'player1Phone', 'player1Email', 'player1SkillLevel',
   'player2Name', 'player2Phone', 'player2Email', 'player2SkillLevel',
-  'city', 'collegeOrOrg', 'entryFee', 'utrNumber', 'paymentPhone',
+  'city', 'collegeOrOrg', 'entryFee', 'upiId', 'paymentPhone',
   'remarks', 'paymentStatus', 'verificationStatus',
   'confirmationSent', 'paymentScreenshotReceived', 'confirmationDate',
   'additionalNotes',

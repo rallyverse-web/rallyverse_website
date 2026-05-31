@@ -4,7 +4,7 @@ import { formatRegistrationDate, generateRegistrationId } from '@/lib/utils'
 
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const utrRegex = /^[a-zA-Z0-9]{8,}$/
+const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/
 
 function isDoublesCategory(category: string) {
   return category.includes('Doubles')
@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
       player2SkillLevel,
       city,
       collegeOrOrg,
-      utrNumber,
+      upiId,
       paymentPhone,
     } = body
 
-    if (!player1Name || !player1Phone || !player1Email || !player1SkillLevel || !category || !city || !utrNumber) {
+    if (!player1Name || !player1Phone || !player1Email || !player1SkillLevel || !category || !city || !upiId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
@@ -42,8 +42,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid Player 1 email' }, { status: 400 })
     }
 
-    if (!utrRegex.test(utrNumber)) {
-      return NextResponse.json({ error: 'Invalid UTR number' }, { status: 400 })
+    if (!upiRegex.test(upiId)) {
+      return NextResponse.json({ error: 'Invalid UPI ID' }, { status: 400 })
     }
 
     if (!paymentPhone || !phoneRegex.test(paymentPhone)) {
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       city,
       collegeOrOrg || '',
       entryFee,
-      utrNumber || '',
+      upiId || '',
       paymentPhone,
       '',
       'Pending',
