@@ -172,23 +172,26 @@ export default function RegistrationForm() {
       </div>
       <div>
         <p className="font-display text-[48px] uppercase leading-none text-primary md:text-[64px]">
-          YOU&apos;RE IN.
+          WELCOME TO THE VERSE.
         </p>
         <p className="mt-4 font-body text-base text-primary">
           Registration ID: {registrationId}
         </p>
         <p className="mt-5 max-w-[430px] font-body text-base leading-relaxed text-muted">
-          Your registration has been successfully recorded. Check your email for confirmation details.
+          You&apos;re officially a founding member of RallyVerse.
         </p>
         <p className="mt-3 max-w-[430px] font-body text-base leading-relaxed text-muted">
-          Watch for our WhatsApp message with further instructions.
+          We&apos;ll reach out on WhatsApp within 24 hours with bracket information and next steps.
+        </p>
+        <p className="mt-4 max-w-[430px] font-body text-base leading-relaxed text-muted">
+          In the meantime &mdash; tell someone worth competing against.
         </p>
       </div>
       <Link
         href="/"
         className="mt-4 inline-flex items-center rounded-md border border-subtle px-6 py-3 font-body text-sm font-semibold text-primary transition-all duration-200 hover:border-orange hover:text-orange"
       >
-        &larr; Back to Home
+        &larr; Back to the Verse
       </Link>
     </div>
   )
@@ -449,22 +452,22 @@ export default function RegistrationForm() {
           <div className="flex items-center gap-3">
             <div className="h-px w-10 bg-orange" />
             <span className="font-body text-[11px] uppercase tracking-widest text-muted">
-              TOURNAMENT REGISTRATION
+              FOUNDING REGISTRATION
             </span>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
           <div className="mt-5 font-display text-[40px] leading-none uppercase text-primary md:text-[64px]">
-            CLAIM YOUR
+            YOUR VERSE
             <br />
-            SPOT.
+            STARTS HERE.
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={0.15}>
           <p className="mt-4 mb-12 font-body text-base leading-relaxed text-muted">
-            Register for RallyVerse Rally Series #01. A confirmation email will be sent after your registration is submitted.
+            You&apos;re about to become one of the first people to step into the RallyVerse. Fill in your details. We&apos;ll handle everything else.
           </p>
         </AnimatedSection>
 

@@ -17,23 +17,23 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'RallyVerse — Badminton Tournaments & Community Sports Events in Bengaluru',
-  description: 'Competitive badminton tournaments, community treks, marathons and cycling events in Bengaluru. RallyVerse is building Bangalore\'s best amateur sports tournament series. Register your interest for 2026.',
+  title: 'RallyVerse — Rally Beyond Routine | Sports, Adventure & Community in Bengaluru',
+  description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
   keywords: [
-    'badminton tournaments in Bengaluru',
+    'RallyVerse Bengaluru',
+    'badminton tournaments Bengaluru 2026',
+    'sports community Bengaluru',
+    'Rally Beyond Routine',
     'competitive badminton Bangalore',
-    'amateur badminton league Bangalore',
-    'badminton doubles tournament Bengaluru',
-    'badminton tournaments happening in Bangalore',
-    'best badminton tournaments Bangalore 2026',
     'community sports events Bangalore',
     'treks near Bangalore',
-    'cycling events Bangalore 2026',
-    'marathons Bangalore 2026'
+    'cycling events Bengaluru',
+    'marathons Bangalore 2026',
+    'sports universe Bengaluru'
   ],
   openGraph: {
-    title: 'RallyVerse — Bengaluru\'s Home for Competitive Sports',
-    description: 'Badminton tournaments, treks, marathons and cycling events. Built for players who show up.',
+    title: 'RallyVerse — Rally Beyond Routine',
+    description: 'A universe built for people who move, compete, explore, and connect. Bengaluru\'s home for sports, adventure, and community.',
     url: 'https://www.rallyverse.in',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -80,7 +80,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "SportsEvent",
-              "name": "Rally Series #01 — Badminton Tournament Bengaluru",
+              "name": "Rally Series 01 — Badminton Tournament Bengaluru",
               "description": "Competitive badminton tournament in Bengaluru with brackets for all skill levels. Men's Singles, Women's Singles, Doubles, Mixed.",
               "location": {
                 "@type": "Place",

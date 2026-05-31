@@ -24,24 +24,27 @@ export default function FirstEvent() {
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-16 px-6 md:grid-cols-2 md:items-start">
         <AnimatedSection>
           <p className="mb-5 font-body text-[11px] uppercase tracking-widest text-muted">
-            BADMINTON TOURNAMENTS &mdash; BENGALURU
+            FIRST CHAPTER &mdash; BENGALURU 2026
           </p>
 
-          <div className="font-display text-[88px] leading-none uppercase text-primary md:text-[100px]">
-            RALLY SERIES
+          <div className="font-display text-[64px] leading-none uppercase text-primary md:text-[88px]">
+            EVERY UNIVERSE
             <br />
-            #01
+            HAS A BEGINNING.
           </div>
-          <div className="mt-1 font-display text-[36px] uppercase text-orange">
-            BADMINTON TOURNAMENTS
+          <div className="mt-2 font-display text-[28px] uppercase text-orange md:text-[36px]">
+            RALLY SERIES 01 &mdash; BENGALURU BADMINTON
           </div>
 
           <div className="mt-7 space-y-5 font-body text-base leading-[1.85] text-muted">
             <p>
-              We are planning our inaugural badminton tournament in Bengaluru &mdash; starting focused and building from there. Competitive brackets across skill levels. Men&apos;s Singles, Women&apos;s Singles, Doubles, Mixed.
+              This is where it starts. Not just a tournament &mdash; the first chapter of something that will outlast any single scoreline or bracket result.
             </p>
             <p>
-              Spots will be limited to keep each tournament tight, well-run, and worth your time.
+              Rally Series 01 is built for Bengaluru&apos;s most passionate players. Men&apos;s Singles. Women&apos;s Singles. Doubles. Mixed. Beginner through Advanced &mdash; there is a court for you.
+            </p>
+            <p>
+              Spots are deliberately limited &mdash; because every player deserves a well-run, well-felt experience. When you&apos;re here, you&apos;ll feel the difference.
             </p>
           </div>
 
@@ -54,7 +57,7 @@ export default function FirstEvent() {
               >
                 <span className="relative z-10">
                   <ShinyText
-                    text="Join the Waitlist"
+                    text="Claim Your Spot in the First Chapter"
                     disabled={false}
                     speed={3}
                     className="font-semibold"
@@ -65,9 +68,8 @@ export default function FirstEvent() {
               </button>
             </Magnet>
 
-            <p className="mt-5 flex items-center gap-2 font-body text-xs text-muted">
-              <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-orange" />
-              Spots are limited per tournament. Early registrations get priority bracket selection.
+            <p className="mt-4 text-center font-body text-xs text-[#909090]">
+              Join the founding community. First registrants shape the Verse.
             </p>
           </div>
         </AnimatedSection>
@@ -80,7 +82,7 @@ export default function FirstEvent() {
               </div>
               <div className="text-center">
                 <p className="font-display text-[18px] tracking-wider text-primary">
-                  RALLY SERIES #01
+                  RALLY SERIES 01
                 </p>
                 <p className="mt-1 font-body text-xs uppercase tracking-widest text-muted">
                   BENGALURU &middot; 2026

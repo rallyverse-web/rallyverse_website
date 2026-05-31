@@ -63,7 +63,7 @@ export default function HeroIntro() {
           transition={{ duration: 0.4, ease: 'easeOut' }}
           className="mb-8 font-body text-[11px] uppercase tracking-widest text-muted"
         >
-          BANGALORE &middot; BADMINTON &middot; 2026
+          BENGALURU &middot; SPORTS &middot; ADVENTURE &middot; COMMUNITY &middot; 2026
         </motion.p>
 
         <motion.div
@@ -72,7 +72,7 @@ export default function HeroIntro() {
           animate={{ opacity: introActive ? 1 : 0 }}
           transition={{ duration: 0.35 }}
         >
-          {['PLAY.', 'COMPETE.', 'RALLY.'].slice(0, visibleTaglines).map((word) => (
+          {['RALLY.', 'BEYOND.', 'ROUTINE.'].slice(0, visibleTaglines).map((word) => (
             <motion.div
               key={word}
               initial={{ opacity: 0 }}
@@ -86,7 +86,7 @@ export default function HeroIntro() {
                 speed={80}
                 sequential={true}
                 className={`font-display text-[56px] uppercase leading-none md:text-[84px] lg:text-[104px] ${
-                  word === 'RALLY.' ? 'rally-gradient-text' : 'text-white'
+                  word === 'ROUTINE.' ? 'rally-gradient-text' : 'text-white'
                 }`}
                 encryptedClassName="font-display text-[56px] uppercase leading-none text-white/30 md:text-[84px] lg:text-[104px]"
               />
@@ -102,15 +102,15 @@ export default function HeroIntro() {
         >
           <div className="flex flex-col items-center gap-2 text-center">
             <p className="text-[#909090] text-base md:text-lg font-body">
-              RallyVerse is for
+              The Verse is for
             </p>
             <RotatingText
               texts={[
-                'Recreational Players',
-                'Serious Amateurs',
+                'Competitors',
+                'Explorers',
+                'Community Builders',
                 'Weekend Warriors',
-                'Badminton Lovers',
-                'Anyone Ready to Compete',
+                'People Who Show Up',
               ]}
               mainClassName="font-display text-[28px] md:text-[36px] text-[#FF5E00] leading-none"
               staggerDuration={0.03}
@@ -122,7 +122,7 @@ export default function HeroIntro() {
               rotationInterval={2500}
             />
             <p className="text-[#909090] text-sm md:text-base font-body mt-1">
-              Bengaluru &middot; Badminton &middot; 2026
+              Move. Compete. Explore. Connect.
             </p>
           </div>
         </motion.div>
@@ -140,7 +140,7 @@ export default function HeroIntro() {
               className="group relative overflow-hidden rounded-md border border-orange bg-transparent px-8 py-3 font-body text-sm font-semibold text-orange transition-all duration-200 hover:glow-orange active:scale-95"
             >
               <span className="relative z-10 transition-colors duration-200 group-hover:text-carbon">
-                Register Your Interest
+                Enter the Verse
               </span>
               <span className="absolute inset-0 -translate-x-full bg-brand-gradient transition-transform duration-300 group-hover:translate-x-0" />
             </button>

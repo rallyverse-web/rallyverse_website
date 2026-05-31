@@ -4,30 +4,30 @@ import AnimatedSection from '@/components/AnimatedSection'
 const categories = [
   {
     icon: Swords,
-    name: 'BADMINTON',
-    desc: 'Launching 2026. Bengaluru\'s first structured amateur tournament series.',
-    status: 'Launching 2026',
+    name: 'THE COURT',
+    desc: 'Where rivals become friends at the net. Competitive brackets, fair draws, verified venues.',
+    status: 'Season 01 — Bengaluru',
     statusColor: 'orange',
   },
   {
     icon: Mountain,
-    name: 'TREKS',
-    desc: 'Curated trail experiences around Karnataka.',
-    status: 'Coming Soon',
+    name: 'THE TRAIL',
+    desc: 'Some stories are only written on the move. Karnataka\'s best trails, with your people beside you.',
+    status: 'Coming to the Verse',
     statusColor: 'gray',
   },
   {
     icon: Timer,
-    name: 'MARATHONS',
-    desc: '5K to half marathon community runs.',
-    status: 'Coming Soon',
+    name: 'THE ROAD',
+    desc: 'Every kilometre is a conversation with yourself. Community runs that push you further than you\'d go alone.',
+    status: 'Coming to the Verse',
     statusColor: 'gray',
   },
   {
     icon: Bike,
-    name: 'CYCLING',
-    desc: 'Group rides and timed events across Bangalore.',
-    status: 'Coming Soon',
+    name: 'THE RIDE',
+    desc: 'Open roads. Shared miles. Group rides and timed events across Bengaluru.',
+    status: 'Coming to the Verse',
     statusColor: 'gray',
   },
 ]
@@ -40,8 +40,14 @@ export default function EventCategories() {
           <div className="mb-12 flex flex-col items-center gap-3">
             <div className="h-px w-10 bg-orange" />
             <span className="font-body text-[11px] uppercase tracking-widest text-muted">
-              WHAT WE ORGANIZE
+              WHAT WE CREATE
             </span>
+          </div>
+
+          <div className="mb-14 text-center font-display text-[40px] leading-none uppercase text-primary md:text-[56px]">
+            ONE VERSE.
+            <br />
+            INFINITE WAYS TO RALLY.
           </div>
         </AnimatedSection>
 

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import RegistrationForm from '@/components/RegistrationForm'
 
 export const metadata: Metadata = {
-  title: 'Register Your Interest - RallyVerse Bengaluru',
+  title: 'Your Verse Starts Here — RallyVerse Founding Registration',
 }
 
 export default function RegisterPage() {

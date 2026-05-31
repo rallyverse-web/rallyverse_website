@@ -13,11 +13,12 @@ const navLinks = [
   { label: 'Home', href: '#hero' },
   { label: 'About', href: '#about' },
   { label: 'Events', href: '#events' },
+  { label: 'Community', href: '#community' },
   { label: 'FAQ', href: '#faq' },
   { label: 'Contact', href: '#contact' },
 ]
 
-const sectionIds = ['hero', 'about', 'events', 'faq', 'contact']
+const sectionIds = ['hero', 'about', 'events', 'community', 'faq', 'contact']
 
 export default function Navbar() {
   const router = useRouter()
@@ -150,7 +151,7 @@ export default function Navbar() {
                 className="whitespace-nowrap rounded-md bg-brand-gradient px-4 py-2 text-sm font-semibold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
               >
                 <ShinyText
-                  text="Register Now"
+                  text="Enter the Verse"
                   disabled={false}
                   speed={3}
                   className="text-sm font-semibold"
@@ -271,7 +272,7 @@ export default function Navbar() {
                     className="w-full rounded-md bg-brand-gradient py-3 text-sm font-semibold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
                   >
                     <ShinyText
-                      text="Register Now"
+                      text="Enter the Verse"
                       disabled={false}
                       speed={3}
                       className="text-sm font-semibold"

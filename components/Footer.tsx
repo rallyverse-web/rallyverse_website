@@ -29,11 +29,11 @@ export default function Footer() {
           </Link>
 
           <p className="font-body text-xs text-muted/60">
-            Organizing competitive sports and community events across Bengaluru since 2026.
+            A universe for people who still believe the best things in life happen when you move.
           </p>
 
           <p className="text-center font-body text-sm text-muted">
-            Badminton &middot; Treks &middot; Marathons &middot; Cycling
+            The Court &middot; The Trail &middot; The Road &middot; The Ride
           </p>
 
           <p className="font-body text-sm text-muted">Bengaluru, Karnataka, India</p>
@@ -44,7 +44,7 @@ export default function Footer() {
             &copy; 2026 RallyVerse. All rights reserved.
           </p>
           <p className="mt-[6px] font-body text-xs text-orange opacity-70">
-            Badminton is just the beginning. Treks, marathons, and cycling rallies are coming.
+            The Court was just the beginning. The Trail, The Road, and The Ride are coming.
           </p>
         </div>
       </div>

@@ -9,14 +9,14 @@ export default function WhatWeDo() {
           <div className="flex items-center gap-3">
             <div className="h-px w-10 bg-orange" />
             <span className="font-body text-[11px] uppercase tracking-widest text-muted">
-              WHY RALLYVERSE
+              WHY WE EXIST
             </span>
           </div>
 
-          <div className="mt-5 font-display text-[64px] leading-none uppercase text-primary">
-            <div>TOURNAMENTS</div>
-            <div>THAT ACTUALLY</div>
-            <div>FEEL LIKE ONE.</div>
+          <div className="mt-5 font-display text-[36px] leading-none uppercase text-primary md:text-[48px] lg:text-[56px]">
+            SOME PEOPLE WATCH LIFE HAPPEN.
+            <br />
+            WE RALLY THROUGH IT.
           </div>
         </AnimatedSection>
 
@@ -29,7 +29,7 @@ export default function WhatWeDo() {
               containerClassName="text-[#909090] text-base md:text-lg font-body leading-relaxed mb-6"
               textClassName="text-[#909090]"
             >
-              Most local badminton tournaments in Bengaluru are an afterthought - booked last minute, poorly bracketed, no atmosphere.
+              Somewhere between the morning alarm and the weekend scroll, life started feeling smaller than it should.
             </ScrollReveal>
 
             <ScrollReveal
@@ -39,7 +39,7 @@ export default function WhatWeDo() {
               containerClassName="text-[#909090] text-base md:text-lg font-body leading-relaxed mb-6"
               textClassName="text-[#909090]"
             >
-              RallyVerse is being built differently. Structured formats, verified venues, fair draws, and a community that takes showing up seriously.
+              RallyVerse exists to reverse that. We are not an event company. We are a universe — built for people who still believe the best moments happen when you move, compete, and show up for each other.
             </ScrollReveal>
 
             <ScrollReveal
@@ -49,7 +49,7 @@ export default function WhatWeDo() {
               containerClassName="text-[#909090] text-base md:text-lg font-body leading-relaxed mb-6"
               textClassName="text-[#909090]"
             >
-              Our first event is coming. And we are doing it right.
+              Every tournament. Every trek. Every ride. Every race. It is all the same thing: a reason to be fully alive.
             </ScrollReveal>
 
             <ScrollReveal
@@ -59,7 +59,7 @@ export default function WhatWeDo() {
               containerClassName="text-base md:text-lg font-body leading-relaxed mb-6"
               textClassName="text-white font-semibold"
             >
-              Beginner. Intermediate. Advanced. Singles. Doubles. Mixed. There is a bracket for you.
+              The Court. The Trail. The Road. The Ride. One Verse. Welcome.
             </ScrollReveal>
           </div>
         </AnimatedSection>
