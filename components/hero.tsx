@@ -33,10 +33,12 @@ export default function Hero() {
       <Particles
         className="absolute inset-0 z-0 h-full w-full"
         quantity={particleQuantity}
-        color={isColorTheme ? '#FF5E00' : '#0A0A0A'}
+        color={isColorTheme ? '#FF5E00' : '#333333'}
         ease={80}
         refresh={false}
-        size={0.6}
+        size={isColorTheme ? 0.6 : 0.75}
+        minAlpha={isColorTheme ? 0.18 : 0.35}
+        maxAlpha={isColorTheme ? 0.54 : 0.7}
       />
 
       <div className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center py-20">
