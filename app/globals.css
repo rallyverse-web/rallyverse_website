@@ -66,7 +66,8 @@
   --btn-outline-hover-bg: #0A0A0A;
   --btn-outline-hover-text: #FFFFFF;
 
-  --gradient-brand: linear-gradient(90deg, #0A0A0A, #4A4A4A);
+  --gradient-brand: linear-gradient(90deg, #111111, #444444, #777777, #FFFFFF);
+  --rallyverse-gradient: linear-gradient(90deg, #111111 0%, #555555 35%, #999999 70%, #FFFFFF 100%);
 
   --manifesto-bg: #0A0A0A;
   --manifesto-text: #FFFFFF;
@@ -132,8 +133,8 @@
   color: rgba(0, 0, 0, 0.3);
 }
 
-/* Brand gradient text — both themes use the same gradient */
-.rallyverse-gradient-text span,
+/* Brand gradient text — uses var(--rallyverse-gradient) per active theme */
+.rallyverse-gradient-text,
 .rally-gradient-text {
   background: var(--rallyverse-gradient);
   -webkit-background-clip: text;

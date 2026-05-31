@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'motion/react'
 import DecryptedText from '@/components/DecryptedText'
-import Magnet from '@/components/Magnet'
 import RotatingText from '@/components/RotatingText'
 
 export default function HeroIntro() {
@@ -13,15 +12,6 @@ export default function HeroIntro() {
   const [introActive, setIntroActive] = useState(false)
   const [visibleTaglines, setVisibleTaglines] = useState(0)
   const [subtextActive, setSubtextActive] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const updateViewportState = () => setIsMobile(window.innerWidth < 768)
-
-    updateViewportState()
-    window.addEventListener('resize', updateViewportState)
-    return () => window.removeEventListener('resize', updateViewportState)
-  }, [])
 
   useEffect(() => {
     if (!sectionRef.current) return
@@ -137,23 +127,21 @@ export default function HeroIntro() {
           transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
           className="mt-8"
         >
-          <Magnet padding={50} disabled={isMobile}>
-            <button
-              type="button"
-              onClick={() => router.push('/register')}
-              className="group relative overflow-hidden rounded-md border px-10 py-4 font-body text-base font-semibold transition-all duration-200 active:scale-95"
-              style={{
-                borderColor: 'var(--btn-outline-border)',
-                backgroundColor: 'transparent',
-                color: 'var(--btn-outline-text)',
-              }}
-            >
-              <span className="relative z-10 transition-colors duration-200" style={{ color: 'var(--btn-outline-text)' }}>
-                Register Now
-              </span>
-              <span className="absolute inset-0 -translate-x-full transition-transform duration-300 group-hover:translate-x-0" style={{ background: 'var(--gradient-brand)' }} />
-            </button>
-          </Magnet>
+          <button
+            type="button"
+            onClick={() => router.push('/register')}
+            className="group relative overflow-hidden rounded-md border px-10 py-4 font-body text-base font-semibold transition-all duration-200 active:scale-95"
+            style={{
+              borderColor: 'var(--btn-outline-border)',
+              backgroundColor: 'transparent',
+              color: 'var(--btn-outline-text)',
+            }}
+          >
+            <span className="relative z-10 transition-colors duration-200" style={{ color: 'var(--btn-outline-text)' }}>
+              Register Now
+            </span>
+            <span className="absolute inset-0 -translate-x-full transition-transform duration-300 group-hover:translate-x-0" style={{ background: 'var(--gradient-brand)' }} />
+          </button>
         </motion.div>
       </div>
     </section>

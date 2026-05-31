@@ -12,7 +12,6 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import ThemedLogo from '@/components/ThemedLogo'
 import ShinyText from '@/components/ShinyText'
-import Magnet from '@/components/Magnet'
 
 // ─── Data ────────────────────────────────────────────────────────
 
@@ -104,26 +103,24 @@ export default function Footer() {
           >
             Join a community built around movement, adventure, and meaningful experiences.
           </motion.p>
-          <Magnet padding={20}>
-            <button
-              type="button"
-              onClick={() => router.push('/register')}
-              className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
-              style={{
-                background: 'var(--gradient-brand)',
-                color: 'var(--btn-primary-text)',
-              }}
-            >
-              <ShinyText
-                text="Secure Your Spot"
-                disabled={false}
-                speed={3}
-                className="text-base font-semibold"
-                shineColor="rgba(255,255,255,0.6)"
-              />
-              <ArrowUpRight size={16} aria-hidden="true" />
-            </button>
-          </Magnet>
+          <button
+            type="button"
+            onClick={() => router.push('/register')}
+            className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
+            style={{
+              background: 'var(--gradient-brand)',
+              color: 'var(--btn-primary-text)',
+            }}
+          >
+            <ShinyText
+              text="Secure Your Spot"
+              disabled={false}
+              speed={3}
+              className="text-base font-semibold"
+              shineColor="rgba(255,255,255,0.6)"
+            />
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </button>
         </div>
       </section>
 

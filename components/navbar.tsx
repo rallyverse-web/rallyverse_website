@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { Menu, X } from 'lucide-react'
-import Magnet from '@/components/Magnet'
 import ShinyText from '@/components/ShinyText'
 import ThemedLogo from '@/components/ThemedLogo'
 import ThemeToggle from '@/components/ThemeToggle'
@@ -148,25 +147,23 @@ export default function Navbar() {
           {/* Desktop right side */}
           <div className="hidden shrink-0 items-center gap-3 md:flex">
             <ThemeToggle />
-            <Magnet padding={30} disabled={isMobile}>
-              <button
-                type="button"
-                onClick={() => router.push('/register')}
-                className="whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95"
-                style={{
-                  background: 'var(--gradient-brand)',
-                  color: 'var(--btn-primary-text)',
-                }}
-              >
-                <ShinyText
-                  text="Register Now"
-                  disabled={false}
-                  speed={3}
-                  className="text-base font-semibold"
-                  shineColor="rgba(255,255,255,0.6)"
-                />
-              </button>
-            </Magnet>
+            <button
+              type="button"
+              onClick={() => router.push('/register')}
+              className="whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95"
+              style={{
+                background: 'var(--gradient-brand)',
+                color: 'var(--btn-primary-text)',
+              }}
+            >
+              <ShinyText
+                text="Register Now"
+                disabled={false}
+                speed={3}
+                className="text-base font-semibold"
+                shineColor="rgba(255,255,255,0.6)"
+              />
+            </button>
           </div>
 
           {/* Mobile right side */}

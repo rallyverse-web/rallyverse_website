@@ -1,23 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { MapPin, Calendar } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
-import Magnet from '@/components/Magnet'
 import ShinyText from '@/components/ShinyText'
 
 export default function FirstEvent() {
   const router = useRouter()
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const updateViewportState = () => setIsMobile(window.innerWidth < 768)
-
-    updateViewportState()
-    window.addEventListener('resize', updateViewportState)
-    return () => window.removeEventListener('resize', updateViewportState)
-  }, [])
 
   return (
     <section id="events" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -49,28 +38,26 @@ export default function FirstEvent() {
           </div>
 
           <div className="mt-9">
-            <Magnet padding={50} disabled={isMobile}>
-              <button
-                type="button"
-                onClick={() => router.push('/register')}
-                className="group relative overflow-hidden rounded-md px-10 py-4 font-body text-base font-bold transition-all duration-200 active:scale-95"
-                style={{
-                  backgroundColor: 'var(--btn-primary-bg)',
-                  color: 'var(--btn-primary-text)',
-                }}
-              >
-                <span className="relative z-10">
-                  <ShinyText
-                    text="Secure Your Spot"
-                    disabled={false}
-                    speed={3}
-                    className="font-semibold"
-                    shineColor="rgba(255,255,255,0.6)"
-                  />
-                </span>
-                <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'var(--gradient-brand)' }} />
-              </button>
-            </Magnet>
+            <button
+              type="button"
+              onClick={() => router.push('/register')}
+              className="group relative overflow-hidden rounded-md px-10 py-4 font-body text-base font-bold transition-all duration-200 active:scale-95"
+              style={{
+                backgroundColor: 'var(--btn-primary-bg)',
+                color: 'var(--btn-primary-text)',
+              }}
+            >
+              <span className="relative z-10">
+                <ShinyText
+                  text="Secure Your Spot"
+                  disabled={false}
+                  speed={3}
+                  className="font-semibold"
+                  shineColor="rgba(255,255,255,0.6)"
+                />
+              </span>
+              <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'var(--gradient-brand)' }} />
+            </button>
 
             <p className="mt-4 text-center font-body text-xs" style={{ color: 'var(--text-muted)' }}>
               First registrants help shape the Verse.
