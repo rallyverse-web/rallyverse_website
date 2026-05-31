@@ -46,7 +46,7 @@ export default function CommunityProof() {
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 rounded-lg px-8 py-4 font-body text-sm font-bold transition-all duration-200 active:scale-95"
+              className="inline-flex items-center gap-3 rounded-lg px-10 py-5 font-body text-base font-bold transition-all duration-200 active:scale-95"
               style={{
                 backgroundColor: '#25D366',
                 color: '#FFFFFF',

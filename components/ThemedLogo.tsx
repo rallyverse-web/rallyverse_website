@@ -21,17 +21,17 @@ const LOGO_MAP: Record<LogoContext, { color: string; bw: string }> = {
 };
 
 const DIMENSION_MAP: Record<LogoContext, { width: number; height: number }> = {
-  navbar:  { width: 220, height: 60 },
-  footer:  { width: 200, height: 56 },
-  hero:    { width: 180, height: 180 },
-  drawer:  { width: 200, height: 56 },
+  navbar:  { width: 260, height: 70 },
+  footer:  { width: 250, height: 68 },
+  hero:    { width: 220, height: 220 },
+  drawer:  { width: 240, height: 64 },
 };
 
 const CLASS_MAP: Record<LogoContext, string> = {
-  navbar:  'h-10 md:h-12 w-auto object-contain',
-  footer:  'h-12 md:h-14 w-auto object-contain',
-  hero:    'w-32 h-32 md:w-44 md:h-44 object-contain mx-auto',
-  drawer:  'h-10 w-auto object-contain',
+  navbar:  'h-12 md:h-14 w-auto object-contain',
+  footer:  'h-14 md:h-16 w-auto object-contain',
+  hero:    'w-36 h-36 md:w-52 md:h-52 object-contain mx-auto',
+  drawer:  'h-12 w-auto object-contain',
 };
 
 export default function ThemedLogo({

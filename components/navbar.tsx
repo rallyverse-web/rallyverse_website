@@ -152,7 +152,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => router.push('/register')}
-                className="whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold transition-all duration-200 active:scale-95"
+                className="whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95"
                 style={{
                   background: 'var(--gradient-brand)',
                   color: 'var(--btn-primary-text)',
@@ -162,7 +162,7 @@ export default function Navbar() {
                   text="Register Now"
                   disabled={false}
                   speed={3}
-                  className="text-sm font-semibold"
+                  className="text-base font-semibold"
                   shineColor="rgba(255,255,255,0.6)"
                 />
               </button>

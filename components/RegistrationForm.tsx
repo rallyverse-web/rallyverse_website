@@ -235,7 +235,7 @@ export default function RegistrationForm() {
           href={whatsappGroupLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-2 rounded-md px-8 py-4 font-body text-sm font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+          className="mt-4 inline-flex items-center gap-2 rounded-md px-10 py-5 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           style={{
             background: 'var(--gradient-brand)',
             color: 'var(--btn-primary-text)',
@@ -252,21 +252,21 @@ export default function RegistrationForm() {
       </div>
       <Link
         href="/"
-        className="mt-4 inline-flex items-center rounded-md px-6 py-3 font-body text-sm font-semibold transition-all duration-200"
-        style={{
-          border: '1px solid var(--border-subtle)',
-          color: 'var(--text-primary)',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--accent-primary)'
-          e.currentTarget.style.color = 'var(--accent-primary)'
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = 'var(--border-subtle)'
-          e.currentTarget.style.color = 'var(--text-primary)'
-        }}
-      >
-        &larr; Back to the Verse
+            className="mt-4 inline-flex items-center rounded-md px-8 py-4 font-body text-base font-semibold transition-all duration-200"
+            style={{
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-primary)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--accent-primary)'
+              e.currentTarget.style.color = 'var(--accent-primary)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border-subtle)'
+              e.currentTarget.style.color = 'var(--text-primary)'
+            }}
+          >
+            &larr; Back to the Verse
       </Link>
     </div>
   )
@@ -498,7 +498,7 @@ export default function RegistrationForm() {
             type="button"
             onClick={goBack}
             disabled={isSubmitting}
-            className="min-h-[48px] rounded-md px-6 py-3 font-body text-sm font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60"
+            className="min-h-[56px] rounded-md px-8 py-4 font-body text-base font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60"
             style={{
               border: '1px solid var(--border-subtle)',
               color: 'var(--text-primary)',
@@ -520,7 +520,7 @@ export default function RegistrationForm() {
           <button
             type="button"
             onClick={goNext}
-            className="min-h-[48px] flex-1 rounded-md px-6 py-3 font-body text-sm font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            className="min-h-[56px] flex-1 rounded-md px-8 py-4 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             style={{
               background: 'var(--gradient-brand)',
               color: 'var(--btn-primary-text)',
@@ -533,7 +533,7 @@ export default function RegistrationForm() {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            className="min-h-[48px] flex-1 rounded-md px-6 py-3 font-body text-sm font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+            className="min-h-[56px] flex-1 rounded-md px-8 py-4 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
             style={{
               background: 'var(--gradient-brand)',
               color: 'var(--btn-primary-text)',

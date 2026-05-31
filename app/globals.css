@@ -32,8 +32,7 @@
   --btn-outline-hover-bg: #FF5E00;
   --btn-outline-hover-text: #0B0D10;
 
-  --gradient-brand: linear-gradient(90deg, #FF5E00, #00E5FF);
-  --gradient-hero-text: linear-gradient(90deg, #FF5E00 0%, #FF8C00 25%, #c8b560 50%, #00C9A7 75%, #00E5FF 100%);
+  --gradient-brand: linear-gradient(90deg, #FF5E00 0%, #FF8C00 30%, #00C9A7 70%, #00E5FF 100%);
 
   --manifesto-bg: #FF5E00;
   --manifesto-text: #0B0D10;
@@ -106,8 +105,7 @@
   --btn-outline-hover-bg: #0A0A0A;
   --btn-outline-hover-text: #FFFFFF;
 
-  --gradient-brand: linear-gradient(90deg, #0A0A0A, #666666);
-  --gradient-hero-text: linear-gradient(90deg, #0A0A0A 0%, #666666 50%, #999999 100%);
+  --gradient-brand: linear-gradient(90deg, #FF5E00 0%, #FF8C00 30%, #00C9A7 70%, #00E5FF 100%);
 
   --manifesto-bg: #0A0A0A;
   --manifesto-text: #FFFFFF;
@@ -173,33 +171,10 @@
   color: rgba(0, 0, 0, 0.3);
 }
 
-/* Hero gradient text — COLOR theme */
-[data-theme="color"] .rallyverse-gradient-text span {
-  background: linear-gradient(90deg, #FF5E00 0%, #FF8C00 25%, #c8b560 50%, #00C9A7 75%, #00E5FF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Hero gradient text — B&W theme */
-[data-theme="bw"] .rallyverse-gradient-text span {
-  background: linear-gradient(90deg, #2A2A2A 0%, #666666 25%, #999999 50%, #666666 75%, #2A2A2A 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Tagline gradient text — COLOR theme */
-[data-theme="color"] .rally-gradient-text {
-  background: linear-gradient(90deg, #FF5E00, #00E5FF);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Tagline gradient text — B&W theme */
-[data-theme="bw"] .rally-gradient-text {
-  background: linear-gradient(90deg, #2A2A2A, #999999);
+/* Brand gradient text — both themes use the same gradient */
+.rallyverse-gradient-text span,
+.rally-gradient-text {
+  background: var(--gradient-brand);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -221,14 +196,14 @@
 }
 
 @utility bg-brand-gradient {
-  background: linear-gradient(135deg, #FF5E00 0%, #00E5FF 100%);
+  background: var(--gradient-brand);
 }
 
 @utility text-brand-gradient {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  background-image: linear-gradient(135deg, #FF5E00 0%, #00E5FF 100%);
+  background: var(--gradient-brand);
 }
 
 @utility glow-orange {
@@ -284,19 +259,7 @@
   }
 }
 
-.rallyverse-gradient-text span {
-  background: linear-gradient(90deg, #FF5E00 0%, #FF8C00 25%, #c8b560 50%, #00C9A7 75%, #00E5FF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
-.rally-gradient-text {
-  background: linear-gradient(90deg, #FF5E00 0%, #FF8C00 30%, #00C9A7 70%, #00E5FF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
 @keyframes shiny-text {
   from {

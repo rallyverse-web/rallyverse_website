@@ -53,7 +53,7 @@ export default function FirstEvent() {
               <button
                 type="button"
                 onClick={() => router.push('/register')}
-                className="group relative overflow-hidden rounded-md px-8 py-3 font-body text-sm font-bold transition-all duration-200 active:scale-95"
+                className="group relative overflow-hidden rounded-md px-10 py-4 font-body text-base font-bold transition-all duration-200 active:scale-95"
                 style={{
                   backgroundColor: 'var(--btn-primary-bg)',
                   color: 'var(--btn-primary-text)',

@@ -22,7 +22,7 @@ export default function ManifestoStrip() {
           <button
             type="button"
             onClick={() => router.push('/register')}
-            className="mt-8 inline-block rounded-md border-2 px-8 py-3 font-display text-lg tracking-wider transition-all duration-200"
+            className="mt-8 inline-block rounded-md border-2 px-10 py-4 font-display text-xl tracking-wider transition-all duration-200"
             style={{
               borderColor: 'var(--manifesto-btn-border)',
               backgroundColor: 'var(--manifesto-btn-bg)',

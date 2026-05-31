@@ -108,7 +108,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={() => router.push('/register')}
-              className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
               style={{
                 background: 'var(--gradient-brand)',
                 color: 'var(--btn-primary-text)',
@@ -118,7 +118,7 @@ export default function Footer() {
                 text="Secure Your Spot"
                 disabled={false}
                 speed={3}
-                className="text-sm font-semibold"
+                className="text-base font-semibold"
                 shineColor="rgba(255,255,255,0.6)"
               />
               <ArrowUpRight size={16} aria-hidden="true" />

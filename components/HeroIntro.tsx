@@ -141,7 +141,7 @@ export default function HeroIntro() {
             <button
               type="button"
               onClick={() => router.push('/register')}
-              className="group relative overflow-hidden rounded-md border px-8 py-3 font-body text-sm font-semibold transition-all duration-200 active:scale-95"
+              className="group relative overflow-hidden rounded-md border px-10 py-4 font-body text-base font-semibold transition-all duration-200 active:scale-95"
               style={{
                 borderColor: 'var(--btn-outline-border)',
                 backgroundColor: 'transparent',
