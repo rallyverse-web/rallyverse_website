@@ -76,75 +76,78 @@
   --shockwave-color: rgba(255, 94, 0, 0.4);
 }
 
-/* BLACK & WHITE THEME */
+/* ============================================
+   RALLYVERSE MONOCHROME THEME (Black & White)
+   Light, paper-like monochrome palette
+   ============================================ */
 [data-theme="bw"] {
-  --bg-primary: #000000;
-  --bg-surface: #0A0A0A;
-  --bg-subtle: #141414;
+  --bg-primary: #FAFAF7;
+  --bg-surface: #F5F5F0;
+  --bg-subtle: #EBEBE6;
 
-  --text-primary: #FFFFFF;
-  --text-muted: #888888;
-  --text-faint: #555555;
+  --text-primary: #0A0A0A;
+  --text-muted: #4A4A4A;
+  --text-faint: #8A8A86;
 
-  --accent-primary: #FFFFFF;
-  --accent-secondary: #CCCCCC;
-  --accent-hover: #E0E0E0;
+  --accent-primary: #0A0A0A;
+  --accent-secondary: #666666;
+  --accent-hover: #333333;
 
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.12);
-  --border-accent: rgba(255, 255, 255, 0.30);
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: #E5E5E0;
+  --border-accent: rgba(0, 0, 0, 0.20);
 
-  --btn-primary-bg: #FFFFFF;
-  --btn-primary-text: #000000;
-  --btn-primary-hover: #E0E0E0;
+  --btn-primary-bg: #0A0A0A;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #333333;
 
-  --btn-outline-border: #FFFFFF;
-  --btn-outline-text: #FFFFFF;
-  --btn-outline-hover-bg: #FFFFFF;
-  --btn-outline-hover-text: #000000;
+  --btn-outline-border: #0A0A0A;
+  --btn-outline-text: #0A0A0A;
+  --btn-outline-hover-bg: #0A0A0A;
+  --btn-outline-hover-text: #FFFFFF;
 
-  --gradient-brand: linear-gradient(90deg, #FFFFFF, #888888);
-  --gradient-hero-text: linear-gradient(90deg, #FFFFFF 0%, #CCCCCC 50%, #888888 100%);
+  --gradient-brand: linear-gradient(90deg, #0A0A0A, #666666);
+  --gradient-hero-text: linear-gradient(90deg, #0A0A0A 0%, #666666 50%, #999999 100%);
 
-  --manifesto-bg: #FFFFFF;
-  --manifesto-text: #000000;
-  --manifesto-muted: rgba(0, 0, 0, 0.6);
-  --manifesto-btn-bg: #000000;
-  --manifesto-btn-text: #FFFFFF;
-  --manifesto-btn-border: #000000;
+  --manifesto-bg: #0A0A0A;
+  --manifesto-text: #FFFFFF;
+  --manifesto-muted: rgba(255, 255, 255, 0.6);
+  --manifesto-btn-bg: #FFFFFF;
+  --manifesto-btn-text: #0A0A0A;
+  --manifesto-btn-border: #FFFFFF;
 
-  --card-bg: #0A0A0A;
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-border-hover: rgba(255, 255, 255, 0.30);
+  --card-bg: #FFFFFF;
+  --card-border: #E5E5E0;
+  --card-border-hover: #AAAAAA;
 
-  --nav-bg-scrolled: #000000;
-  --nav-border: rgba(255, 255, 255, 0.08);
+  --nav-bg-scrolled: #FAFAF7;
+  --nav-border: #E5E5E0;
 
-  --section-label-color: #FFFFFF;
+  --section-label-color: #0A0A0A;
 
-  --toggle-bg: #141414;
-  --toggle-icon-color: #FFFFFF;
-  --toggle-border: rgba(255, 255, 255, 0.20);
+  --toggle-bg: #E5E5E0;
+  --toggle-icon-color: #0A0A0A;
+  --toggle-border: #CCCCC8;
 
-  --pill-active-bg: #FFFFFF;
-  --pill-active-text: #000000;
-  --pill-inactive-bg: #141414;
-  --pill-inactive-text: #888888;
+  --pill-active-bg: #0A0A0A;
+  --pill-active-text: #FFFFFF;
+  --pill-inactive-bg: #EBEBE6;
+  --pill-inactive-text: #8A8A86;
 
-  --icon-color: #FFFFFF;
-  --link-color: #FFFFFF;
-  --link-hover: #CCCCCC;
+  --icon-color: #0A0A0A;
+  --link-color: #0A0A0A;
+  --link-hover: #555555;
 
-  --input-bg: #0A0A0A;
-  --input-border: rgba(255, 255, 255, 0.12);
-  --input-border-focus: #FFFFFF;
-  --input-text: #FFFFFF;
-  --input-placeholder: #555555;
+  --input-bg: #FFFFFF;
+  --input-border: #E5E5E0;
+  --input-border-focus: #0A0A0A;
+  --input-text: #0A0A0A;
+  --input-placeholder: #8A8A86;
 
-  --success-color: #FFFFFF;
-  --error-color: #FF6666;
+  --success-color: #4A4A4A;
+  --error-color: #CC3333;
 
-  --shockwave-color: rgba(255, 255, 255, 0.3);
+  --shockwave-color: rgba(0, 0, 0, 0.15);
 }
 
 /* Smooth theme transition — applied globally */
@@ -171,8 +174,8 @@
 /* Hero gradient text — B&W theme */
 [data-theme="bw"] .rallyverse-gradient-text span {
   background: none;
-  -webkit-text-fill-color: #FFFFFF;
-  color: #FFFFFF;
+  -webkit-text-fill-color: #0A0A0A;
+  color: #0A0A0A;
 }
 
 /* Tagline gradient text — COLOR theme */
@@ -186,8 +189,8 @@
 /* Tagline gradient text — B&W theme */
 [data-theme="bw"] .rally-gradient-text {
   background: none;
-  -webkit-text-fill-color: #FFFFFF;
-  color: #FFFFFF;
+  -webkit-text-fill-color: #0A0A0A;
+  color: #0A0A0A;
 }
 
 @import 'tailwindcss';

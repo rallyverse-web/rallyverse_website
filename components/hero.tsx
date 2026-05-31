@@ -33,7 +33,7 @@ export default function Hero() {
       <Particles
         className="absolute inset-0 z-0 h-full w-full"
         quantity={particleQuantity}
-        color={isColorTheme ? '#FF5E00' : '#FFFFFF'}
+        color={isColorTheme ? '#FF5E00' : '#0A0A0A'}
         ease={80}
         refresh={false}
         size={0.6}
