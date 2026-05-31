@@ -50,9 +50,10 @@ const inputBaseStyle = {
 } as React.CSSProperties
 
 const inputClass =
-  'w-full min-h-[48px] font-body text-sm px-4 py-3 rounded-md appearance-none cursor-pointer'
+  'w-full min-h-[48px] font-body text-sm px-4 py-3 rounded-md appearance-none cursor-pointer hover:border-[var(--input-border-focus)] focus-visible:!border-[var(--input-border-focus)] focus-visible:ring-2 focus-visible:ring-[var(--input-border-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]'
 
-const selectClass = inputClass
+const selectClass = inputClass +
+  ' [&>option]:bg-[var(--input-bg)] [&>option]:text-[var(--input-text)]'
 
 const labelClass = 'mb-2 block font-body text-sm'
 const errorClass = 'mt-2 font-body text-xs'
@@ -185,12 +186,7 @@ export default function RegistrationForm() {
 
   const isSubmitting = Boolean(loadingMessage)
 
-  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.currentTarget.style.borderColor = 'var(--input-border-focus)'
-  }
-  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.currentTarget.style.borderColor = 'var(--input-border)'
-  }
+
 
   const successContent = (
     <div className="flex flex-col items-center gap-6 py-16 text-center">
@@ -313,8 +309,7 @@ export default function RegistrationForm() {
               onChange={handleChange}
               className={selectClass}
               style={inputBaseStyle}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
+             
             >
               <option value="" disabled>
                 Select category
@@ -341,8 +336,6 @@ export default function RegistrationForm() {
                 onChange={handleChange}
                 className={inputClass}
                 style={inputBaseStyle}
-                onFocus={handleInputFocus}
-                onBlur={handleInputBlur}
                 placeholder="Optional team name"
               />
             </div>
@@ -369,28 +362,28 @@ export default function RegistrationForm() {
               <label htmlFor="player1Name" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 Player 1 Full Name <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <input id="player1Name" name="player1Name" value={formData.player1Name} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
+              <input id="player1Name" name="player1Name" value={formData.player1Name} onChange={handleChange} className={inputClass} style={inputBaseStyle} />
               <FieldError message={errors.player1Name} />
             </div>
             <div>
               <label htmlFor="player1Phone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 Player 1 WhatsApp Number <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <input id="player1Phone" name="player1Phone" type="tel" value={formData.player1Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="+91 98765 43210" />
+              <input id="player1Phone" name="player1Phone" type="tel" value={formData.player1Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="+91 98765 43210" />
               <FieldError message={errors.player1Phone} />
             </div>
             <div>
               <label htmlFor="player1Email" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 Player 1 Email
               </label>
-              <input id="player1Email" name="player1Email" type="email" value={formData.player1Email} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
+              <input id="player1Email" name="player1Email" type="email" value={formData.player1Email} onChange={handleChange} className={inputClass} style={inputBaseStyle} />
               <FieldError message={errors.player1Email} />
             </div>
             <div>
               <label htmlFor="player1SkillLevel" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 Player 1 Skill Level <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <select id="player1SkillLevel" name="player1SkillLevel" value={formData.player1SkillLevel} onChange={handleChange} className={selectClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur}>
+              <select id="player1SkillLevel" name="player1SkillLevel" value={formData.player1SkillLevel} onChange={handleChange} className={selectClass} style={inputBaseStyle}>
                 <option value="" disabled>Select skill level</option>
                 {skillLevels.map((level) => <option key={level} value={level}>{level}</option>)}
               </select>
@@ -407,28 +400,28 @@ export default function RegistrationForm() {
                 <label htmlFor="player2Name" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                   Player 2 Full Name <span style={{ color: 'var(--accent-primary)' }}>*</span>
                 </label>
-                <input id="player2Name" name="player2Name" value={formData.player2Name} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
+                <input id="player2Name" name="player2Name" value={formData.player2Name} onChange={handleChange} className={inputClass} style={inputBaseStyle} />
                 <FieldError message={errors.player2Name} />
               </div>
               <div>
                 <label htmlFor="player2Phone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                   Player 2 WhatsApp Number <span style={{ color: 'var(--accent-primary)' }}>*</span>
                 </label>
-                <input id="player2Phone" name="player2Phone" type="tel" value={formData.player2Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="+91 98765 43210" />
+                <input id="player2Phone" name="player2Phone" type="tel" value={formData.player2Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="+91 98765 43210" />
                 <FieldError message={errors.player2Phone} />
               </div>
               <div>
                 <label htmlFor="player2Email" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                   Player 2 Email
                 </label>
-                <input id="player2Email" name="player2Email" type="email" value={formData.player2Email} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
+                <input id="player2Email" name="player2Email" type="email" value={formData.player2Email} onChange={handleChange} className={inputClass} style={inputBaseStyle} />
                 <FieldError message={errors.player2Email} />
               </div>
               <div>
                 <label htmlFor="player2SkillLevel" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                   Player 2 Skill Level <span style={{ color: 'var(--accent-primary)' }}>*</span>
                 </label>
-                <select id="player2SkillLevel" name="player2SkillLevel" value={formData.player2SkillLevel} onChange={handleChange} className={selectClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur}>
+                <select id="player2SkillLevel" name="player2SkillLevel" value={formData.player2SkillLevel} onChange={handleChange} className={selectClass} style={inputBaseStyle}>
                   <option value="" disabled>Select skill level</option>
                   {skillLevels.map((level) => <option key={level} value={level}>{level}</option>)}
                 </select>
@@ -442,14 +435,14 @@ export default function RegistrationForm() {
               <label htmlFor="city" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 City <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <input id="city" name="city" value={formData.city} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
+              <input id="city" name="city" value={formData.city} onChange={handleChange} className={inputClass} style={inputBaseStyle} />
               <FieldError message={errors.city} />
             </div>
             <div>
               <label htmlFor="collegeOrOrg" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 College / Organization
               </label>
-              <input id="collegeOrOrg" name="collegeOrOrg" value={formData.collegeOrOrg} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
+              <input id="collegeOrOrg" name="collegeOrOrg" value={formData.collegeOrOrg} onChange={handleChange} className={inputClass} style={inputBaseStyle} />
             </div>
           </div>
         </div>
@@ -478,7 +471,7 @@ export default function RegistrationForm() {
             <label htmlFor="utrNumber" className={labelClass} style={{ color: 'var(--text-muted)' }}>
               UTR Number / Transaction ID <span style={{ color: 'var(--accent-primary)' }}>*</span>
             </label>
-            <input id="utrNumber" name="utrNumber" value={formData.utrNumber} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="Minimum 8 alphanumeric characters" />
+            <input id="utrNumber" name="utrNumber" value={formData.utrNumber} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="Minimum 8 alphanumeric characters" />
             <FieldError message={errors.utrNumber} />
           </div>
 
@@ -486,7 +479,7 @@ export default function RegistrationForm() {
             <label htmlFor="paymentPhone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
               Phone Number Used For Payment <span style={{ color: 'var(--accent-primary)' }}>*</span>
             </label>
-            <input id="paymentPhone" name="paymentPhone" type="tel" value={formData.paymentPhone} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="+91 98765 43210" />
+            <input id="paymentPhone" name="paymentPhone" type="tel" value={formData.paymentPhone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="+91 98765 43210" />
             <FieldError message={errors.paymentPhone} />
           </div>
         </div>

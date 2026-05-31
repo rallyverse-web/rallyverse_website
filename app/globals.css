@@ -33,6 +33,15 @@
   --btn-outline-hover-text: #0B0D10;
 
   --rallyverse-gradient: linear-gradient(90deg, #FF5E00 0%, #F0B35A 30%, #79D2BC 65%, #00E7FF 100%);
+
+  --input-bg: #13161B;
+  --input-border: rgba(255, 255, 255, 0.10);
+  --input-border-focus: #00E5FF;
+  --input-text: #F5F5F5;
+  --input-placeholder: #606060;
+
+  --error-color: #FF4444;
+  --success-color: #4ADE80;
 }
 
 /* ============================================
