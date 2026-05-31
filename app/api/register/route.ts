@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       city,
       collegeOrOrg,
       utrNumber,
+      paymentPhone,
     } = body
 
     if (!player1Name || !player1Phone || !player1SkillLevel || !category || !city || !utrNumber) {
@@ -43,6 +44,10 @@ export async function POST(req: NextRequest) {
 
     if (!utrRegex.test(utrNumber)) {
       return NextResponse.json({ error: 'Invalid UTR number' }, { status: 400 })
+    }
+
+    if (!paymentPhone || !phoneRegex.test(paymentPhone)) {
+      return NextResponse.json({ error: 'Invalid payment phone number' }, { status: 400 })
     }
 
     if (isDoublesCategory(category)) {
@@ -64,6 +69,8 @@ export async function POST(req: NextRequest) {
     const sheets = getSheetsClient()
     const sheetTabName = process.env.GOOGLE_SHEET_TAB_NAME || 'Registrations'
 
+    const entryFee = process.env.NEXT_PUBLIC_ENTRY_FEE || '800'
+
     const row = [
       registrationId,
       registrationDate,
@@ -79,16 +86,21 @@ export async function POST(req: NextRequest) {
       player2SkillLevel || '',
       city,
       collegeOrOrg || '',
-      'Confirmed',
-      '',
+      entryFee,
       utrNumber || '',
-      'Verified',
+      paymentPhone,
+      '',
+      'Pending',
+      'Pending',
+      'No',
+      'No',
+      '',
       '',
     ]
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: `${sheetTabName}!A:S`,
+      range: `${sheetTabName}!A:X`,
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values: [row] },
@@ -98,21 +110,31 @@ export async function POST(req: NextRequest) {
       try {
         const { Resend } = await import('resend')
         const resend = new Resend(process.env.RESEND_API_KEY)
+        const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+91 98765 43210'
+        const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
 
         await resend.emails.send({
           from: 'RallyVerse <onboarding@resend.dev>',
           to: player1Email,
-          subject: `Registration Confirmed - ${registrationId}`,
+          subject: 'Registration Received \u2013 RallyVerse Badminton Tournament',
           html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-              <h1 style="color: #FF5E00;">You're registered!</h1>
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
               <p>Hi ${player1Name},</p>
-              <p>Your registration for RallyVerse Rally Series #01 has been received.</p>
+              <p>Thank you for registering for the RallyVerse Badminton Tournament.</p>
+              <p>We have successfully received your registration details.</p>
               <p><strong>Registration ID:</strong> ${registrationId}</p>
-              <p><strong>Category:</strong> ${category}</p>
-              <p>We'll reach out on WhatsApp within 24 hours with confirmation and next steps.</p>
-              <p style="color: #FF5E00; font-weight: bold;">Show up. Play hard. Build something.</p>
-              <p>- RallyVerse Team</p>
+              <p>Our team will now verify your payment and confirm your registration shortly.</p>
+              <p>Please send your payment screenshot on WhatsApp:</p>
+              <p style="font-size: 18px; font-weight: bold; color: #FF5E00;">
+                <a href="https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}" style="color: #FF5E00; text-decoration: none;">${whatsappNumber}</a>
+              </p>
+              <p>Join the official tournament WhatsApp group:</p>
+              <p style="text-align: center; margin: 28px 0;">
+                <a href="${whatsappGroupLink}" style="display: inline-block; background: linear-gradient(135deg, #FF5E00, #FF8C00); color: #FFFFFF; font-weight: bold; padding: 14px 32px; border-radius: 6px; text-decoration: none; font-size: 16px;">Join WhatsApp Group</a>
+              </p>
+              <p>We'll share match schedules, announcements, and event updates there.</p>
+              <p>Thank you for being a part of RallyVerse.</p>
+              <p>Regards,<br/>Team RallyVerse</p>
             </div>
           `,
         })

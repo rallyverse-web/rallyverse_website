@@ -19,6 +19,7 @@ type FormDataState = {
   city: string
   collegeOrOrg: string
   utrNumber: string
+  paymentPhone: string
 }
 
 const categories = [
@@ -70,6 +71,7 @@ const initialFormData: FormDataState = {
   city: 'Bengaluru',
   collegeOrOrg: '',
   utrNumber: '',
+  paymentPhone: '',
 }
 
 function isDoublesCategory(category: string) {
@@ -92,6 +94,8 @@ export default function RegistrationForm() {
   const needsPlayer2 = useMemo(() => isDoublesCategory(formData.category), [formData.category])
   const upiId = process.env.NEXT_PUBLIC_UPI_ID || 'adityag,007@ptaxis'
   const entryFee = process.env.NEXT_PUBLIC_ENTRY_FEE || '800'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+91 98765 43210'
+  const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target
@@ -132,6 +136,9 @@ export default function RegistrationForm() {
     if (stepToValidate === 3) {
       if (!utrRegex.test(formData.utrNumber.trim())) {
         nextErrors.utrNumber = 'Enter an alphanumeric UTR or transaction ID of at least 8 characters.'
+      }
+      if (!phoneRegex.test(formData.paymentPhone.trim())) {
+        nextErrors.paymentPhone = 'Enter the phone number used for payment.'
       }
     }
 
@@ -196,21 +203,51 @@ export default function RegistrationForm() {
       >
         <CheckCircle size={32} style={{ color: 'var(--accent-primary)' }} />
       </div>
-      <div>
-        <p className="font-display text-[48px] uppercase leading-none md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
-          WELCOME TO THE VERSE.
+      <div className="max-w-[540px]">
+        <p className="font-body text-base font-semibold" style={{ color: 'var(--accent-primary)' }}>
+          Registration Submitted Successfully!
         </p>
-        <p className="mt-4 font-body text-base" style={{ color: 'var(--text-primary)' }}>
-          Registration ID: {registrationId}
+        <p className="mt-4 font-body text-base leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+          Thank you for registering for the RallyVerse Badminton Tournament.
         </p>
-        <p className="mt-5 max-w-[430px] font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-           You&apos;re officially part of the RallyVerse.
+        <p className="mt-1 font-body text-sm" style={{ color: 'var(--text-muted)' }}>
+          Registration ID: <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{registrationId}</span>
         </p>
-        <p className="mt-3 max-w-[430px] font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          We&apos;ll reach out on WhatsApp within 24 hours with bracket information and next steps.
+        <p className="mt-4 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+          Our team will verify your payment details and confirm your registration shortly.
         </p>
-        <p className="mt-4 max-w-[430px] font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          In the meantime &mdash; tell someone worth competing against.
+        <p className="mt-4 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+          Please send a screenshot of your payment on WhatsApp:
+        </p>
+        <a
+          href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-1 inline-block font-body text-base font-semibold transition-colors hover:opacity-80"
+          style={{ color: 'var(--accent-primary)' }}
+        >
+          {whatsappNumber}
+        </a>
+        <p className="mt-5 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+          While we process registrations, join the official tournament WhatsApp group to receive updates, schedules, and announcements.
+        </p>
+        <a
+          href={whatsappGroupLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex items-center gap-2 rounded-md px-8 py-4 font-body text-sm font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+          style={{
+            background: 'var(--gradient-brand)',
+            color: 'var(--btn-primary-text)',
+          }}
+        >
+          Join WhatsApp Group
+        </a>
+        <p className="mt-5 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+          If you have any questions, feel free to contact the RallyVerse team.
+        </p>
+        <p className="mt-4 font-body text-base leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+          See you on the court!
         </p>
       </div>
       <Link
@@ -443,6 +480,14 @@ export default function RegistrationForm() {
             </label>
             <input id="utrNumber" name="utrNumber" value={formData.utrNumber} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="Minimum 8 alphanumeric characters" />
             <FieldError message={errors.utrNumber} />
+          </div>
+
+          <div>
+            <label htmlFor="paymentPhone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+              Phone Number Used For Payment <span style={{ color: 'var(--accent-primary)' }}>*</span>
+            </label>
+            <input id="paymentPhone" name="paymentPhone" type="tel" value={formData.paymentPhone} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="+91 98765 43210" />
+            <FieldError message={errors.paymentPhone} />
           </div>
         </div>
       )}
