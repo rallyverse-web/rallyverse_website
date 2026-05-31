@@ -61,7 +61,7 @@ export default function FirstEvent() {
               >
                 <span className="relative z-10">
                   <ShinyText
-                    text="Claim Your Spot in the First Chapter"
+                    text="Secure Your Spot"
                     disabled={false}
                     speed={3}
                     className="font-semibold"
@@ -73,7 +73,7 @@ export default function FirstEvent() {
             </Magnet>
 
             <p className="mt-4 text-center font-body text-xs" style={{ color: 'var(--text-muted)' }}>
-              Join the founding community. First registrants shape the Verse.
+              First registrants help shape the Verse.
             </p>
           </div>
         </AnimatedSection>

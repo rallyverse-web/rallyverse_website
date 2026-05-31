@@ -115,7 +115,7 @@ export default function Footer() {
               }}
             >
               <ShinyText
-                text="Enter the Verse"
+                text="Secure Your Spot"
                 disabled={false}
                 speed={3}
                 className="text-sm font-semibold"

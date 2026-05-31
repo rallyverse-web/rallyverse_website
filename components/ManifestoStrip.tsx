@@ -37,7 +37,7 @@ export default function ManifestoStrip() {
               e.currentTarget.style.color = 'var(--manifesto-btn-text)'
             }}
           >
-            Enter the Verse &rarr;
+            Register Now &rarr;
           </button>
         </AnimatedSection>
       </div>

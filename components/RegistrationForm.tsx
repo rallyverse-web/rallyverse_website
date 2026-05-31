@@ -204,7 +204,7 @@ export default function RegistrationForm() {
           Registration ID: {registrationId}
         </p>
         <p className="mt-5 max-w-[430px] font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          You&apos;re officially a founding member of RallyVerse.
+           You&apos;re officially part of the RallyVerse.
         </p>
         <p className="mt-3 max-w-[430px] font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           We&apos;ll reach out on WhatsApp within 24 hours with bracket information and next steps.
@@ -520,7 +520,7 @@ export default function RegistrationForm() {
           <div className="flex items-center gap-3">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
             <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-              FOUNDING REGISTRATION
+              REGISTRATION
             </span>
           </div>
         </AnimatedSection>

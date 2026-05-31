@@ -103,7 +103,7 @@ export default function WhoThisIsFor() {
             onMouseEnter={(e) => e.currentTarget.style.color = 'var(--link-hover)'}
             onMouseLeave={(e) => e.currentTarget.style.color = 'var(--link-color)'}
           >
-            Find Your Place in the Verse &rarr;
+            Register Now &rarr;
           </button>
         </motion.div>
       </div>

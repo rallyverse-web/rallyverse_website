@@ -14,10 +14,10 @@ interface ThemedLogoProps {
 }
 
 const LOGO_MAP: Record<LogoContext, { color: string; bw: string }> = {
-  navbar:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_transparent.png' },
-  footer:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_transparent.png' },
-  hero:    { color: '/logo/logo_transparent.png',            bw: '/logo/logo_transparent.png' },
-  drawer:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_transparent.png' },
+  navbar:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_black_text.svg' },
+  footer:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_black_text.svg' },
+  hero:    { color: '/logo/logo_transparent.png',            bw: '/logo/logo_black.svg' },
+  drawer:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_black_text.svg' },
 };
 
 const DIMENSION_MAP: Record<LogoContext, { width: number; height: number }> = {
@@ -40,7 +40,7 @@ export default function ThemedLogo({
   width,
   height,
 }: ThemedLogoProps) {
-  const { theme, isBWTheme } = useTheme();
+  const { theme } = useTheme();
   const [imgError, setImgError] = useState(false);
 
   const src = imgError
@@ -49,9 +49,6 @@ export default function ThemedLogo({
   const dims = DIMENSION_MAP[context];
   const cls = className ?? CLASS_MAP[context];
 
-  // When falling back to default logo in BW mode, apply CSS filter to make it white
-  const bwFilter = imgError && isBWTheme ? 'brightness(0) invert(1)' : undefined;
-
   return (
     <Image
       src={src}
@@ -59,7 +56,6 @@ export default function ThemedLogo({
       width={width ?? dims.width}
       height={height ?? dims.height}
       className={cls}
-      style={bwFilter ? { filter: bwFilter } : undefined}
       priority={context === 'navbar' || context === 'hero'}
       onError={() => setImgError(true)}
     />

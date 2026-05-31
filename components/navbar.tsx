@@ -25,7 +25,7 @@ export default function Navbar() {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('hero')
+  const [activeSection, setActiveSection] = useState('')
   const [isMobile, setIsMobile] = useState(false)
 
   // Scroll background toggle
@@ -79,7 +79,7 @@ export default function Navbar() {
     return () => observers.forEach((o) => o.disconnect())
   }, [])
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = async (href: string) => {
     setMenuOpen(false)
     const sectionId = href.replace('#', '')
     setActiveSection(sectionId)
@@ -89,8 +89,15 @@ export default function Navbar() {
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
-    } else {
-      router.push(`/${href}`)
+      return
+    }
+
+    // Navigate to homepage, then scroll to section once DOM is ready
+    await router.push('/')
+    await new Promise((resolve) => requestAnimationFrame(resolve))
+    const el = document.getElementById(sectionId)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
 
@@ -152,7 +159,7 @@ export default function Navbar() {
                 }}
               >
                 <ShinyText
-                  text="Enter the Verse"
+                  text="Register Now"
                   disabled={false}
                   speed={3}
                   className="text-sm font-semibold"
@@ -274,7 +281,7 @@ export default function Navbar() {
                     }}
                   >
                     <ShinyText
-                      text="Enter the Verse"
+                  text="Register Now"
                       disabled={false}
                       speed={3}
                       className="text-sm font-semibold"
