@@ -133,13 +133,15 @@
   color: rgba(0, 0, 0, 0.3);
 }
 
-/* Brand gradient text — uses var(--rallyverse-gradient) per active theme */
+/* Brand gradient text — applies to both parent and child text elements */
 .rallyverse-gradient-text,
+.rallyverse-gradient-text > *,
 .rally-gradient-text {
   background: var(--rallyverse-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: transparent;
 }
 
 @import 'tailwindcss';
