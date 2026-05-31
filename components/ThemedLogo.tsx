@@ -14,10 +14,10 @@ interface ThemedLogoProps {
 }
 
 const LOGO_MAP: Record<LogoContext, { color: string; bw: string }> = {
-  navbar:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_black_text.svg' },
-  footer:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_black_text.svg' },
-  hero:    { color: '/logo/logo_transparent.png',            bw: '/logo/logo_black.svg' },
-  drawer:  { color: '/logo/logo_transparent.png',            bw: '/logo/logo_black_text.svg' },
+  navbar:  { color: '/logo/logo_transparent.png',                     bw: '/logo/black_logo_text_transparent.png' },
+  footer:  { color: '/logo/logo_transparent.png',                     bw: '/logo/black_logo_text_transparent.png' },
+  hero:    { color: '/logo/logo_transparent.png',                     bw: '/logo/only_logo_black.png' },
+  drawer:  { color: '/logo/logo_transparent.png',                     bw: '/logo/black_logo_text_transparent.png' },
 };
 
 const DIMENSION_MAP: Record<LogoContext, { width: number; height: number }> = {
