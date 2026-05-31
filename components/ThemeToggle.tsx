@@ -81,8 +81,8 @@ export default function ThemeToggle() {
                   x2="100%"
                   y2="100%"
                 >
-                  <stop offset="0%" stopColor="#FF5E00" />
-                  <stop offset="100%" stopColor="#00E5FF" />
+                  <stop offset="0%" stopColor="var(--accent-primary)" />
+                  <stop offset="100%" stopColor="var(--accent-secondary)" />
                 </linearGradient>
               </defs>
               <circle cx="8" cy="8" r="7" fill="url(#rv-color-grad)" />

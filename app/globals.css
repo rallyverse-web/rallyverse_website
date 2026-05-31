@@ -32,47 +32,8 @@
   --btn-outline-hover-bg: #FF5E00;
   --btn-outline-hover-text: #0B0D10;
 
-  --gradient-brand: linear-gradient(90deg, #FF5E00 0%, #FF8C00 30%, #00C9A7 70%, #00E5FF 100%);
-
-  --manifesto-bg: #FF5E00;
-  --manifesto-text: #0B0D10;
-  --manifesto-muted: rgba(11, 13, 16, 0.6);
-  --manifesto-btn-bg: #0B0D10;
-  --manifesto-btn-text: #F5F5F5;
-  --manifesto-btn-border: #0B0D10;
-
-  --card-bg: #13161B;
-  --card-border: rgba(255, 255, 255, 0.06);
-  --card-border-hover: rgba(255, 94, 0, 0.30);
-
-  --nav-bg-scrolled: #0B0D10;
-  --nav-border: rgba(255, 255, 255, 0.05);
-
-  --section-label-color: #FF5E00;
-
-  --toggle-bg: #232833;
-  --toggle-icon-color: #FF5E00;
-  --toggle-border: rgba(255, 255, 255, 0.10);
-
-  --pill-active-bg: #FF5E00;
-  --pill-active-text: #0B0D10;
-  --pill-inactive-bg: #232833;
-  --pill-inactive-text: #909090;
-
-  --icon-color: #FF5E00;
-  --link-color: #FF5E00;
-  --link-hover: #FF7A2E;
-
-  --input-bg: #13161B;
-  --input-border: rgba(255, 255, 255, 0.10);
-  --input-border-focus: #FF5E00;
-  --input-text: #F5F5F5;
-  --input-placeholder: #606060;
-
-  --success-color: #00E5FF;
-  --error-color: #FF4444;
-
-  --shockwave-color: rgba(255, 94, 0, 0.4);
+  --gradient-brand: linear-gradient(90deg, #FF5E00 0%, #F0B35A 30%, #79D2BC 65%, #00E7FF 100%);
+  --rallyverse-gradient: linear-gradient(90deg, #FF5E00 0%, #F0B35A 30%, #79D2BC 65%, #00E7FF 100%);
 }
 
 /* ============================================
@@ -105,7 +66,7 @@
   --btn-outline-hover-bg: #0A0A0A;
   --btn-outline-hover-text: #FFFFFF;
 
-  --gradient-brand: linear-gradient(90deg, #FF5E00 0%, #FF8C00 30%, #00C9A7 70%, #00E5FF 100%);
+  --gradient-brand: linear-gradient(90deg, #0A0A0A, #4A4A4A);
 
   --manifesto-bg: #0A0A0A;
   --manifesto-text: #FFFFFF;
@@ -174,7 +135,7 @@
 /* Brand gradient text — both themes use the same gradient */
 .rallyverse-gradient-text span,
 .rally-gradient-text {
-  background: var(--gradient-brand);
+  background: var(--rallyverse-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -199,19 +160,31 @@
   background: var(--gradient-brand);
 }
 
+@utility bg-rallyverse-gradient {
+  background: var(--rallyverse-gradient);
+}
+
 @utility text-brand-gradient {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  background: var(--gradient-brand);
+  background: var(--rallyverse-gradient);
+}
+
+@utility glow-accent {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+
+@utility glow-accent-filter {
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent-primary) 50%, transparent));
 }
 
 @utility glow-orange {
-  box-shadow: 0 0 24px rgba(255, 94, 0, 0.25);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent-primary) 25%, transparent);
 }
 
 @utility glow-cyan {
-  box-shadow: 0 0 24px rgba(0, 229, 255, 0.2);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent-secondary) 20%, transparent);
 }
 
 @layer base {

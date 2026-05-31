@@ -25,7 +25,7 @@ type ParticlesProps = {
 export default function Particles({
   className = '',
   quantity = 80,
-  color = '#FF5E00',
+  color = '#666666',
   ease = 80,
   size = 0.6,
   minAlpha,

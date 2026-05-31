@@ -57,7 +57,7 @@ export default function EventCategories() {
             return (
               <AnimatedSection key={cat.name} delay={i * 0.1}>
                 <div className="group flex flex-col items-center text-center">
-                  <Icon size={32} className="mb-4 transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]" style={{ color: 'var(--accent-primary)' }} />
+                  <Icon size={32} className="mb-4 transition-all duration-300 group-hover:glow-accent-filter" style={{ color: 'var(--accent-primary)' }} />
                   <div className="font-display text-[28px] uppercase transition-colors duration-300" style={{ color: 'var(--text-primary)' }}>
                     {cat.name}
                   </div>

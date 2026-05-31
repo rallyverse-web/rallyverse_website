@@ -197,8 +197,8 @@ export default function RegistrationForm() {
       <div
         className="flex h-16 w-16 items-center justify-center rounded-full"
         style={{
-          border: '1px solid rgba(255, 94, 0, 0.3)',
-          backgroundColor: 'rgba(255, 94, 0, 0.1)',
+          border: '1px solid color-mix(in srgb, var(--accent-primary) 30%, transparent)',
+          backgroundColor: 'color-mix(in srgb, var(--accent-primary) 10%, transparent)',
         }}
       >
         <CheckCircle size={32} style={{ color: 'var(--accent-primary)' }} />
@@ -286,7 +286,7 @@ export default function RegistrationForm() {
       </div>
 
       {submitError && (
-        <div role="alert" aria-live="polite" className="rounded-md border p-3" style={{ borderColor: 'rgba(255, 68, 68, 0.3)', backgroundColor: 'rgba(255, 68, 68, 0.1)' }}>
+        <div role="alert" aria-live="polite" className="rounded-md border p-3" style={{ borderColor: 'color-mix(in srgb, var(--error-color) 30%, transparent)', backgroundColor: 'color-mix(in srgb, var(--error-color) 10%, transparent)' }}>
           <p className="font-body text-sm" style={{ color: 'var(--error-color)' }}>{submitError}</p>
         </div>
       )}

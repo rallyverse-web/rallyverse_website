@@ -122,7 +122,7 @@ export default function AdminPage() {
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', padding: 24 }}>
         <form onSubmit={handleLogin} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <ShieldAlert size={40} style={{ color: '#FF5E00', margin: '0 auto 12px' }} />
+            <ShieldAlert size={40} style={{ color: '#e5e5e5', margin: '0 auto 12px' }} />
             <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Admin Access</h1>
           </div>
           <input
@@ -168,22 +168,22 @@ export default function AdminPage() {
           <>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 16, marginBottom: 32 }}>
               <div style={cardStyle}>
-                <Users size={20} style={{ color: '#FF5E00', marginBottom: 8 }} />
+                <Users size={20} style={{ color: '#e5e5e5', marginBottom: 8 }} />
                 <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Total Registrations</p>
                 <p style={{ color: '#fff', fontSize: 32, fontWeight: 700 }}>{metrics.totalRegistrations}</p>
               </div>
               <div style={cardStyle}>
-                <Wallet size={20} style={{ color: '#FF5E00', marginBottom: 8 }} />
+                <Wallet size={20} style={{ color: '#e5e5e5', marginBottom: 8 }} />
                 <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Pending Payments</p>
                 <p style={{ color: '#fff', fontSize: 32, fontWeight: 700 }}>{metrics.pendingPayments}</p>
               </div>
               <div style={cardStyle}>
-                <CheckCircle size={20} style={{ color: '#FF5E00', marginBottom: 8 }} />
+                <CheckCircle size={20} style={{ color: '#e5e5e5', marginBottom: 8 }} />
                 <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Verified Registrations</p>
                 <p style={{ color: '#fff', fontSize: 32, fontWeight: 700 }}>{metrics.verifiedRegistrations}</p>
               </div>
               <div style={cardStyle}>
-                <Mail size={20} style={{ color: '#FF5E00', marginBottom: 8 }} />
+                <Mail size={20} style={{ color: '#e5e5e5', marginBottom: 8 }} />
                 <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Confirmations Sent</p>
                 <p style={{ color: '#fff', fontSize: 32, fontWeight: 700 }}>{metrics.confirmationsSent}</p>
               </div>
