@@ -19,12 +19,12 @@ const faqs = [
   {
     question: 'Where will the tournaments be held?',
     answer:
-      'Venues across Bengaluru \u2014 we\u2019re finalising court partnerships now. Registered players will be the first to know location details.',
+      'Venues across Bengaluru. We\u2019re finalising court partnerships now. Registered players will be the first to know location details.',
   },
   {
     question: 'How will I know when the first event is confirmed?',
     answer:
-      'We\u2019ll reach out directly on WhatsApp. That\u2019s why we ask for your number \u2014 no spam, just tournament updates.',
+      'We\u2019ll reach out directly on WhatsApp. That\u2019s why we ask for your number. No spam, only tournament updates.',
   },
   {
     question: "Can I play doubles if I don\u2019t have a partner?",

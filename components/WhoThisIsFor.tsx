@@ -13,7 +13,7 @@ const personas = [
   {
     icon: Target,
     title: 'The Explorer',
-    desc: "You'd rather move than sit still. A new trail, a new route, a new challenge — you're always looking for the next one.",
+    desc: "You'd rather move than sit still. A new trail, a new route, a new challenge. You're always looking for the next one.",
   },
   {
     icon: Flame,

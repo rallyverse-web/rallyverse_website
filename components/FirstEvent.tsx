@@ -27,13 +27,13 @@ export default function FirstEvent() {
 
           <div className="mt-7 space-y-5 font-body text-base leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
             <p>
-              This is where it starts. Not just a tournament &mdash; the first chapter of something that will outlast any single scoreline or bracket result.
+              This is where it starts. Not just a tournament. It's the first chapter of something that will outlast any single scoreline or bracket result.
             </p>
             <p>
-              Rally Series 01 is built for Bengaluru&apos;s most passionate players. Men&apos;s Singles. Women&apos;s Singles. Doubles. Mixed. Beginner through Advanced &mdash; there is a court for you.
+              Rally Series 01 is built for Bengaluru&apos;s most passionate players. Men&apos;s Singles. Women&apos;s Singles. Doubles. Mixed. From Beginner to Advanced, there is a court for you.
             </p>
             <p>
-              Spots are deliberately limited &mdash; because every player deserves a well-run experience. When you&apos;re here, you&apos;ll feel the difference.
+              Spots are deliberately limited because every player deserves a well-run experience. When you&apos;re here, you&apos;ll feel the difference.
             </p>
           </div>
 

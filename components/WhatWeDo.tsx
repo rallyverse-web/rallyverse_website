@@ -29,7 +29,7 @@ export default function WhatWeDo() {
               </AnimatedSection>
               <AnimatedSection delay={0.1}>
                 <p className="text-base md:text-lg font-body leading-relaxed mb-6">
-                  RallyVerse exists to reverse that. We are not an event company. We are a universe — built for people who still believe the best moments happen when you move, compete, and show up for each other.
+                  RallyVerse exists to reverse that. We are not an event company. We are a universe built for people who still believe the best moments happen when you move, compete, and show up for each other.
                 </p>
               </AnimatedSection>
               <AnimatedSection delay={0.2}>
