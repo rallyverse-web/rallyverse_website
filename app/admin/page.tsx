@@ -1,162 +1,282 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-import { CheckCircle, Clock, Loader2, Mail, RefreshCw, ShieldAlert, Users, Wallet } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  CheckCircle,
+  Clock,
+  Edit,
+  Loader2,
+  Mail,
+  RefreshCw,
+  Search,
+  ShieldAlert,
+  Trash2,
+  Users,
+  Wallet,
+  XCircle,
+} from 'lucide-react'
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  height: 48,
-  padding: '0 16px',
-  borderRadius: 6,
-  border: '1px solid #333',
-  background: '#111',
-  color: '#fff',
-  fontSize: 14,
-  outline: 'none',
-}
-const buttonStyle: React.CSSProperties = {
-  height: 48,
-  padding: '0 24px',
-  borderRadius: 6,
-  border: 'none',
-  background: 'var(--rallyverse-gradient)',
-  color: '#fff',
-  fontSize: 14,
-  fontWeight: 700,
-  cursor: 'pointer',
-}
-const disabledButtonStyle: React.CSSProperties = {
-  ...buttonStyle,
-  opacity: 0.6,
-  cursor: 'not-allowed',
-}
-const cardStyle: React.CSSProperties = {
-  padding: 24,
-  borderRadius: 8,
-  border: '1px solid #222',
-  background: '#111',
-}
+/* ─── Types ─── */
+type Registration = Record<string, string> & { rowIndex: string }
 
 type Metrics = {
   totalRegistrations: number
   pendingPayments: number
   verifiedRegistrations: number
+  rejectedRegistrations: number
+  pendingVerification: number
   confirmationsSent: number
+  confirmationsPending: number
 }
 
+/* ─── Styles ─── */
+const s = {
+  input: { width: '100%', height: 48, padding: '0 16px', borderRadius: 6, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 14, outline: 'none' } as React.CSSProperties,
+  btn: { height: 40, padding: '0 20px', borderRadius: 6, border: 'none', background: 'var(--rallyverse-gradient)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer' } as React.CSSProperties,
+  btnSm: { height: 32, padding: '0 12px', borderRadius: 4, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' } as React.CSSProperties,
+  btnDisabled: (b: React.CSSProperties) => ({ ...b, opacity: 0.6, cursor: 'not-allowed' }) as React.CSSProperties,
+  card: { padding: 20, borderRadius: 8, border: '1px solid #222', background: '#111' } as React.CSSProperties,
+  th: { padding: '8px 10px', textAlign: 'left' as const, fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.5px', color: '#888', borderBottom: '1px solid #222', whiteSpace: 'nowrap' as const },
+  td: { padding: '8px 10px', fontSize: 13, color: '#ccc', borderBottom: '1px solid #1a1a1a', verticalAlign: 'middle' as const },
+  overlay: { position: 'fixed' as const, inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 20 },
+  modal: { background: '#1a1a1a', borderRadius: 8, border: '1px solid #333', maxWidth: 600, width: '100%', maxHeight: '90vh', overflowY: 'auto' as const, padding: 24 },
+  label: { display: 'block', color: '#888', fontSize: 12, marginBottom: 4 },
+  field: { width: '100%', height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none' } as React.CSSProperties,
+}
+
+/* ─── Badge helpers ─── */
+function Badge({ color, label }: { color: string; label: string }) {
+  return (
+    <span style={{
+      display: 'inline-block',
+      padding: '2px 8px',
+      borderRadius: 4,
+      fontSize: 11,
+      fontWeight: 600,
+      background: `${color}20`,
+      color,
+    }}>
+      {label}
+    </span>
+  )
+}
+
+function statusBadge(status: string) {
+  switch (status) {
+    case 'Verified': return <Badge color="#4ade80" label="Verified" />
+    case 'Rejected': return <Badge color="#ff4444" label="Rejected" />
+    case 'Pending': return <Badge color="#facc15" label="Pending" />
+    case 'Paid': return <Badge color="#4ade80" label="Paid" />
+    case 'Yes': return <Badge color="#4ade80" label="Yes" />
+    case 'No': return <Badge color="#666" label="No" />
+    default: return <Badge color="#888" label={status || '—'} />
+  }
+}
+
+/* ─── Editable fields map for the edit modal ─── */
+const EDIT_FIELDS: { label: string; colIndex: number }[] = [
+  { label: 'Player 1 Name', colIndex: 4 },
+  { label: 'Player 1 Phone', colIndex: 5 },
+  { label: 'Player 1 Email', colIndex: 6 },
+  { label: 'Player 1 Skill Level', colIndex: 7 },
+  { label: 'Player 2 Name', colIndex: 8 },
+  { label: 'Player 2 Phone', colIndex: 9 },
+  { label: 'Player 2 Email', colIndex: 10 },
+  { label: 'Player 2 Skill Level', colIndex: 11 },
+  { label: 'Category', colIndex: 2 },
+  { label: 'Team Name', colIndex: 3 },
+  { label: 'City', colIndex: 12 },
+  { label: 'College / Organization', colIndex: 13 },
+  { label: 'Amount Paid', colIndex: 14 },
+  { label: 'Transaction ID', colIndex: 15 },
+  { label: 'Payment Phone', colIndex: 16 },
+  { label: 'Remarks', colIndex: 17 },
+]
+
+/* ─── Table column definitions ─── */
+const TABLE_COLUMNS: { key: string; label: string; sortable: boolean }[] = [
+  { key: 'registrationId', label: 'ID', sortable: true },
+  { key: 'registrationDate', label: 'Date', sortable: true },
+  { key: 'category', label: 'Category', sortable: true },
+  { key: 'player1Name', label: 'Player 1', sortable: true },
+  { key: 'player1Phone', label: 'Phone', sortable: false },
+  { key: 'player1Email', label: 'Email', sortable: false },
+  { key: 'entryFee', label: 'Fee', sortable: true },
+  { key: 'utrNumber', label: 'UTR', sortable: false },
+  { key: 'paymentStatus', label: 'Payment', sortable: true },
+  { key: 'verificationStatus', label: 'Verification', sortable: true },
+  { key: 'confirmationSent', label: 'Confirmed', sortable: true },
+]
+
+/* ─── Main component ─── */
 export default function AdminPage() {
   const [password, setPassword] = useState('')
   const [token, setToken] = useState('')
   const [authError, setAuthError] = useState('')
+
+  const [registrations, setRegistrations] = useState<Registration[]>([])
   const [metrics, setMetrics] = useState<Metrics | null>(null)
-  const [metricsLoading, setMetricsLoading] = useState(false)
-  const [sending, setSending] = useState(false)
-  const [sendResult, setSendResult] = useState<{ message: string; sent?: number; failed?: number; details?: string[] } | string>('')
+  const [loading, setLoading] = useState(false)
   const [lastSync, setLastSync] = useState('')
 
-  const emailsReady = metrics
-    ? metrics.verifiedRegistrations - metrics.confirmationsSent
-    : 0
+  /* Search & filters */
+  const [search, setSearch] = useState('')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [sortKey, setSortKey] = useState('registrationDate')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [page, setPage] = useState(0)
+  const perPage = 20
 
-  const authHeaders = useCallback(() => ({
-    Authorization: `Bearer ${token}`,
-  }), [token])
+  /* Email sending */
+  const [sending, setSending] = useState(false)
+  const [sendResult, setSendResult] = useState<any>(null)
 
-  const fetchMetrics = useCallback(async () => {
-    setMetricsLoading(true)
+  /* Edit modal */
+  const [editTarget, setEditTarget] = useState<Registration | null>(null)
+  const [editValues, setEditValues] = useState<Record<string, string>>({})
+  const [saving, setSaving] = useState(false)
+
+  /* Confirm dialogs */
+  const [confirmAction, setConfirmAction] = useState<{ type: string; row: Registration } | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
+
+  /* ── Helpers ── */
+  const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
     setAuthError('')
     try {
-      const res = await fetch('/api/admin/metrics', { headers: authHeaders() })
-      if (res.status === 401) {
-        setToken('')
-        setAuthError('Invalid password')
-        return
-      }
-      if (!res.ok) {
-        setAuthError('Failed to load metrics')
-        return
-      }
+      const res = await fetch('/api/admin/registrations', { headers: authHeaders() })
+      if (res.status === 401) { setToken(''); setAuthError('Invalid password'); return }
+      if (!res.ok) { setAuthError('Failed to load data'); return }
       const data = await res.json()
-      setMetrics(data)
+      setRegistrations(data.registrations || [])
+      setMetrics(data.metrics || null)
       setLastSync(new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }))
-    } catch {
-      setAuthError('Failed to connect to server')
-    } finally {
-      setMetricsLoading(false)
-    }
+    } catch { setAuthError('Failed to connect to server') }
+    finally { setLoading(false) }
   }, [authHeaders])
 
-  useEffect(() => {
-    if (token) fetchMetrics()
-  }, [token, fetchMetrics])
+  useEffect(() => { if (token) fetchData() }, [token, fetchData])
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setAuthError('')
-    setToken(password)
+  /* ── Sorting + filtering ── */
+  const toggleSort = (key: string) => {
+    if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    else { setSortKey(key); setSortDir('asc') }
   }
+
+  const filtered = useMemo(() => {
+    let list = [...registrations]
+    if (search) {
+      const q = search.toLowerCase()
+      list = list.filter((r) =>
+        Object.values(r).some((v) => v.toLowerCase().includes(q))
+      )
+    }
+    if (filterStatus === 'pending') list = list.filter((r) => r.verificationStatus === 'Pending')
+    else if (filterStatus === 'verified') list = list.filter((r) => r.verificationStatus === 'Verified')
+    else if (filterStatus === 'rejected') list = list.filter((r) => r.verificationStatus === 'Rejected')
+    else if (filterStatus === 'confirmed') list = list.filter((r) => r.confirmationSent === 'Yes')
+    else if (filterStatus === 'unconfirmed') list = list.filter((r) => r.verificationStatus === 'Verified' && r.confirmationSent === 'No')
+
+    list.sort((a, b) => {
+      const av = (a[sortKey] || '').toLowerCase()
+      const bv = (b[sortKey] || '').toLowerCase()
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av)
+    })
+    return list
+  }, [registrations, search, filterStatus, sortKey, sortDir])
+
+  const pageCount = Math.ceil(filtered.length / perPage)
+  const paged = filtered.slice(page * perPage, (page + 1) * perPage)
+
+  useEffect(() => { setPage(0) }, [search, filterStatus])
+
+  /* ── Actions ── */
+  const emailsReady = metrics ? metrics.confirmationsPending : 0
 
   const handleSendConfirmations = async () => {
     setSending(true)
-    setSendResult('')
+    setSendResult(null)
     try {
-      const res = await fetch('/api/admin/send-confirmations', {
-        method: 'POST',
-        headers: authHeaders(),
-      })
-      if (res.status === 401) {
-        setSendResult('Session expired. Please re-authenticate.')
-        setToken('')
-        return
-      }
+      const res = await fetch('/api/admin/send-confirmations', { method: 'POST', headers: authHeaders() })
+      if (res.status === 401) { setToken(''); return }
       const data = await res.json()
-      if (!res.ok) {
-        setSendResult(data.error || 'Failed to send confirmations')
-        return
-      }
-      setSendResult({
-        message: data.message,
-        sent: data.sent,
-        failed: data.failed,
-        details: data.details,
-      })
-      fetchMetrics()
-    } catch {
-      setSendResult('Failed to connect to server')
-    } finally {
-      setSending(false)
-    }
+      setSendResult(data)
+      fetchData()
+    } catch { setSendResult({ error: 'Failed to connect' }) }
+    finally { setSending(false) }
   }
 
+  const confirmThen = async () => {
+    if (!confirmAction) return
+    setActionLoading(true)
+    const { type, row } = confirmAction
+    const rowIndex = parseInt(row.rowIndex, 10)
+    try {
+      const res = await fetch(`/api/admin/${type}`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ rowIndex }),
+      })
+      if (res.status === 401) { setToken(''); return }
+      if (!res.ok) { const d = await res.json(); setAuthError(d.error || 'Action failed'); return }
+      setConfirmAction(null)
+      fetchData()
+    } catch { setAuthError('Action failed') }
+    finally { setActionLoading(false) }
+  }
+
+  const openEdit = (row: Registration) => {
+    setEditTarget(row)
+    const vals: Record<string, string> = {}
+    EDIT_FIELDS.forEach((f) => { vals[String(f.colIndex)] = row[Object.keys(row)[f.colIndex]] || '' })
+    setEditValues(vals)
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editTarget) return
+    setSaving(true)
+    const rowIndex = parseInt(editTarget.rowIndex, 10)
+    try {
+      const res = await fetch('/api/admin/edit', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ rowIndex, updates: editValues }),
+      })
+      if (res.status === 401) { setToken(''); return }
+      if (!res.ok) { const d = await res.json(); setAuthError(d.error || 'Edit failed'); return }
+      setEditTarget(null)
+      fetchData()
+    } catch { setAuthError('Edit failed') }
+    finally { setSaving(false) }
+  }
+
+  /* ── Login screen ── */
   if (!token) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', padding: 24 }}>
-        <form onSubmit={handleLogin} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={(e) => { e.preventDefault(); setAuthError(''); setToken(password) }} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ textAlign: 'center', marginBottom: 8 }}>
             <ShieldAlert size={40} style={{ color: '#e5e5e5', margin: '0 auto 12px' }} />
             <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Admin Access</h1>
           </div>
-          <input
-            type="password"
-            placeholder="Enter admin password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
-            autoFocus
-          />
+          <input type="password" placeholder="Enter admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={s.input} autoFocus />
           {authError && <p style={{ color: '#ff4444', fontSize: 13 }}>{authError}</p>}
-          <button type="submit" style={password ? buttonStyle : disabledButtonStyle} disabled={!password}>
-            Sign In
-          </button>
+          <button type="submit" style={password ? s.btn : s.btnDisabled(s.btn)} disabled={!password}>Sign In</button>
         </form>
       </div>
     )
   }
 
+  /* ── Main dashboard ── */
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 32 }}>
-      <div style={{ maxWidth: 800, margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
           <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Dashboard</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {lastSync && (
@@ -164,150 +284,293 @@ export default function AdminPage() {
                 <Clock size={12} /> Last sync: {lastSync}
               </span>
             )}
-            <button onClick={fetchMetrics} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh metrics">
-              <RefreshCw size={16} className={metricsLoading ? 'animate-spin' : ''} />
+            <button onClick={fetchData} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh">
+              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             </button>
-            <button onClick={() => { setToken(''); setMetrics(null); setSendResult('') }} style={{ ...buttonStyle, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>
-              Sign Out
-            </button>
+            <button onClick={() => { setToken(''); setRegistrations([]); setMetrics(null); setSendResult(null) }} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
           </div>
         </div>
 
-        {metricsLoading && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#888', fontSize: 14, marginBottom: 24 }}>
-            <Loader2 size={16} className="animate-spin" /> Loading metrics...
-          </div>
-        )}
-
         {authError && (
-          <div style={{ padding: 12, borderRadius: 6, background: 'rgba(255,68,68,0.1)', border: '1px solid rgba(255,68,68,0.3)', color: '#ff4444', fontSize: 13, marginBottom: 24 }}>
-            {authError}
+          <div style={{ padding: 12, borderRadius: 6, background: 'rgba(255,68,68,0.1)', border: '1px solid rgba(255,68,68,0.3)', color: '#ff4444', fontSize: 13, marginBottom: 24 }}>{authError}</div>
+        )}
+
+        {/* Metric cards */}
+        {metrics && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 24 }}>
+            <MetricCard icon={<Users size={18} />} label="Total" value={metrics.totalRegistrations} />
+            <MetricCard icon={<Wallet size={18} />} label="Pending Verification" value={metrics.pendingVerification} color="#facc15" />
+            <MetricCard icon={<CheckCircle size={18} />} label="Verified" value={metrics.verifiedRegistrations} color="#4ade80" />
+            <MetricCard icon={<XCircle size={18} />} label="Rejected" value={metrics.rejectedRegistrations} color="#ff4444" />
+            <MetricCard icon={<Mail size={18} />} label="Emails Pending" value={metrics.confirmationsPending} borderColor={metrics.confirmationsPending > 0 ? 'rgba(74, 222, 128, 0.3)' : undefined} valueColor={metrics.confirmationsPending > 0 ? '#4ade80' : undefined} />
+            <MetricCard icon={<Mail size={18} />} label="Emails Sent" value={metrics.confirmationsSent} />
           </div>
         )}
 
-        {metrics && (
-          <>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 16, marginBottom: 32 }}>
-              <div style={cardStyle}>
-                <Users size={20} style={{ color: '#e5e5e5', marginBottom: 8 }} />
-                <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Total Registrations</p>
-                <p style={{ color: '#fff', fontSize: 32, fontWeight: 700 }}>{metrics.totalRegistrations}</p>
+        {/* Search & Filters */}
+        <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: '1 1 260px', minWidth: 200 }}>
+            <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#555', pointerEvents: 'none' }} />
+            <input
+              placeholder="Search registrations..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ width: '100%', height: 36, padding: '0 12px 0 32px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none' }}
+            />
+          </div>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', cursor: 'pointer' }}
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending Verification</option>
+            <option value="verified">Verified</option>
+            <option value="rejected">Rejected</option>
+            <option value="confirmed">Confirmation Sent</option>
+            <option value="unconfirmed">Confirmation Pending</option>
+          </select>
+          <span style={{ color: '#666', fontSize: 12 }}>{filtered.length} registration{filtered.length !== 1 ? 's' : ''}</span>
+
+          {/* Email send section — inline with filters */}
+          {emailsReady > 0 && (
+            <button
+              onClick={handleSendConfirmations}
+              disabled={sending}
+              style={{
+                ...s.btn,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                ...(sending ? s.btnDisabled(s.btn) : {}),
+              }}
+            >
+              {sending ? <Loader2 size={14} className="animate-spin" /> : <Mail size={14} />}
+              {sending ? 'Sending...' : `Send (${emailsReady})`}
+            </button>
+          )}
+        </div>
+
+        {/* Send result */}
+        {sendResult && (
+          <div style={{
+            marginBottom: 16,
+            padding: 12,
+            borderRadius: 6,
+            fontSize: 13,
+            background: sendResult.error ? 'rgba(255,68,68,0.1)' : sendResult.failed === 0 ? 'rgba(74,222,128,0.1)' : 'rgba(250,204,21,0.1)',
+            border: `1px solid ${sendResult.error ? 'rgba(255,68,68,0.3)' : sendResult.failed === 0 ? 'rgba(74,222,128,0.3)' : 'rgba(250,204,21,0.3)'}`,
+            color: sendResult.error ? '#ff4444' : sendResult.failed === 0 ? '#4ade80' : '#facc15',
+          }}>
+            <strong>{sendResult.error || `Emails Sent: ${sendResult.sent} | Failed: ${sendResult.failed}`}</strong>
+            {sendResult.details && sendResult.details.length > 0 && (
+              <div style={{ marginTop: 6, maxHeight: 120, overflowY: 'auto' }}>
+                {sendResult.details.map((d: string, i: number) => (
+                  <p key={i} style={{ color: d.includes('✗') ? '#ff4444' : '#888', fontSize: 11, fontFamily: 'monospace', padding: '1px 0' }}>{d}</p>
+                ))}
               </div>
-              <div style={cardStyle}>
-                <Wallet size={20} style={{ color: '#e5e5e5', marginBottom: 8 }} />
-                <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Pending Payments</p>
-                <p style={{ color: '#fff', fontSize: 32, fontWeight: 700 }}>{metrics.pendingPayments}</p>
-              </div>
-              <div style={cardStyle}>
-                <CheckCircle size={20} style={{ color: '#e5e5e5', marginBottom: 8 }} />
-                <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Verified Registrations</p>
-                <p style={{ color: '#fff', fontSize: 32, fontWeight: 700 }}>{metrics.verifiedRegistrations}</p>
-              </div>
-              <div style={{
-                ...cardStyle,
-                borderColor: emailsReady > 0 ? 'rgba(74, 222, 128, 0.3)' : '#222',
-              }}>
-                <Mail size={20} style={{ color: emailsReady > 0 ? '#4ade80' : '#e5e5e5', marginBottom: 8 }} />
-                <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Confirmations Sent</p>
-                <p style={{ color: '#fff', fontSize: 32, fontWeight: 700 }}>{metrics.confirmationsSent}</p>
-                {emailsReady > 0 && (
-                  <p style={{ color: '#4ade80', fontSize: 13, marginTop: 4 }}>
-                    {emailsReady} ready to send
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div style={cardStyle}>
-              <h2 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Send Confirmation Emails</h2>
-              <p style={{ color: '#888', fontSize: 13, marginBottom: 12 }}>
-                Sends confirmation emails to all registrations with <strong style={{ color: '#fff' }}>Verified</strong> status and <strong style={{ color: '#fff' }}>Confirmation Sent = No</strong>.
-              </p>
-
-              {typeof sendResult !== 'string' && sendResult.message && (
-                <div style={{
-                  marginBottom: 16,
-                  padding: 16,
-                  borderRadius: 6,
-                  background: sendResult.failed === 0
-                    ? 'rgba(74, 222, 128, 0.1)'
-                    : sendResult.sent && sendResult.failed
-                      ? 'rgba(250, 204, 21, 0.1)'
-                      : 'rgba(255, 68, 68, 0.1)',
-                  border: `1px solid ${
-                    sendResult.failed === 0
-                      ? 'rgba(74, 222, 128, 0.3)'
-                      : sendResult.sent && sendResult.failed
-                        ? 'rgba(250, 204, 21, 0.3)'
-                        : 'rgba(255, 68, 68, 0.3)'
-                  }`,
-                }}>
-                  <p style={{
-                    color: sendResult.failed === 0 ? '#4ade80' : '#facc15',
-                    fontSize: 14,
-                    fontWeight: 600,
-                  }}>
-                    Emails Sent: {sendResult.sent} | Failed: {sendResult.failed}
-                  </p>
-                  {sendResult.details && sendResult.details.length > 0 && (
-                    <div style={{ marginTop: 8, maxHeight: 200, overflowY: 'auto' }}>
-                      {sendResult.details.map((d, i) => (
-                        <p key={i} style={{
-                          color: d.includes('✗') ? '#ff4444' : '#888',
-                          fontSize: 12,
-                          fontFamily: 'monospace',
-                          padding: '2px 0',
-                        }}>{d}</p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {typeof sendResult === 'string' && sendResult && (
-                <p style={{
-                  marginBottom: 16,
-                  padding: 12,
-                  borderRadius: 6,
-                  fontSize: 13,
-                  color: sendResult.includes('failed: 0') ? '#4ade80' : sendResult.includes('No pending') ? '#888' : '#ff4444',
-                  background: sendResult.includes('failed: 0') ? 'rgba(74, 222, 128, 0.1)' : 'transparent',
-                  border: sendResult.includes('failed: 0') ? '1px solid rgba(74, 222, 128, 0.3)' : 'none',
-                }}>
-                  {sendResult}
-                </p>
-              )}
-
-              {emailsReady > 0 && typeof sendResult !== 'object' && (
-                <p style={{ color: '#facc15', fontSize: 13, marginBottom: 12 }}>
-                  {emailsReady} registration{emailsReady > 1 ? 's' : ''} ready for confirmation.
-                </p>
-              )}
-
-              <button
-                onClick={handleSendConfirmations}
-                disabled={sending || emailsReady === 0}
-                style={{
-                  ...(sending || emailsReady === 0 ? disabledButtonStyle : buttonStyle),
-                }}
-              >
-                {sending ? (
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                    <Loader2 size={16} className="animate-spin" /> Sending...
-                  </span>
-                ) : (
-                  `Send Confirmation Emails${emailsReady > 0 ? ` (${emailsReady})` : ''}`
-                )}
-              </button>
-              {emailsReady === 0 && metrics.confirmationsSent > 0 && (
-                <p style={{ marginTop: 8, color: '#666', fontSize: 12 }}>
-                  All verified registrations have been confirmed.
-                </p>
-              )}
-            </div>
-          </>
+            )}
+          </div>
         )}
+
+        {/* Registrations table */}
+        {loading && registrations.length === 0 ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#888', fontSize: 14, padding: 40, justifyContent: 'center' }}>
+            <Loader2 size={16} className="animate-spin" /> Loading registrations...
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid #222', background: '#111' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1100 }}>
+              <thead>
+                <tr>
+                  {TABLE_COLUMNS.map((col) => (
+                    <th key={col.key} style={s.th} onClick={() => col.sortable && toggleSort(col.key)}>
+                      <span style={{ cursor: col.sortable ? 'pointer' : 'default', userSelect: 'none' }}>
+                        {col.label}
+                        {sortKey === col.key && (
+                          <span style={{ marginLeft: 4, color: '#4ade80' }}>{sortDir === 'asc' ? '▲' : '▼'}</span>
+                        )}
+                      </span>
+                    </th>
+                  ))}
+                  <th style={{ ...s.th, textAlign: 'center' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paged.length === 0 ? (
+                  <tr><td colSpan={TABLE_COLUMNS.length + 1} style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No registrations found</td></tr>
+                ) : paged.map((row) => (
+                  <tr key={row.rowIndex} style={{ transition: 'background 0.15s' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#1a1a1a')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+                    <td style={s.td}><span style={{ color: '#888', fontSize: 11, fontFamily: 'monospace' }}>{row.registrationId}</span></td>
+                    <td style={s.td}>{row.registrationDate}</td>
+                    <td style={s.td}>{row.category}</td>
+                    <td style={s.td}>
+                      {row.player1Name}
+                      {row.player2Name && <><br /><span style={{ color: '#666', fontSize: 12 }}>+ {row.player2Name}</span></>}
+                    </td>
+                    <td style={s.td}>{row.player1Phone}</td>
+                    <td style={{ ...s.td, fontSize: 12, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.player1Email}</td>
+                    <td style={s.td}>{row.entryFee}</td>
+                    <td style={{ ...s.td, fontSize: 11, fontFamily: 'monospace', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.utrNumber}</td>
+                    <td style={s.td}>{statusBadge(row.paymentStatus)}</td>
+                    <td style={s.td}>{statusBadge(row.verificationStatus)}</td>
+                    <td style={s.td}>{statusBadge(row.confirmationSent)}</td>
+                    <td style={{ ...s.td, textAlign: 'center' }}>
+                      <div style={{ display: 'flex', gap: 4, justifyContent: 'center', flexWrap: 'wrap' }}>
+                        {row.verificationStatus === 'Pending' && (
+                          <button style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80' }} onClick={() => setConfirmAction({ type: 'verify', row })}>Verify</button>
+                        )}
+                        {row.verificationStatus === 'Pending' && (
+                          <button style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444' }} onClick={() => setConfirmAction({ type: 'reject', row })}>Reject</button>
+                        )}
+                        <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => openEdit(row)}>
+                          <Edit size={12} style={{ marginRight: 3, verticalAlign: 'middle' }} />Edit
+                        </button>
+                        <button style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }} onClick={() => setConfirmAction({ type: 'delete', row })}>
+                          <Trash2 size={12} style={{ marginRight: 3, verticalAlign: 'middle' }} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Pagination */}
+            {pageCount > 1 && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '12px 16px', borderTop: '1px solid #222' }}>
+                <button disabled={page === 0} onClick={() => setPage((p) => p - 1)} style={page === 0 ? { ...s.btnSm, opacity: 0.4, cursor: 'not-allowed', background: 'transparent', border: '1px solid #333', color: '#888' } : { ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#ccc' }}>
+                  Prev
+                </button>
+                {Array.from({ length: Math.min(pageCount, 8) }, (_, i) => {
+                  const pageNum = Math.max(0, Math.min(page - 3, pageCount - 8)) + i
+                  if (pageNum >= pageCount) return null
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setPage(pageNum)}
+                      style={{
+                        ...s.btnSm,
+                        minWidth: 32,
+                        background: page === pageNum ? '#333' : 'transparent',
+                        border: page === pageNum ? 'none' : '1px solid #333',
+                        color: page === pageNum ? '#fff' : '#888',
+                      }}
+                    >
+                      {pageNum + 1}
+                    </button>
+                  )
+                })}
+                <button disabled={page >= pageCount - 1} onClick={() => setPage((p) => p + 1)} style={page >= pageCount - 1 ? { ...s.btnSm, opacity: 0.4, cursor: 'not-allowed', background: 'transparent', border: '1px solid #333', color: '#888' } : { ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#ccc' }}>
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Confirm action modal */}
+        {confirmAction && (
+          <div style={s.overlay} onClick={() => !actionLoading && setConfirmAction(null)}>
+            <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>
+                {confirmAction.type === 'verify' && 'Verify Registration'}
+                {confirmAction.type === 'reject' && 'Reject Registration'}
+                {confirmAction.type === 'delete' && 'Delete Registration'}
+              </h3>
+              <p style={{ color: '#888', fontSize: 14, marginBottom: 4 }}>
+                {confirmAction.type === 'verify' && 'Mark this registration as verified? This will set Payment Status to "Paid" and Verification Status to "Verified".'}
+                {confirmAction.type === 'reject' && 'Reject this registration? This will set Verification Status to "Rejected" and add a remark.'}
+                {confirmAction.type === 'delete' && 'Are you sure? This action cannot be undone. The row will be permanently removed from Google Sheets.'}
+              </p>
+              {confirmAction.type !== 'delete' && (
+                <p style={{ color: '#666', fontSize: 13, marginBottom: 16 }}>
+                  <strong style={{ color: '#ccc' }}>{confirmAction.row.player1Name}</strong> — {confirmAction.row.registrationId}
+                </p>
+              )}
+              {confirmAction.type === 'delete' && (
+                <p style={{ color: '#ff4444', fontSize: 13, marginBottom: 16 }}>
+                  <strong>{confirmAction.row.player1Name}</strong> — {confirmAction.row.registrationId}
+                </p>
+              )}
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setConfirmAction(null)}
+                  disabled={actionLoading}
+                  style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmThen}
+                  disabled={actionLoading}
+                  style={{
+                    ...s.btnSm,
+                    background: confirmAction.type === 'delete' ? '#ff4444' : confirmAction.type === 'reject' ? '#ff4444' : '#4ade80',
+                    color: '#000',
+                    fontWeight: 700,
+                    ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}),
+                  }}
+                >
+                  {actionLoading ? 'Processing...' : confirmAction.type === 'delete' ? 'Delete' : confirmAction.type === 'reject' ? 'Reject' : 'Verify'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit modal */}
+        {editTarget && (
+          <div style={s.overlay} onClick={() => !saving && setEditTarget(null)}>
+            <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600 }}>Edit Registration</h3>
+                <span style={{ color: '#888', fontSize: 12, fontFamily: 'monospace' }}>{editTarget.registrationId}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {EDIT_FIELDS.map((field) => (
+                  <div key={field.colIndex}>
+                    <label style={s.label}>{field.label}</label>
+                    <input
+                      value={editValues[String(field.colIndex)] || ''}
+                      onChange={(e) => setEditValues((v) => ({ ...v, [String(field.colIndex)]: e.target.value }))}
+                      style={s.field}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
+                <button onClick={() => setEditTarget(null)} disabled={saving} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+                <button onClick={handleSaveEdit} disabled={saving} style={{ ...s.btnSm, background: 'var(--rallyverse-gradient)', color: '#000', fontWeight: 700, ...(saving ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                  {saving ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Saving...</> : 'Save Changes'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
+    </div>
+  )
+}
+
+/* ── Metric card sub-component ── */
+function MetricCard({
+  icon, label, value, color, valueColor, borderColor,
+}: {
+  icon: React.ReactNode; label: string; value: number;
+  color?: string; valueColor?: string; borderColor?: string;
+}) {
+  return (
+    <div style={{
+      padding: 16,
+      borderRadius: 8,
+      border: `1px solid ${borderColor || '#222'}`,
+      background: '#111',
+    }}>
+      <div style={{ color: color || '#e5e5e5', marginBottom: 6 }}>{icon}</div>
+      <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{label}</p>
+      <p style={{ color: valueColor || '#fff', fontSize: 26, fontWeight: 700 }}>{value}</p>
     </div>
   )
 }

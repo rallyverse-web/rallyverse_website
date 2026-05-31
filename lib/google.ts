@@ -22,3 +22,17 @@ export function getDriveClient() {
   const auth = getGoogleAuth()
   return google.drive({ version: 'v3', auth })
 }
+
+export async function getSheetId(sheets: ReturnType<typeof getSheetsClient>, spreadsheetId: string, sheetTabName: string) {
+  const sheetMeta = await sheets.spreadsheets.get({
+    spreadsheetId,
+    fields: 'sheets.properties',
+  })
+  const sheet = sheetMeta.data.sheets?.find(
+    (s) => s.properties?.title === sheetTabName
+  )
+  if (!sheet?.properties?.sheetId) {
+    throw new Error(`Sheet "${sheetTabName}" not found`)
+  }
+  return sheet.properties.sheetId
+}
