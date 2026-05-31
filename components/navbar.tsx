@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { Menu, X } from 'lucide-react'
 import Magnet from '@/components/Magnet'
@@ -22,6 +22,7 @@ const sectionIds = ['hero', 'about', 'events', 'community', 'faq', 'contact']
 
 export default function Navbar() {
   const router = useRouter()
+  const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
@@ -80,7 +81,17 @@ export default function Navbar() {
 
   const handleNavClick = (href: string) => {
     setMenuOpen(false)
-    setActiveSection(href.replace('#', ''))
+    const sectionId = href.replace('#', '')
+    setActiveSection(sectionId)
+
+    if (pathname === '/') {
+      const el = document.getElementById(sectionId)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    } else {
+      router.push(`/${href}`)
+    }
   }
 
   return (

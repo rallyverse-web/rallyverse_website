@@ -90,6 +90,7 @@ export async function POST(req: NextRequest) {
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
       range: `${sheetTabName}!A:S`,
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       requestBody: { values: [row] },
     })
 
