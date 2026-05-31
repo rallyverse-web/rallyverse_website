@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       paymentPhone,
     } = body
 
-    if (!player1Name || !player1Phone || !player1SkillLevel || !category || !city || !utrNumber) {
+    if (!player1Name || !player1Phone || !player1Email || !player1SkillLevel || !category || !city || !utrNumber) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid Player 1 phone number' }, { status: 400 })
     }
 
-    if (player1Email && !emailRegex.test(player1Email)) {
+    if (!emailRegex.test(player1Email)) {
       return NextResponse.json({ error: 'Invalid Player 1 email' }, { status: 400 })
     }
 
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid Player 2 phone number' }, { status: 400 })
       }
 
-      if (player2Email && !emailRegex.test(player2Email)) {
+      if (!player2Email || !emailRegex.test(player2Email)) {
         return NextResponse.json({ error: 'Invalid Player 2 email' }, { status: 400 })
       }
     }

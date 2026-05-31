@@ -116,8 +116,10 @@ export default function RegistrationForm() {
       if (!phoneRegex.test(formData.player1Phone)) {
         nextErrors.player1Phone = 'Enter a valid WhatsApp number.'
       }
-      if (formData.player1Email && !emailRegex.test(formData.player1Email)) {
-        nextErrors.player1Email = 'Enter a valid email address.'
+      if (!formData.player1Email.trim()) {
+        nextErrors.player1Email = 'Email address is required.'
+      } else if (!emailRegex.test(formData.player1Email)) {
+        nextErrors.player1Email = 'Please enter a valid email address.'
       }
       if (!formData.player1SkillLevel) nextErrors.player1SkillLevel = 'Choose Player 1 skill level.'
       if (!formData.city.trim()) nextErrors.city = 'City is required.'
@@ -127,8 +129,10 @@ export default function RegistrationForm() {
         if (!phoneRegex.test(formData.player2Phone)) {
           nextErrors.player2Phone = 'Enter a valid WhatsApp number.'
         }
-        if (formData.player2Email && !emailRegex.test(formData.player2Email)) {
-          nextErrors.player2Email = 'Enter a valid email address.'
+        if (!formData.player2Email.trim()) {
+          nextErrors.player2Email = 'Email address is required.'
+        } else if (!emailRegex.test(formData.player2Email)) {
+          nextErrors.player2Email = 'Please enter a valid email address.'
         }
         if (!formData.player2SkillLevel) nextErrors.player2SkillLevel = 'Choose Player 2 skill level.'
       }
@@ -374,7 +378,7 @@ export default function RegistrationForm() {
             </div>
             <div>
               <label htmlFor="player1Email" className={labelClass} style={{ color: 'var(--text-muted)' }}>
-                Player 1 Email
+                Player 1 Email <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
               <input id="player1Email" name="player1Email" type="email" value={formData.player1Email} onChange={handleChange} className={inputClass} style={inputBaseStyle} />
               <FieldError message={errors.player1Email} />
@@ -411,9 +415,9 @@ export default function RegistrationForm() {
                 <FieldError message={errors.player2Phone} />
               </div>
               <div>
-                <label htmlFor="player2Email" className={labelClass} style={{ color: 'var(--text-muted)' }}>
-                  Player 2 Email
-                </label>
+              <label htmlFor="player2Email" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+                Player 2 Email <span style={{ color: 'var(--accent-primary)' }}>*</span>
+              </label>
                 <input id="player2Email" name="player2Email" type="email" value={formData.player2Email} onChange={handleChange} className={inputClass} style={inputBaseStyle} />
                 <FieldError message={errors.player2Email} />
               </div>
