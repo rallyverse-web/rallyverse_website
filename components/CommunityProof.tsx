@@ -21,7 +21,7 @@ export default function CommunityProof() {
         </AnimatedSection>
 
         <AnimatedSection>
-          <h2 className="text-center font-display text-[44px] leading-none uppercase md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
+          <h2 className="text-center font-display text-[32px] leading-none uppercase sm:text-[44px] md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
             Join the RallyVerse
             <br />
             Community

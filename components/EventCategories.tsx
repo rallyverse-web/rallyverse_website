@@ -44,7 +44,7 @@ export default function EventCategories() {
             </span>
           </div>
 
-          <div className="mb-14 text-center font-display text-[40px] leading-none uppercase md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
+          <div className="mb-14 text-center font-display text-[28px] leading-none uppercase sm:text-[40px] md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
             ONE VERSE.
             <br />
             INFINITE WAYS TO RALLY.

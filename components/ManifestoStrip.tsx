@@ -10,7 +10,7 @@ export default function ManifestoStrip() {
     <section className="py-20" style={{ backgroundColor: 'var(--manifesto-bg)' }}>
       <div className="mx-auto max-w-[800px] px-6 text-center">
         <AnimatedSection>
-          <div className="font-display text-[44px] leading-none uppercase md:text-[72px]" style={{ color: 'var(--manifesto-text)' }}>
+          <div className="font-display text-[28px] leading-none uppercase sm:text-[44px] md:text-[72px]" style={{ color: 'var(--manifesto-text)' }}>
             THE ROUTINE ENDS HERE.
             <br />
             YOUR VERSE BEGINS NOW.

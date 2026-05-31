@@ -62,7 +62,7 @@ export default function FAQ() {
             </span>
           </div>
 
-          <h2 className="mt-5 font-display text-[48px] leading-none uppercase md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
+          <h2 className="mt-5 font-display text-[32px] leading-none uppercase sm:text-[48px] md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
             THINGS YOU PROBABLY WANT TO KNOW.
           </h2>
         </AnimatedSection>

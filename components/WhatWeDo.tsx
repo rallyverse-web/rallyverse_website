@@ -13,7 +13,7 @@ export default function WhatWeDo() {
             </span>
           </div>
 
-          <div className="mt-5 font-display text-[36px] leading-none uppercase md:text-[48px] lg:text-[56px]" style={{ color: 'var(--text-primary)' }}>
+          <div className="mt-5 font-display text-[24px] leading-none uppercase sm:text-[36px] md:text-[48px] lg:text-[56px]" style={{ color: 'var(--text-primary)' }}>
             SOME PEOPLE WATCH LIFE HAPPEN.
             <br />
             WE RALLY THROUGH IT.

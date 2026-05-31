@@ -21,18 +21,18 @@ export default function FirstEvent() {
 
   return (
     <section id="events" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-16 px-6 md:grid-cols-2 md:items-start">
+      <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-10 px-6 md:grid-cols-2 md:gap-16 md:items-start">
         <AnimatedSection>
           <p className="mb-5 font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
             FIRST CHAPTER &mdash; BENGALURU 2026
           </p>
 
-          <div className="font-display text-[64px] leading-none uppercase md:text-[88px]" style={{ color: 'var(--text-primary)' }}>
+          <div className="font-display text-[36px] leading-none uppercase sm:text-[48px] md:text-[88px]" style={{ color: 'var(--text-primary)' }}>
             EVERY UNIVERSE
             <br />
             HAS A BEGINNING.
           </div>
-          <div className="mt-2 font-display text-[28px] uppercase md:text-[36px]" style={{ color: 'var(--accent-primary)' }}>
+          <div className="mt-2 font-display text-[18px] uppercase sm:text-[22px] md:text-[36px]" style={{ color: 'var(--accent-primary)' }}>
             RALLY SERIES 01 &mdash; BENGALURU BADMINTON
           </div>
 

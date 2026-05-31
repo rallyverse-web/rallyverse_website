@@ -61,7 +61,7 @@ export default function HeroIntro() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px' }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="mb-8 font-body text-[11px] uppercase tracking-widest"
+          className="mb-8 max-w-[280px] font-body text-[11px] uppercase tracking-widest"
           style={{ color: 'var(--text-muted)' }}
         >
           BENGALURU &middot; SPORTS &middot; ADVENTURE &middot; COMMUNITY &middot; 2026
@@ -87,10 +87,10 @@ export default function HeroIntro() {
                 revealDirection="start"
                 speed={80}
                 sequential={true}
-                className={`font-display text-[56px] uppercase leading-none md:text-[84px] lg:text-[104px] ${
+                className={`font-display text-[40px] uppercase leading-none sm:text-[56px] md:text-[84px] lg:text-[104px] ${
                   word === 'ROUTINE.' ? 'rally-gradient-text' : ''
                 }`}
-                encryptedClassName="font-display text-[56px] uppercase leading-none text-white/30 md:text-[84px] lg:text-[104px]"
+                encryptedClassName="font-display text-[40px] uppercase leading-none text-white/30 sm:text-[56px] md:text-[84px] lg:text-[104px]"
               />
             </motion.div>
           ))}

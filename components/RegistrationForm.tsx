@@ -526,7 +526,7 @@ export default function RegistrationForm() {
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
-          <div className="mt-5 font-display text-[40px] leading-none uppercase md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
+          <div className="mt-5 font-display text-[36px] leading-none uppercase sm:text-[40px] md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
             YOUR VERSE
             <br />
             STARTS HERE.
