@@ -46,18 +46,23 @@ export default function FAQ() {
   }
 
   return (
-    <section id="faq" className="border-t border-subtle bg-carbon py-20 md:py-28">
+    <section id="faq" className="py-20 md:py-28"
+      style={{
+        borderTop: '1px solid var(--border-subtle)',
+        backgroundColor: 'var(--bg-primary)',
+      }}
+    >
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-12 px-6 md:grid-cols-[1fr_1.5fr] md:gap-20">
         {/* Left column — heading */}
         <AnimatedSection>
           <div className="flex items-center gap-3">
-            <div className="h-px w-10 bg-orange" />
-            <span className="font-body text-[11px] uppercase tracking-widest text-orange">
+            <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
+            <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--section-label-color)' }}>
               QUESTIONS
             </span>
           </div>
 
-          <h2 className="mt-5 font-display text-[48px] leading-none uppercase text-primary md:text-[64px]">
+          <h2 className="mt-5 font-display text-[48px] leading-none uppercase md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
             THINGS YOU PROBABLY WANT TO KNOW.
           </h2>
         </AnimatedSection>
@@ -75,20 +80,24 @@ export default function FAQ() {
                 ease: 'easeOut',
                 delay: i * 0.07,
               }}
-              className="border-b border-subtle"
+              style={{ borderBottom: '1px solid var(--border-subtle)' }}
             >
               <button
                 type="button"
                 onClick={() => toggle(i)}
-                className="flex w-full items-center justify-between gap-4 py-6 text-left transition-colors duration-200 hover:text-orange"
+                className="flex w-full items-center justify-between gap-4 py-6 text-left transition-colors duration-200"
+                style={{ color: 'var(--text-primary)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-primary)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
               >
-                <span className="font-body text-[15px] font-medium text-primary">
+                <span className="font-body text-[15px] font-medium">
                   {faq.question}
                 </span>
                 <motion.span
                   animate={{ rotate: openIndex === i ? 180 : 0 }}
                   transition={{ duration: 0.25 }}
-                  className="shrink-0 text-orange"
+                  className="shrink-0"
+                  style={{ color: 'var(--accent-primary)' }}
                 >
                   <ChevronDown size={18} />
                 </motion.span>
@@ -103,7 +112,7 @@ export default function FAQ() {
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <p className="pb-6 font-body text-[15px] leading-[1.85] text-muted">
+                    <p className="pb-6 font-body text-[15px] leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
                       {faq.answer}
                     </p>
                   </motion.div>

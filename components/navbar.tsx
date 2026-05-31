@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { motion, AnimatePresence } from 'motion/react'
 import { Menu, X } from 'lucide-react'
-import GradientText from '@/components/GradientText'
 import Magnet from '@/components/Magnet'
 import ShinyText from '@/components/ShinyText'
+import ThemedLogo from '@/components/ThemedLogo'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const navLinks = [
   { label: 'Home', href: '#hero' },
@@ -86,38 +86,20 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 h-16 transition-all duration-300 ${
-          scrolled
-            ? 'border-b border-white/10 bg-[#0B0D10] backdrop-blur-sm'
-            : 'bg-transparent'
-        }`}
+        className="fixed inset-x-0 top-0 z-50 h-16 no-theme-transition"
+        style={{
+          backgroundColor: scrolled ? 'var(--nav-bg-scrolled)' : 'transparent',
+          borderBottom: scrolled ? '1px solid var(--nav-border)' : 'none',
+          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        }}
       >
         <div className="relative flex h-full items-center justify-between px-6 md:px-12">
           {/* Logo */}
           <button
             type="button"
             onClick={() => router.push('/')}
-            className="flex shrink-0 items-center gap-2"
           >
-            <Image
-              src="/logo/logo_transparent.png"
-              alt="RallyVerse logo"
-              width={120}
-              height={40}
-              className="h-8 w-auto object-contain"
-              priority
-            />
-            <span className="hidden font-display text-lg leading-none tracking-tight sm:inline-flex">
-              <span className="text-white">RALLY</span>
-              <GradientText
-                colors={['#FF5E00', '#FF8C00', '#00C9A7', '#00E5FF', '#FF5E00']}
-                animationSpeed={6}
-                showBorder={false}
-                className="font-display tracking-tight"
-              >
-                VERSE
-              </GradientText>
-            </span>
+            <ThemedLogo context="navbar" />
           </button>
 
           {/* Desktop nav links */}
@@ -129,26 +111,34 @@ export default function Navbar() {
                   key={link.href}
                   type="button"
                   onClick={() => handleNavClick(link.href)}
-                  className={`relative text-sm font-medium tracking-wide transition-colors duration-200 ${
-                    isActive ? 'text-white' : 'text-[#909090] hover:text-white'
-                  }`}
+                  className="relative text-sm font-medium tracking-wide transition-colors duration-200"
+                  style={{
+                    color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+                  }}
+                  onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute -bottom-1 left-0 right-0 h-[2px] bg-[#FF5E00] rounded-full" />
+                    <span className="absolute -bottom-1 left-0 right-0 h-[2px] rounded-full" style={{ backgroundColor: 'var(--accent-primary)' }} />
                   )}
                 </button>
               )
             })}
           </nav>
 
-          {/* Desktop Register button */}
-          <div className="hidden shrink-0 md:block">
+          {/* Desktop right side */}
+          <div className="hidden shrink-0 items-center gap-3 md:flex">
+            <ThemeToggle />
             <Magnet padding={30} disabled={isMobile}>
               <button
                 type="button"
                 onClick={() => router.push('/register')}
-                className="whitespace-nowrap rounded-md bg-brand-gradient px-4 py-2 text-sm font-semibold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
+                className="whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold transition-all duration-200 active:scale-95"
+                style={{
+                  background: 'var(--gradient-brand)',
+                  color: 'var(--btn-primary-text)',
+                }}
               >
                 <ShinyText
                   text="Enter the Verse"
@@ -165,7 +155,8 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="md:hidden text-primary p-1"
+            className="md:hidden p-1"
+            style={{ color: 'var(--text-primary)' }}
             aria-label="Open menu"
           >
             <Menu size={24} />
@@ -189,7 +180,11 @@ export default function Navbar() {
 
             {/* Drawer */}
             <motion.div
-              className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#13161B] px-6 pb-8 pt-5"
+              className="fixed inset-x-0 top-0 z-50 px-6 pb-8 pt-5"
+              style={{
+                backgroundColor: 'var(--bg-surface)',
+                borderBottom: '1px solid var(--border-subtle)',
+              }}
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
@@ -200,31 +195,14 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => router.push('/')}
-                  className="flex items-center gap-2"
                 >
-                  <Image
-                    src="/logo/logo_transparent.png"
-                    alt="RallyVerse logo"
-                    width={120}
-                    height={40}
-                    className="h-8 w-auto object-contain"
-                  />
-                  <span className="inline-flex font-display text-lg leading-none tracking-tight">
-                    <span className="text-white">RALLY</span>
-                    <GradientText
-                      colors={['#FF5E00', '#FF8C00', '#00C9A7', '#00E5FF', '#FF5E00']}
-                      animationSpeed={6}
-                      showBorder={false}
-                      className="font-display tracking-tight"
-                    >
-                      VERSE
-                    </GradientText>
-                  </span>
+                  <ThemedLogo context="drawer" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setMenuOpen(false)}
-                  className="text-primary p-1"
+                  className="p-1"
+                  style={{ color: 'var(--text-primary)' }}
                   aria-label="Close menu"
                 >
                   <X size={24} />
@@ -243,11 +221,15 @@ export default function Navbar() {
                       initial={{ opacity: 0, x: -12 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05, duration: 0.2 }}
-                      className={`w-full text-left py-3 px-2 text-base font-medium tracking-wide border-b border-white/5 transition-colors duration-200 ${
-                        isActive
-                          ? 'text-white border-l-2 border-l-[#FF5E00] pl-3'
-                          : 'text-[#909090] hover:text-white'
-                      }`}
+                      className="w-full text-left py-3 px-2 text-base font-medium tracking-wide transition-colors duration-200"
+                      style={{
+                        color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+                        borderBottom: '1px solid var(--border-subtle)',
+                        borderLeft: isActive ? '2px solid var(--accent-primary)' : 'none',
+                        paddingLeft: isActive ? '12px' : '8px',
+                      }}
+                      onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.color = 'var(--text-primary)'; }}
+                      onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.color = 'var(--text-muted)'; }}
                     >
                       {link.label}
                     </motion.button>
@@ -255,12 +237,17 @@ export default function Navbar() {
                 })}
               </nav>
 
+              {/* Drawer ThemeToggle */}
+              <div className="px-2 pt-4 pb-2">
+                <ThemeToggle />
+              </div>
+
               {/* Drawer CTA */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.2 }}
-                className="mt-8"
+                className="mt-2"
               >
                 <Magnet padding={30} disabled={isMobile}>
                   <button
@@ -269,7 +256,11 @@ export default function Navbar() {
                       setMenuOpen(false)
                       router.push('/register')
                     }}
-                    className="w-full rounded-md bg-brand-gradient py-3 text-sm font-semibold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
+                    className="w-full rounded-md py-3 text-sm font-semibold transition-all duration-200 active:scale-95"
+                    style={{
+                      background: 'var(--gradient-brand)',
+                      color: 'var(--btn-primary-text)',
+                    }}
                   >
                     <ShinyText
                       text="Enter the Verse"

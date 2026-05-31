@@ -54,14 +54,15 @@ export default function HeroIntro() {
   }, [introActive])
 
   return (
-    <section ref={sectionRef} className="bg-carbon px-4 py-20 text-center md:py-28">
+    <section ref={sectionRef} className="px-4 py-20 text-center md:py-28" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="mx-auto flex max-w-4xl flex-col items-center">
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px' }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="mb-8 font-body text-[11px] uppercase tracking-widest text-muted"
+          className="mb-8 font-body text-[11px] uppercase tracking-widest"
+          style={{ color: 'var(--text-muted)' }}
         >
           BENGALURU &middot; SPORTS &middot; ADVENTURE &middot; COMMUNITY &middot; 2026
         </motion.p>
@@ -78,6 +79,7 @@ export default function HeroIntro() {
               initial={{ opacity: 0 }}
               animate={{ opacity: introActive ? 1 : 0 }}
               transition={{ duration: 0.25 }}
+              style={{ color: word === 'ROUTINE.' ? undefined : 'var(--text-primary)' }}
             >
               <DecryptedText
                 text={word}
@@ -86,7 +88,7 @@ export default function HeroIntro() {
                 speed={80}
                 sequential={true}
                 className={`font-display text-[56px] uppercase leading-none md:text-[84px] lg:text-[104px] ${
-                  word === 'ROUTINE.' ? 'rally-gradient-text' : 'text-white'
+                  word === 'ROUTINE.' ? 'rally-gradient-text' : ''
                 }`}
                 encryptedClassName="font-display text-[56px] uppercase leading-none text-white/30 md:text-[84px] lg:text-[104px]"
               />
@@ -101,27 +103,29 @@ export default function HeroIntro() {
           className="mt-10"
         >
           <div className="flex flex-col items-center gap-2 text-center">
-            <p className="text-[#909090] text-base md:text-lg font-body">
+            <p className="font-body text-base md:text-lg" style={{ color: 'var(--text-muted)' }}>
               The Verse is for
             </p>
-            <RotatingText
-              texts={[
-                'Competitors',
-                'Explorers',
-                'Community Builders',
-                'Weekend Warriors',
-                'People Who Show Up',
-              ]}
-              mainClassName="font-display text-[28px] md:text-[36px] text-[#FF5E00] leading-none"
-              staggerDuration={0.03}
-              splitLevelClassName="overflow-hidden"
-              transition={{ type: 'spring', damping: 30, stiffness: 400 }}
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '-100%' }}
-              rotationInterval={2500}
-            />
-            <p className="text-[#909090] text-sm md:text-base font-body mt-1">
+            <div style={{ color: 'var(--accent-primary)' }}>
+              <RotatingText
+                texts={[
+                  'Competitors',
+                  'Explorers',
+                  'Community Builders',
+                  'Weekend Warriors',
+                  'People Who Show Up',
+                ]}
+                mainClassName="font-display text-[28px] md:text-[36px] leading-none"
+                staggerDuration={0.03}
+                splitLevelClassName="overflow-hidden"
+                transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '-100%' }}
+                rotationInterval={2500}
+              />
+            </div>
+            <p className="font-body text-sm md:text-base mt-1" style={{ color: 'var(--text-muted)' }}>
               Move. Compete. Explore. Connect.
             </p>
           </div>
@@ -137,12 +141,17 @@ export default function HeroIntro() {
             <button
               type="button"
               onClick={() => router.push('/register')}
-              className="group relative overflow-hidden rounded-md border border-orange bg-transparent px-8 py-3 font-body text-sm font-semibold text-orange transition-all duration-200 hover:glow-orange active:scale-95"
+              className="group relative overflow-hidden rounded-md border px-8 py-3 font-body text-sm font-semibold transition-all duration-200 active:scale-95"
+              style={{
+                borderColor: 'var(--btn-outline-border)',
+                backgroundColor: 'transparent',
+                color: 'var(--btn-outline-text)',
+              }}
             >
-              <span className="relative z-10 transition-colors duration-200 group-hover:text-carbon">
+              <span className="relative z-10 transition-colors duration-200" style={{ color: 'var(--btn-outline-text)' }}>
                 Enter the Verse
               </span>
-              <span className="absolute inset-0 -translate-x-full bg-brand-gradient transition-transform duration-300 group-hover:translate-x-0" />
+              <span className="absolute inset-0 -translate-x-full transition-transform duration-300 group-hover:translate-x-0" style={{ background: 'var(--gradient-brand)' }} />
             </button>
           </Magnet>
         </motion.div>

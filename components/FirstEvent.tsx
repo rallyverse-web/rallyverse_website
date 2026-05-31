@@ -20,23 +20,23 @@ export default function FirstEvent() {
   }, [])
 
   return (
-    <section id="events" className="bg-carbon py-20 md:py-28">
+    <section id="events" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-16 px-6 md:grid-cols-2 md:items-start">
         <AnimatedSection>
-          <p className="mb-5 font-body text-[11px] uppercase tracking-widest text-muted">
+          <p className="mb-5 font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
             FIRST CHAPTER &mdash; BENGALURU 2026
           </p>
 
-          <div className="font-display text-[64px] leading-none uppercase text-primary md:text-[88px]">
+          <div className="font-display text-[64px] leading-none uppercase md:text-[88px]" style={{ color: 'var(--text-primary)' }}>
             EVERY UNIVERSE
             <br />
             HAS A BEGINNING.
           </div>
-          <div className="mt-2 font-display text-[28px] uppercase text-orange md:text-[36px]">
+          <div className="mt-2 font-display text-[28px] uppercase md:text-[36px]" style={{ color: 'var(--accent-primary)' }}>
             RALLY SERIES 01 &mdash; BENGALURU BADMINTON
           </div>
 
-          <div className="mt-7 space-y-5 font-body text-base leading-[1.85] text-muted">
+          <div className="mt-7 space-y-5 font-body text-base leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
             <p>
               This is where it starts. Not just a tournament &mdash; the first chapter of something that will outlast any single scoreline or bracket result.
             </p>
@@ -53,7 +53,11 @@ export default function FirstEvent() {
               <button
                 type="button"
                 onClick={() => router.push('/register')}
-                className="group relative overflow-hidden rounded-md bg-orange px-8 py-3 font-body text-sm font-bold text-carbon transition-all duration-200 hover:glow-orange active:scale-95"
+                className="group relative overflow-hidden rounded-md px-8 py-3 font-body text-sm font-bold transition-all duration-200 active:scale-95"
+                style={{
+                  backgroundColor: 'var(--btn-primary-bg)',
+                  color: 'var(--btn-primary-text)',
+                }}
               >
                 <span className="relative z-10">
                   <ShinyText
@@ -64,11 +68,11 @@ export default function FirstEvent() {
                     shineColor="rgba(255,255,255,0.6)"
                   />
                 </span>
-                <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'linear-gradient(135deg, #FF5E00 0%, #00E5FF 100%)' }} />
+                <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'var(--gradient-brand)' }} />
               </button>
             </Magnet>
 
-            <p className="mt-4 text-center font-body text-xs text-[#909090]">
+            <p className="mt-4 text-center font-body text-xs" style={{ color: 'var(--text-muted)' }}>
               Join the founding community. First registrants shape the Verse.
             </p>
           </div>
@@ -76,15 +80,22 @@ export default function FirstEvent() {
 
         <AnimatedSection delay={0.15}>
           <div className="group">
-            <div className="flex aspect-[3/4] w-full flex-col items-center justify-center gap-6 rounded-xl border border-subtle bg-surface transition-all duration-300 group-hover:border-orange/30 group-hover:glow-orange">
-              <div className="font-display text-[80px] leading-none tracking-wide text-subtle transition-colors duration-300 group-hover:text-orange/30">
+            <div className="flex aspect-[3/4] w-full flex-col items-center justify-center gap-6 rounded-xl transition-all duration-300 group-hover:glow-orange"
+              style={{
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: 'var(--bg-surface)',
+              }}
+            >
+              <div className="font-display text-[80px] leading-none tracking-wide transition-colors duration-300"
+                style={{ color: 'var(--text-faint)' }}
+              >
                 RV
               </div>
               <div className="text-center">
-                <p className="font-display text-[18px] tracking-wider text-primary">
+                <p className="font-display text-[18px] tracking-wider" style={{ color: 'var(--text-primary)' }}>
                   RALLY SERIES 01
                 </p>
-                <p className="mt-1 font-body text-xs uppercase tracking-widest text-muted">
+                <p className="mt-1 font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
                   BENGALURU &middot; 2026
                 </p>
               </div>
@@ -92,12 +103,12 @@ export default function FirstEvent() {
 
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MapPin size={14} className="text-orange" />
-                <span className="font-body text-sm text-muted">Bengaluru, India</span>
+                <MapPin size={14} style={{ color: 'var(--icon-color)' }} />
+                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>Bengaluru, India</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar size={14} className="text-orange" />
-                <span className="font-body text-sm text-muted">Date TBA</span>
+                <Calendar size={14} style={{ color: 'var(--icon-color)' }} />
+                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>Date TBA</span>
               </div>
             </div>
           </div>

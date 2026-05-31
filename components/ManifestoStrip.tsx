@@ -7,22 +7,35 @@ export default function ManifestoStrip() {
   const router = useRouter()
 
   return (
-    <section className="bg-orange py-20">
+    <section className="py-20" style={{ backgroundColor: 'var(--manifesto-bg)' }}>
       <div className="mx-auto max-w-[800px] px-6 text-center">
         <AnimatedSection>
-          <div className="font-display text-[44px] leading-none uppercase text-carbon md:text-[72px]">
+          <div className="font-display text-[44px] leading-none uppercase md:text-[72px]" style={{ color: 'var(--manifesto-text)' }}>
             THE ROUTINE ENDS HERE.
             <br />
             YOUR VERSE BEGINS NOW.
           </div>
-          <p className="mt-5 font-body text-[15px] text-carbon opacity-60">
+          <p className="mt-5 font-body text-[15px]" style={{ color: 'var(--manifesto-muted)' }}>
             RallyVerse &middot; Bengaluru &middot; Season 01 &middot; 2026
           </p>
 
           <button
             type="button"
             onClick={() => router.push('/register')}
-            className="mt-8 inline-block rounded-md border-2 border-carbon bg-carbon px-8 py-3 font-display text-lg tracking-wider text-white transition-all duration-200 hover:bg-transparent hover:text-carbon"
+            className="mt-8 inline-block rounded-md border-2 px-8 py-3 font-display text-lg tracking-wider transition-all duration-200"
+            style={{
+              borderColor: 'var(--manifesto-btn-border)',
+              backgroundColor: 'var(--manifesto-btn-bg)',
+              color: 'var(--manifesto-btn-text)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.color = 'var(--manifesto-text)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--manifesto-btn-bg)'
+              e.currentTarget.style.color = 'var(--manifesto-btn-text)'
+            }}
           >
             Enter the Verse &rarr;
           </button>

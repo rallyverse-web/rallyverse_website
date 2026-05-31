@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Bebas_Neue, Inter } from 'next/font/google'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/Footer'
+import { ThemeProvider } from '@/lib/theme'
 import './globals.css'
 
 const bebasNeue = Bebas_Neue({
@@ -51,8 +52,22 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${bebasNeue.variable} ${inter.variable}`}>
+    <html lang="en" data-theme="color" suppressHydrationWarning className={`${bebasNeue.variable} ${inter.variable}`}>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var t = localStorage.getItem('rallyverse-theme');
+                  if (t === 'bw' || t === 'color') {
+                    document.documentElement.setAttribute('data-theme', t);
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
         <link rel="canonical" href="https://www.rallyverse.in" />
         <script
           type="application/ld+json"
@@ -98,9 +113,11 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <ThemeProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   )

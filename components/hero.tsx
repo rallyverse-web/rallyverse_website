@@ -1,14 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { motion } from 'motion/react'
 import BlurText from './BlurText'
+import ThemedLogo from '@/components/ThemedLogo'
+import { useTheme } from '@/lib/theme'
 
 const Particles = dynamic(() => import('@/components/Particles'), { ssr: false })
 
 export default function Hero() {
+  const { isColorTheme } = useTheme()
   const [particleQuantity, setParticleQuantity] = useState(80)
 
   useEffect(() => {
@@ -25,12 +27,13 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[100svh] overflow-hidden bg-carbon px-4 text-center"
+      className="relative min-h-[100svh] overflow-hidden px-4 text-center no-theme-transition"
+      style={{ backgroundColor: 'var(--bg-primary)' }}
     >
       <Particles
         className="absolute inset-0 z-0 h-full w-full"
         quantity={particleQuantity}
-        color="#FF5E00"
+        color={isColorTheme ? '#FF5E00' : '#FFFFFF'}
         ease={80}
         refresh={false}
         size={0.6}
@@ -43,14 +46,7 @@ export default function Hero() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="mb-6"
         >
-          <Image
-            src="/logo/logo_transparent.png"
-            alt="RallyVerse"
-            width={220}
-            height={220}
-            className="mx-auto h-36 w-36 object-contain md:h-48 md:w-48 lg:h-56 lg:w-56"
-            priority
-          />
+          <ThemedLogo context="hero" />
         </motion.div>
 
         <div className="relative">
@@ -62,7 +58,7 @@ export default function Hero() {
             stepDuration={0.4}
             threshold={0}
             rootMargin="0px"
-            className="font-display text-[80px] md:text-[120px] lg:text-[160px] leading-none tracking-tight text-white rallyverse-gradient-text"
+            className="font-display text-[80px] md:text-[120px] lg:text-[160px] leading-none tracking-tight rallyverse-gradient-text"
           />
         </div>
       </div>

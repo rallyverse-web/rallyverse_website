@@ -1,3 +1,195 @@
+/* ============================================
+   RALLYVERSE THEME SYSTEM
+   Theme 1: [color] = default (orange + teal)
+   Theme 2: [bw]    = black and white
+   ============================================ */
+
+/* COLOR THEME — Default */
+:root,
+[data-theme="color"] {
+  --bg-primary: #0B0D10;
+  --bg-surface: #13161B;
+  --bg-subtle: #232833;
+
+  --text-primary: #F5F5F5;
+  --text-muted: #909090;
+  --text-faint: #606060;
+
+  --accent-primary: #FF5E00;
+  --accent-secondary: #00E5FF;
+  --accent-hover: #FF7A2E;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.10);
+  --border-accent: rgba(255, 94, 0, 0.40);
+
+  --btn-primary-bg: #FF5E00;
+  --btn-primary-text: #0B0D10;
+  --btn-primary-hover: #FF7A2E;
+
+  --btn-outline-border: #FF5E00;
+  --btn-outline-text: #FF5E00;
+  --btn-outline-hover-bg: #FF5E00;
+  --btn-outline-hover-text: #0B0D10;
+
+  --gradient-brand: linear-gradient(90deg, #FF5E00, #00E5FF);
+  --gradient-hero-text: linear-gradient(90deg, #FF5E00 0%, #FF8C00 25%, #c8b560 50%, #00C9A7 75%, #00E5FF 100%);
+
+  --manifesto-bg: #FF5E00;
+  --manifesto-text: #0B0D10;
+  --manifesto-muted: rgba(11, 13, 16, 0.6);
+  --manifesto-btn-bg: #0B0D10;
+  --manifesto-btn-text: #F5F5F5;
+  --manifesto-btn-border: #0B0D10;
+
+  --card-bg: #13161B;
+  --card-border: rgba(255, 255, 255, 0.06);
+  --card-border-hover: rgba(255, 94, 0, 0.30);
+
+  --nav-bg-scrolled: #0B0D10;
+  --nav-border: rgba(255, 255, 255, 0.05);
+
+  --section-label-color: #FF5E00;
+
+  --toggle-bg: #232833;
+  --toggle-icon-color: #FF5E00;
+  --toggle-border: rgba(255, 255, 255, 0.10);
+
+  --pill-active-bg: #FF5E00;
+  --pill-active-text: #0B0D10;
+  --pill-inactive-bg: #232833;
+  --pill-inactive-text: #909090;
+
+  --icon-color: #FF5E00;
+  --link-color: #FF5E00;
+  --link-hover: #FF7A2E;
+
+  --input-bg: #13161B;
+  --input-border: rgba(255, 255, 255, 0.10);
+  --input-border-focus: #FF5E00;
+  --input-text: #F5F5F5;
+  --input-placeholder: #606060;
+
+  --success-color: #00E5FF;
+  --error-color: #FF4444;
+
+  --shockwave-color: rgba(255, 94, 0, 0.4);
+}
+
+/* BLACK & WHITE THEME */
+[data-theme="bw"] {
+  --bg-primary: #000000;
+  --bg-surface: #0A0A0A;
+  --bg-subtle: #141414;
+
+  --text-primary: #FFFFFF;
+  --text-muted: #888888;
+  --text-faint: #555555;
+
+  --accent-primary: #FFFFFF;
+  --accent-secondary: #CCCCCC;
+  --accent-hover: #E0E0E0;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-accent: rgba(255, 255, 255, 0.30);
+
+  --btn-primary-bg: #FFFFFF;
+  --btn-primary-text: #000000;
+  --btn-primary-hover: #E0E0E0;
+
+  --btn-outline-border: #FFFFFF;
+  --btn-outline-text: #FFFFFF;
+  --btn-outline-hover-bg: #FFFFFF;
+  --btn-outline-hover-text: #000000;
+
+  --gradient-brand: linear-gradient(90deg, #FFFFFF, #888888);
+  --gradient-hero-text: linear-gradient(90deg, #FFFFFF 0%, #CCCCCC 50%, #888888 100%);
+
+  --manifesto-bg: #FFFFFF;
+  --manifesto-text: #000000;
+  --manifesto-muted: rgba(0, 0, 0, 0.6);
+  --manifesto-btn-bg: #000000;
+  --manifesto-btn-text: #FFFFFF;
+  --manifesto-btn-border: #000000;
+
+  --card-bg: #0A0A0A;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-border-hover: rgba(255, 255, 255, 0.30);
+
+  --nav-bg-scrolled: #000000;
+  --nav-border: rgba(255, 255, 255, 0.08);
+
+  --section-label-color: #FFFFFF;
+
+  --toggle-bg: #141414;
+  --toggle-icon-color: #FFFFFF;
+  --toggle-border: rgba(255, 255, 255, 0.20);
+
+  --pill-active-bg: #FFFFFF;
+  --pill-active-text: #000000;
+  --pill-inactive-bg: #141414;
+  --pill-inactive-text: #888888;
+
+  --icon-color: #FFFFFF;
+  --link-color: #FFFFFF;
+  --link-hover: #CCCCCC;
+
+  --input-bg: #0A0A0A;
+  --input-border: rgba(255, 255, 255, 0.12);
+  --input-border-focus: #FFFFFF;
+  --input-text: #FFFFFF;
+  --input-placeholder: #555555;
+
+  --success-color: #FFFFFF;
+  --error-color: #FF6666;
+
+  --shockwave-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Smooth theme transition — applied globally */
+*,
+*::before,
+*::after {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+/* Exclude animation-heavy and motion elements from theme transition */
+.no-theme-transition,
+.no-theme-transition * {
+  transition: none !important;
+}
+
+/* Hero gradient text — COLOR theme */
+[data-theme="color"] .rallyverse-gradient-text span {
+  background: linear-gradient(90deg, #FF5E00 0%, #FF8C00 25%, #c8b560 50%, #00C9A7 75%, #00E5FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero gradient text — B&W theme */
+[data-theme="bw"] .rallyverse-gradient-text span {
+  background: none;
+  -webkit-text-fill-color: #FFFFFF;
+  color: #FFFFFF;
+}
+
+/* Tagline gradient text — COLOR theme */
+[data-theme="color"] .rally-gradient-text {
+  background: linear-gradient(90deg, #FF5E00, #00E5FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Tagline gradient text — B&W theme */
+[data-theme="bw"] .rally-gradient-text {
+  background: none;
+  -webkit-text-fill-color: #FFFFFF;
+  color: #FFFFFF;
+}
+
 @import 'tailwindcss';
 
 @theme inline {
@@ -40,22 +232,28 @@
   }
 
   body {
-    background-color: #0B0D10;
-    color: #F5F5F5;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     font-family: var(--font-body);
     overflow-anchor: none;
   }
 
   ::selection {
-    background-color: #FF5E00;
-    color: #0B0D10;
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+  }
+
+  input::placeholder,
+  select::placeholder,
+  textarea::placeholder {
+    color: var(--input-placeholder);
   }
 
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible,
   button:focus-visible {
-    outline: 2px solid #00E5FF;
+    outline: 2px solid var(--accent-secondary);
     outline-offset: 2px;
   }
 

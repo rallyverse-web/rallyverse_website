@@ -34,14 +34,27 @@ const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const utrRegex = /^[a-zA-Z0-9]{8,}$/
 
+const inputBaseStyle = {
+  width: '100%',
+  minHeight: 48,
+  backgroundColor: 'var(--input-bg)',
+  color: 'var(--input-text)',
+  fontFamily: 'var(--font-body)',
+  fontSize: 14,
+  padding: '12px 16px',
+  borderRadius: 6,
+  outline: 'none',
+  border: '1px solid var(--input-border)',
+  transition: 'border-color 0.2s, background-color 0.35s ease, color 0.35s ease',
+} as React.CSSProperties
+
 const inputClass =
-  'w-full min-h-[48px] bg-surface border border-subtle text-primary placeholder:text-muted font-body text-sm px-4 py-3 rounded-md focus:outline-none focus:border-orange transition-colors duration-200'
+  'w-full min-h-[48px] font-body text-sm px-4 py-3 rounded-md appearance-none cursor-pointer'
 
-const selectClass =
-  'w-full min-h-[48px] bg-surface border border-subtle text-primary font-body text-sm px-4 py-3 rounded-md focus:outline-none focus:border-orange transition-colors duration-200 appearance-none cursor-pointer'
+const selectClass = inputClass
 
-const labelClass = 'mb-2 block font-body text-sm text-muted'
-const errorClass = 'mt-2 font-body text-xs text-red-400'
+const labelClass = 'mb-2 block font-body text-sm'
+const errorClass = 'mt-2 font-body text-xs'
 
 const initialFormData: FormDataState = {
   category: '',
@@ -165,31 +178,56 @@ export default function RegistrationForm() {
 
   const isSubmitting = Boolean(loadingMessage)
 
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.currentTarget.style.borderColor = 'var(--input-border-focus)'
+  }
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.currentTarget.style.borderColor = 'var(--input-border)'
+  }
+
   const successContent = (
     <div className="flex flex-col items-center gap-6 py-16 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-orange/30 bg-orange/10">
-        <CheckCircle size={32} className="text-orange" />
+      <div
+        className="flex h-16 w-16 items-center justify-center rounded-full"
+        style={{
+          border: '1px solid rgba(255, 94, 0, 0.3)',
+          backgroundColor: 'rgba(255, 94, 0, 0.1)',
+        }}
+      >
+        <CheckCircle size={32} style={{ color: 'var(--accent-primary)' }} />
       </div>
       <div>
-        <p className="font-display text-[48px] uppercase leading-none text-primary md:text-[64px]">
+        <p className="font-display text-[48px] uppercase leading-none md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
           WELCOME TO THE VERSE.
         </p>
-        <p className="mt-4 font-body text-base text-primary">
+        <p className="mt-4 font-body text-base" style={{ color: 'var(--text-primary)' }}>
           Registration ID: {registrationId}
         </p>
-        <p className="mt-5 max-w-[430px] font-body text-base leading-relaxed text-muted">
+        <p className="mt-5 max-w-[430px] font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           You&apos;re officially a founding member of RallyVerse.
         </p>
-        <p className="mt-3 max-w-[430px] font-body text-base leading-relaxed text-muted">
+        <p className="mt-3 max-w-[430px] font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           We&apos;ll reach out on WhatsApp within 24 hours with bracket information and next steps.
         </p>
-        <p className="mt-4 max-w-[430px] font-body text-base leading-relaxed text-muted">
+        <p className="mt-4 max-w-[430px] font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           In the meantime &mdash; tell someone worth competing against.
         </p>
       </div>
       <Link
         href="/"
-        className="mt-4 inline-flex items-center rounded-md border border-subtle px-6 py-3 font-body text-sm font-semibold text-primary transition-all duration-200 hover:border-orange hover:text-orange"
+        className="mt-4 inline-flex items-center rounded-md px-6 py-3 font-body text-sm font-semibold transition-all duration-200"
+        style={{
+          border: '1px solid var(--border-subtle)',
+          color: 'var(--text-primary)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'var(--accent-primary)'
+          e.currentTarget.style.color = 'var(--accent-primary)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = 'var(--border-subtle)'
+          e.currentTarget.style.color = 'var(--text-primary)'
+        }}
       >
         &larr; Back to the Verse
       </Link>
@@ -202,35 +240,34 @@ export default function RegistrationForm() {
         {[1, 2, 3].map((item) => (
           <div key={item} className="flex items-center gap-3">
             <div
-              className={`h-3 w-3 rounded-full transition-colors ${
-                step >= item ? 'bg-orange' : 'bg-subtle'
-              }`}
+              className="h-3 w-3 rounded-full transition-colors"
+              style={{ backgroundColor: step >= item ? 'var(--accent-primary)' : 'var(--bg-subtle)' }}
             />
-            <div className={`h-px flex-1 ${step > item ? 'bg-orange' : 'bg-subtle'}`} />
+            <div className="h-px flex-1 transition-colors" style={{ backgroundColor: step > item ? 'var(--accent-primary)' : 'var(--bg-subtle)' }} />
           </div>
         ))}
       </div>
 
       {submitError && (
-        <div role="alert" aria-live="polite" className="rounded-md border border-red-500/30 bg-red-500/10 p-3">
-          <p className="font-body text-sm text-red-400">{submitError}</p>
+        <div role="alert" aria-live="polite" className="rounded-md border p-3" style={{ borderColor: 'rgba(255, 68, 68, 0.3)', backgroundColor: 'rgba(255, 68, 68, 0.1)' }}>
+          <p className="font-body text-sm" style={{ color: 'var(--error-color)' }}>{submitError}</p>
         </div>
       )}
 
       {step === 1 && (
         <div className="flex flex-col gap-6">
           <div>
-            <p className="font-display text-[32px] uppercase leading-none text-primary">
+            <p className="font-display text-[32px] uppercase leading-none" style={{ color: 'var(--text-primary)' }}>
               Step 1 / Event Details
             </p>
-            <p className="mt-2 font-body text-sm leading-relaxed text-muted">
+            <p className="mt-2 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               Choose your category so we can place you in the right draw.
             </p>
           </div>
 
           <div>
-            <label htmlFor="category" className={labelClass}>
-              Category <span className="text-orange">*</span>
+            <label htmlFor="category" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+              Category <span style={{ color: 'var(--accent-primary)' }}>*</span>
             </label>
             <select
               id="category"
@@ -238,6 +275,9 @@ export default function RegistrationForm() {
               value={formData.category}
               onChange={handleChange}
               className={selectClass}
+              style={inputBaseStyle}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
             >
               <option value="" disabled>
                 Select category
@@ -253,7 +293,7 @@ export default function RegistrationForm() {
 
           {needsPlayer2 && (
             <div>
-              <label htmlFor="teamName" className={labelClass}>
+              <label htmlFor="teamName" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 Team Name
               </label>
               <input
@@ -263,6 +303,9 @@ export default function RegistrationForm() {
                 value={formData.teamName}
                 onChange={handleChange}
                 className={inputClass}
+                style={inputBaseStyle}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
                 placeholder="Optional team name"
               />
             </div>
@@ -273,44 +316,44 @@ export default function RegistrationForm() {
       {step === 2 && (
         <div className="flex flex-col gap-8">
           <div>
-            <p className="font-display text-[32px] uppercase leading-none text-primary">
+            <p className="font-display text-[32px] uppercase leading-none" style={{ color: 'var(--text-primary)' }}>
               Step 2 / Player Details
             </p>
-            <p className="mt-2 font-body text-sm leading-relaxed text-muted">
+            <p className="mt-2 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               Tell us who is playing and where you are coming from.
             </p>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div className="md:col-span-2">
-              <p className="font-body text-xs uppercase tracking-widest text-orange">Player 1</p>
+              <p className="font-body text-xs uppercase tracking-widest" style={{ color: 'var(--accent-primary)' }}>Player 1</p>
             </div>
             <div>
-              <label htmlFor="player1Name" className={labelClass}>
-                Player 1 Full Name <span className="text-orange">*</span>
+              <label htmlFor="player1Name" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+                Player 1 Full Name <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <input id="player1Name" name="player1Name" value={formData.player1Name} onChange={handleChange} className={inputClass} />
+              <input id="player1Name" name="player1Name" value={formData.player1Name} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
               <FieldError message={errors.player1Name} />
             </div>
             <div>
-              <label htmlFor="player1Phone" className={labelClass}>
-                Player 1 WhatsApp Number <span className="text-orange">*</span>
+              <label htmlFor="player1Phone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+                Player 1 WhatsApp Number <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <input id="player1Phone" name="player1Phone" type="tel" value={formData.player1Phone} onChange={handleChange} className={inputClass} placeholder="+91 98765 43210" />
+              <input id="player1Phone" name="player1Phone" type="tel" value={formData.player1Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="+91 98765 43210" />
               <FieldError message={errors.player1Phone} />
             </div>
             <div>
-              <label htmlFor="player1Email" className={labelClass}>
+              <label htmlFor="player1Email" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 Player 1 Email
               </label>
-              <input id="player1Email" name="player1Email" type="email" value={formData.player1Email} onChange={handleChange} className={inputClass} />
+              <input id="player1Email" name="player1Email" type="email" value={formData.player1Email} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
               <FieldError message={errors.player1Email} />
             </div>
             <div>
-              <label htmlFor="player1SkillLevel" className={labelClass}>
-                Player 1 Skill Level <span className="text-orange">*</span>
+              <label htmlFor="player1SkillLevel" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+                Player 1 Skill Level <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <select id="player1SkillLevel" name="player1SkillLevel" value={formData.player1SkillLevel} onChange={handleChange} className={selectClass}>
+              <select id="player1SkillLevel" name="player1SkillLevel" value={formData.player1SkillLevel} onChange={handleChange} className={selectClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur}>
                 <option value="" disabled>Select skill level</option>
                 {skillLevels.map((level) => <option key={level} value={level}>{level}</option>)}
               </select>
@@ -321,34 +364,34 @@ export default function RegistrationForm() {
           {needsPlayer2 && (
             <div className="grid gap-5 md:grid-cols-2">
               <div className="md:col-span-2">
-                <p className="font-body text-xs uppercase tracking-widest text-orange">Player 2</p>
+                <p className="font-body text-xs uppercase tracking-widest" style={{ color: 'var(--accent-primary)' }}>Player 2</p>
               </div>
               <div>
-                <label htmlFor="player2Name" className={labelClass}>
-                  Player 2 Full Name <span className="text-orange">*</span>
+                <label htmlFor="player2Name" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+                  Player 2 Full Name <span style={{ color: 'var(--accent-primary)' }}>*</span>
                 </label>
-                <input id="player2Name" name="player2Name" value={formData.player2Name} onChange={handleChange} className={inputClass} />
+                <input id="player2Name" name="player2Name" value={formData.player2Name} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
                 <FieldError message={errors.player2Name} />
               </div>
               <div>
-                <label htmlFor="player2Phone" className={labelClass}>
-                  Player 2 WhatsApp Number <span className="text-orange">*</span>
+                <label htmlFor="player2Phone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+                  Player 2 WhatsApp Number <span style={{ color: 'var(--accent-primary)' }}>*</span>
                 </label>
-                <input id="player2Phone" name="player2Phone" type="tel" value={formData.player2Phone} onChange={handleChange} className={inputClass} placeholder="+91 98765 43210" />
+                <input id="player2Phone" name="player2Phone" type="tel" value={formData.player2Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="+91 98765 43210" />
                 <FieldError message={errors.player2Phone} />
               </div>
               <div>
-                <label htmlFor="player2Email" className={labelClass}>
+                <label htmlFor="player2Email" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                   Player 2 Email
                 </label>
-                <input id="player2Email" name="player2Email" type="email" value={formData.player2Email} onChange={handleChange} className={inputClass} />
+                <input id="player2Email" name="player2Email" type="email" value={formData.player2Email} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
                 <FieldError message={errors.player2Email} />
               </div>
               <div>
-                <label htmlFor="player2SkillLevel" className={labelClass}>
-                  Player 2 Skill Level <span className="text-orange">*</span>
+                <label htmlFor="player2SkillLevel" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+                  Player 2 Skill Level <span style={{ color: 'var(--accent-primary)' }}>*</span>
                 </label>
-                <select id="player2SkillLevel" name="player2SkillLevel" value={formData.player2SkillLevel} onChange={handleChange} className={selectClass}>
+                <select id="player2SkillLevel" name="player2SkillLevel" value={formData.player2SkillLevel} onChange={handleChange} className={selectClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur}>
                   <option value="" disabled>Select skill level</option>
                   {skillLevels.map((level) => <option key={level} value={level}>{level}</option>)}
                 </select>
@@ -359,17 +402,17 @@ export default function RegistrationForm() {
 
           <div className="grid gap-5 md:grid-cols-2">
             <div>
-              <label htmlFor="city" className={labelClass}>
-                City <span className="text-orange">*</span>
+              <label htmlFor="city" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+                City <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <input id="city" name="city" value={formData.city} onChange={handleChange} className={inputClass} />
+              <input id="city" name="city" value={formData.city} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
               <FieldError message={errors.city} />
             </div>
             <div>
-              <label htmlFor="collegeOrOrg" className={labelClass}>
+              <label htmlFor="collegeOrOrg" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 College / Organization
               </label>
-              <input id="collegeOrOrg" name="collegeOrOrg" value={formData.collegeOrOrg} onChange={handleChange} className={inputClass} />
+              <input id="collegeOrOrg" name="collegeOrOrg" value={formData.collegeOrOrg} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} />
             </div>
           </div>
         </div>
@@ -378,27 +421,27 @@ export default function RegistrationForm() {
       {step === 3 && (
         <div className="flex flex-col gap-6">
           <div>
-            <p className="font-display text-[32px] uppercase leading-none text-primary">
+            <p className="font-display text-[32px] uppercase leading-none" style={{ color: 'var(--text-primary)' }}>
               Step 3 / Payment
             </p>
-            <p className="mt-2 font-body text-sm leading-relaxed text-muted">
+            <p className="mt-2 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               Complete the payment and enter your transaction details below.
             </p>
           </div>
 
-          <div className="rounded-md border border-subtle bg-surface p-5">
-            <p className="font-body text-xs uppercase tracking-widest text-muted">Payment Details</p>
-            <div className="mt-4 grid gap-3 font-body text-sm text-primary">
-              <p>UPI ID: <span className="font-semibold text-orange">{upiId}</span></p>
-              <p>Amount: <span className="font-semibold text-orange">Rs. {entryFee}</span></p>
+          <div className="rounded-md p-5" style={{ border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
+            <p className="font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Payment Details</p>
+            <div className="mt-4 grid gap-3 font-body text-sm" style={{ color: 'var(--text-primary)' }}>
+              <p>UPI ID: <span className="font-semibold" style={{ color: 'var(--accent-primary)' }}>{upiId}</span></p>
+              <p>Amount: <span className="font-semibold" style={{ color: 'var(--accent-primary)' }}>Rs. {entryFee}</span></p>
             </div>
           </div>
 
           <div>
-            <label htmlFor="utrNumber" className={labelClass}>
-              UTR Number / Transaction ID <span className="text-orange">*</span>
+            <label htmlFor="utrNumber" className={labelClass} style={{ color: 'var(--text-muted)' }}>
+              UTR Number / Transaction ID <span style={{ color: 'var(--accent-primary)' }}>*</span>
             </label>
-            <input id="utrNumber" name="utrNumber" value={formData.utrNumber} onChange={handleChange} className={inputClass} placeholder="Minimum 8 alphanumeric characters" />
+            <input id="utrNumber" name="utrNumber" value={formData.utrNumber} onChange={handleChange} className={inputClass} style={inputBaseStyle} onFocus={handleInputFocus} onBlur={handleInputBlur} placeholder="Minimum 8 alphanumeric characters" />
             <FieldError message={errors.utrNumber} />
           </div>
         </div>
@@ -410,7 +453,19 @@ export default function RegistrationForm() {
             type="button"
             onClick={goBack}
             disabled={isSubmitting}
-            className="min-h-[48px] rounded-md border border-subtle px-6 py-3 font-body text-sm font-semibold text-primary transition-all duration-200 hover:border-orange hover:text-orange disabled:cursor-not-allowed disabled:opacity-60"
+            className="min-h-[48px] rounded-md px-6 py-3 font-body text-sm font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60"
+            style={{
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-primary)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--accent-primary)'
+              e.currentTarget.style.color = 'var(--accent-primary)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border-subtle)'
+              e.currentTarget.style.color = 'var(--text-primary)'
+            }}
           >
             Back
           </button>
@@ -420,7 +475,11 @@ export default function RegistrationForm() {
           <button
             type="button"
             onClick={goNext}
-            className="min-h-[48px] flex-1 rounded-md bg-brand-gradient px-6 py-3 font-body text-sm font-bold tracking-wide text-carbon transition-all duration-200 hover:scale-[1.02] hover:glow-orange active:scale-[0.98]"
+            className="min-h-[48px] flex-1 rounded-md px-6 py-3 font-body text-sm font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: 'var(--gradient-brand)',
+              color: 'var(--btn-primary-text)',
+            }}
           >
             Next
           </button>
@@ -429,11 +488,15 @@ export default function RegistrationForm() {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            className="min-h-[48px] flex-1 rounded-md bg-brand-gradient px-6 py-3 font-body text-sm font-bold tracking-wide text-carbon transition-all duration-200 hover:scale-[1.02] hover:glow-orange active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+            className="min-h-[48px] flex-1 rounded-md px-6 py-3 font-body text-sm font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+            style={{
+              background: 'var(--gradient-brand)',
+              color: 'var(--btn-primary-text)',
+            }}
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-carbon border-t-transparent" />
+                <span className="h-4 w-4 animate-spin rounded-full border-2" style={{ borderColor: 'var(--btn-primary-text)', borderTopColor: 'transparent' }} />
                 {loadingMessage}
               </span>
             ) : (
@@ -446,19 +509,24 @@ export default function RegistrationForm() {
   )
 
   return (
-    <section id="register" className="border-t border-subtle bg-carbon py-32">
+    <section id="register" className="py-32"
+      style={{
+        borderTop: '1px solid var(--border-subtle)',
+        backgroundColor: 'var(--bg-primary)',
+      }}
+    >
       <div className="mx-auto max-w-[760px] px-6">
         <AnimatedSection>
           <div className="flex items-center gap-3">
-            <div className="h-px w-10 bg-orange" />
-            <span className="font-body text-[11px] uppercase tracking-widest text-muted">
+            <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
+            <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
               FOUNDING REGISTRATION
             </span>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
-          <div className="mt-5 font-display text-[40px] leading-none uppercase text-primary md:text-[64px]">
+          <div className="mt-5 font-display text-[40px] leading-none uppercase md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
             YOUR VERSE
             <br />
             STARTS HERE.
@@ -466,7 +534,7 @@ export default function RegistrationForm() {
         </AnimatedSection>
 
         <AnimatedSection delay={0.15}>
-          <p className="mt-4 mb-12 font-body text-base leading-relaxed text-muted">
+          <p className="mt-4 mb-12 font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
             You&apos;re about to become one of the first people to step into the RallyVerse. Fill in your details. We&apos;ll handle everything else.
           </p>
         </AnimatedSection>
