@@ -6,7 +6,7 @@ const categories = [
     icon: Swords,
     name: 'THE COURT',
     desc: 'Where rivals become friends at the net. Competitive brackets, fair draws, verified venues.',
-    status: 'Season 01 — Bengaluru',
+    status: 'Season 01 · Bengaluru',
     statusColor: 'orange',
   },
   {

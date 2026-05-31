@@ -140,7 +140,7 @@ export default function HeroIntro() {
             <span className="relative z-10 transition-colors duration-200" style={{ color: 'var(--btn-outline-text)' }}>
               Register Now
             </span>
-            <span className="absolute inset-0 -translate-x-full transition-transform duration-300 group-hover:translate-x-0" style={{ background: 'var(--gradient-brand)' }} />
+            <span className="absolute inset-0 -translate-x-full transition-transform duration-300 group-hover:translate-x-0" style={{ background: 'var(--rallyverse-gradient)' }} />
           </button>
         </motion.div>
       </div>

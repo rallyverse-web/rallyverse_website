@@ -237,7 +237,7 @@ export default function RegistrationForm() {
           rel="noopener noreferrer"
           className="mt-4 inline-flex items-center gap-2 rounded-md px-10 py-5 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           style={{
-            background: 'var(--gradient-brand)',
+            background: 'var(--rallyverse-gradient)',
             color: 'var(--btn-primary-text)',
           }}
         >
@@ -522,7 +522,7 @@ export default function RegistrationForm() {
             onClick={goNext}
             className="min-h-[56px] flex-1 rounded-md px-8 py-4 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             style={{
-              background: 'var(--gradient-brand)',
+              background: 'var(--rallyverse-gradient)',
               color: 'var(--btn-primary-text)',
             }}
           >
@@ -535,7 +535,7 @@ export default function RegistrationForm() {
             aria-busy={isSubmitting}
             className="min-h-[56px] flex-1 rounded-md px-8 py-4 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
             style={{
-              background: 'var(--gradient-brand)',
+              background: 'var(--rallyverse-gradient)',
               color: 'var(--btn-primary-text)',
             }}
           >

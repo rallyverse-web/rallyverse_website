@@ -152,7 +152,7 @@ export default function Navbar() {
               onClick={() => router.push('/register')}
               className="whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95"
               style={{
-                background: 'var(--gradient-brand)',
+                background: 'var(--rallyverse-gradient)',
                 color: 'var(--btn-primary-text)',
               }}
             >
@@ -277,7 +277,7 @@ export default function Navbar() {
                   }}
                   className="w-full rounded-md py-4 text-base font-semibold transition-all duration-200 active:scale-95"
                   style={{
-                    background: 'var(--gradient-brand)',
+                    background: 'var(--rallyverse-gradient)',
                     color: 'var(--btn-primary-text)',
                   }}
                 >

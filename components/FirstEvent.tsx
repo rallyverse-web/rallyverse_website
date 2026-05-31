@@ -13,7 +13,7 @@ export default function FirstEvent() {
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-10 px-6 md:grid-cols-2 md:gap-16 md:items-start">
         <AnimatedSection>
           <p className="mb-5 font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-            FIRST CHAPTER &mdash; BENGALURU 2026
+            FIRST CHAPTER · BENGALURU 2026
           </p>
 
           <div className="font-display text-[36px] leading-none uppercase sm:text-[48px] md:text-[88px]" style={{ color: 'var(--text-primary)' }}>
@@ -22,7 +22,7 @@ export default function FirstEvent() {
             HAS A BEGINNING.
           </div>
           <div className="mt-2 font-display text-[18px] uppercase sm:text-[22px] md:text-[36px]" style={{ color: 'var(--accent-primary)' }}>
-            RALLY SERIES 01 &mdash; BENGALURU BADMINTON
+            RALLY SERIES 01 · BENGALURU BADMINTON
           </div>
 
           <div className="mt-7 space-y-5 font-body text-base leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
@@ -33,7 +33,7 @@ export default function FirstEvent() {
               Rally Series 01 is built for Bengaluru&apos;s most passionate players. Men&apos;s Singles. Women&apos;s Singles. Doubles. Mixed. Beginner through Advanced &mdash; there is a court for you.
             </p>
             <p>
-              Spots are deliberately limited &mdash; because every player deserves a well-run, well-felt experience. When you&apos;re here, you&apos;ll feel the difference.
+              Spots are deliberately limited &mdash; because every player deserves a well-run experience. When you&apos;re here, you&apos;ll feel the difference.
             </p>
           </div>
 
@@ -56,7 +56,7 @@ export default function FirstEvent() {
                   shineColor="rgba(255,255,255,0.6)"
                 />
               </span>
-              <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'var(--gradient-brand)' }} />
+              <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'var(--rallyverse-gradient)' }} />
             </button>
 
             <p className="mt-4 text-center font-body text-xs" style={{ color: 'var(--text-muted)' }}>

@@ -75,7 +75,7 @@ export default function Footer() {
   const router = useRouter()
 
   return (
-    <>
+    <div id="contact">
       {/* ── Pre‑footer CTA ──────────────────────────────────────── */}
       <section
         className="relative overflow-hidden px-6 py-20 md:py-28"
@@ -108,7 +108,7 @@ export default function Footer() {
             onClick={() => router.push('/register')}
             className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
             style={{
-              background: 'var(--gradient-brand)',
+              background: 'var(--rallyverse-gradient)',
               color: 'var(--btn-primary-text)',
             }}
           >
@@ -252,6 +252,6 @@ export default function Footer() {
           </div>
         </div>
       </footer>
-    </>
+    </div>
   )
 }

@@ -19,7 +19,7 @@ const buttonStyle: React.CSSProperties = {
   padding: '0 24px',
   borderRadius: 6,
   border: 'none',
-  background: 'var(--gradient-brand)',
+  background: 'var(--rallyverse-gradient)',
   color: '#fff',
   fontSize: 14,
   fontWeight: 700,
