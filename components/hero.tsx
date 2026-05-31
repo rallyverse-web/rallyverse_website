@@ -54,7 +54,7 @@ export default function Hero() {
         <div className="relative">
           <BlurText
             text="RALLYVERSE"
-            animateBy="letters"
+            animateBy="words"
             direction="top"
             delay={80}
             stepDuration={0.4}
