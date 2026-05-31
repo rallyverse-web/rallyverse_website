@@ -163,6 +163,16 @@
   transition: none !important;
 }
 
+/* DecryptedText encrypted state — COLOR theme */
+[data-theme="color"] .encrypted-glitch {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* DecryptedText encrypted state — B&W theme */
+[data-theme="bw"] .encrypted-glitch {
+  color: rgba(0, 0, 0, 0.3);
+}
+
 /* Hero gradient text — COLOR theme */
 [data-theme="color"] .rallyverse-gradient-text span {
   background: linear-gradient(90deg, #FF5E00 0%, #FF8C00 25%, #c8b560 50%, #00C9A7 75%, #00E5FF 100%);

@@ -90,7 +90,7 @@ export default function HeroIntro() {
                 className={`font-display text-[40px] uppercase leading-none sm:text-[56px] md:text-[84px] lg:text-[104px] ${
                   word === 'ROUTINE.' ? 'rally-gradient-text' : ''
                 }`}
-                encryptedClassName="font-display text-[40px] uppercase leading-none text-white/30 sm:text-[56px] md:text-[84px] lg:text-[104px]"
+                encryptedClassName="font-display text-[40px] uppercase leading-none encrypted-glitch sm:text-[56px] md:text-[84px] lg:text-[104px]"
               />
             </motion.div>
           ))}
