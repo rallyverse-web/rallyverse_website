@@ -169,16 +169,19 @@ export default function Navbar() {
             </Magnet>
           </div>
 
-          {/* Mobile hamburger */}
-          <button
-            type="button"
-            onClick={() => setMenuOpen(true)}
-            className="md:hidden p-1"
-            style={{ color: 'var(--text-primary)' }}
-            aria-label="Open menu"
-          >
-            <Menu size={24} />
-          </button>
+          {/* Mobile right side */}
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              className="p-1"
+              style={{ color: 'var(--text-primary)' }}
+              aria-label="Open menu"
+            >
+              <Menu size={24} />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -198,7 +201,7 @@ export default function Navbar() {
 
             {/* Drawer */}
             <motion.div
-              className="fixed inset-x-0 top-0 z-50 px-6 pb-8 pt-5"
+              className="fixed inset-x-0 top-0 z-50 px-6 pb-10 pt-5"
               style={{
                 backgroundColor: 'var(--bg-surface)',
                 borderBottom: '1px solid var(--border-subtle)',
@@ -209,7 +212,7 @@ export default function Navbar() {
               transition={{ duration: 0.25, ease: 'easeOut' }}
             >
               {/* Drawer header */}
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center justify-between mb-10">
                 <button
                   type="button"
                   onClick={() => router.push('/')}
@@ -228,7 +231,7 @@ export default function Navbar() {
               </div>
 
               {/* Drawer nav links */}
-              <nav className="flex flex-col gap-1">
+              <nav className="flex flex-col gap-0">
                 {navLinks.map((link, i) => {
                   const isActive = activeSection === link.href.replace('#', '')
                   return (
@@ -239,56 +242,56 @@ export default function Navbar() {
                       initial={{ opacity: 0, x: -12 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05, duration: 0.2 }}
-                      className="w-full text-left py-3 px-2 text-base font-medium tracking-wide transition-colors duration-200"
+                      className="w-full text-left px-3 text-lg font-semibold tracking-wide transition-colors duration-200"
                       style={{
                         color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
                         borderBottom: '1px solid var(--border-subtle)',
-                        borderLeft: isActive ? '2px solid var(--accent-primary)' : 'none',
-                        paddingLeft: isActive ? '12px' : '8px',
+                        height: '54px',
                       }}
                       onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.color = 'var(--text-primary)'; }}
                       onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.color = 'var(--text-muted)'; }}
                     >
-                      {link.label}
+                      <span
+                        className="flex h-full items-center"
+                        style={{
+                          borderLeft: isActive ? '2px solid var(--accent-primary)' : 'none',
+                          paddingLeft: isActive ? '10px' : '12px',
+                        }}
+                      >
+                        {link.label}
+                      </span>
                     </motion.button>
                   )
                 })}
               </nav>
-
-              {/* Drawer ThemeToggle */}
-              <div className="px-2 pt-4 pb-2">
-                <ThemeToggle />
-              </div>
 
               {/* Drawer CTA */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.2 }}
-                className="mt-2"
+                className="mt-10"
               >
-                <Magnet padding={30} disabled={isMobile}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMenuOpen(false)
-                      router.push('/register')
-                    }}
-                    className="w-full rounded-md py-3 text-sm font-semibold transition-all duration-200 active:scale-95"
-                    style={{
-                      background: 'var(--gradient-brand)',
-                      color: 'var(--btn-primary-text)',
-                    }}
-                  >
-                    <ShinyText
-                  text="Register Now"
-                      disabled={false}
-                      speed={3}
-                      className="text-sm font-semibold"
-                      shineColor="rgba(255,255,255,0.6)"
-                    />
-                  </button>
-                </Magnet>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    router.push('/register')
+                  }}
+                  className="w-full rounded-md py-4 text-base font-semibold transition-all duration-200 active:scale-95"
+                  style={{
+                    background: 'var(--gradient-brand)',
+                    color: 'var(--btn-primary-text)',
+                  }}
+                >
+                  <ShinyText
+                text="Register Now"
+                    disabled={false}
+                    speed={3}
+                    className="text-base font-semibold"
+                    shineColor="rgba(255,255,255,0.6)"
+                  />
+                </button>
               </motion.div>
             </motion.div>
           </>
