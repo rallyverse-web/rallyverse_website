@@ -137,8 +137,17 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false)
 
   /* Confirm dialogs */
-  const [confirmAction, setConfirmAction] = useState<{ type: string; row: Registration } | null>(null)
+  const [confirmAction, setConfirmAction] = useState<{ type: string; row?: Registration } | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
+
+  /* Notification */
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+
+  const notify = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message })
+    if (type === 'success') setAuthError('')
+    setTimeout(() => setNotification(null), 5000)
+  }
 
   /* ── Helpers ── */
   const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
@@ -197,20 +206,27 @@ export default function AdminPage() {
   const emailsReady = metrics ? metrics.confirmationsPending : 0
 
   const handleSendConfirmations = async () => {
+    setConfirmAction({ type: 'send-confirmations' })
+  }
+
+  const confirmSend = async () => {
     setSending(true)
     setSendResult(null)
+    setConfirmAction(null)
     try {
       const res = await fetch('/api/admin/send-confirmations', { method: 'POST', headers: authHeaders() })
       if (res.status === 401) { setToken(''); return }
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to send emails'); return }
       const data = await res.json()
       setSendResult(data)
+      notify('success', `Emails sent: ${data.sent}, failed: ${data.failed}`)
       fetchData()
-    } catch { setSendResult({ error: 'Failed to connect' }) }
+    } catch { notify('error', 'Failed to connect to server') }
     finally { setSending(false) }
   }
 
   const confirmThen = async () => {
-    if (!confirmAction) return
+    if (!confirmAction || !confirmAction.row) return
     setActionLoading(true)
     const { type, row } = confirmAction
     const rowIndex = parseInt(row.rowIndex, 10)
@@ -221,17 +237,31 @@ export default function AdminPage() {
         body: JSON.stringify({ rowIndex }),
       })
       if (res.status === 401) { setToken(''); return }
-      if (!res.ok) { const d = await res.json(); setAuthError(d.error || 'Action failed'); return }
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Action failed'); setActionLoading(false); return }
       setConfirmAction(null)
+      notify('success', `Registration ${type === 'delete' ? 'deleted' : type === 'verify' ? 'verified' : 'rejected'} successfully`)
       fetchData()
-    } catch { setAuthError('Action failed') }
+    } catch { notify('error', 'Action failed due to network error') }
     finally { setActionLoading(false) }
   }
+
+  /* Column label lookup for edit modal (matches COLUMN_LABELS in registrations API) */
+  const COLUMN_KEYS = [
+    'registrationId', 'registrationDate', 'category', 'teamName',
+    'player1Name', 'player1Phone', 'player1Email', 'player1SkillLevel',
+    'player2Name', 'player2Phone', 'player2Email', 'player2SkillLevel',
+    'city', 'collegeOrOrg', 'entryFee', 'upiId', 'paymentPhone',
+    'remarks', 'paymentStatus', 'verificationStatus',
+    'confirmationSent', 'paymentScreenshotReceived', 'confirmationDate',
+    'additionalNotes',
+  ]
 
   const openEdit = (row: Registration) => {
     setEditTarget(row)
     const vals: Record<string, string> = {}
-    EDIT_FIELDS.forEach((f) => { vals[String(f.colIndex)] = row[Object.keys(row)[f.colIndex]] || '' })
+    EDIT_FIELDS.forEach((f) => {
+      vals[String(f.colIndex)] = row[COLUMN_KEYS[f.colIndex]] || ''
+    })
     setEditValues(vals)
   }
 
@@ -246,10 +276,11 @@ export default function AdminPage() {
         body: JSON.stringify({ rowIndex, updates: editValues }),
       })
       if (res.status === 401) { setToken(''); return }
-      if (!res.ok) { const d = await res.json(); setAuthError(d.error || 'Edit failed'); return }
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Edit failed'); setSaving(false); return }
       setEditTarget(null)
+      notify('success', 'Registration updated successfully')
       fetchData()
-    } catch { setAuthError('Edit failed') }
+    } catch { notify('error', 'Edit failed due to network error') }
     finally { setSaving(false) }
   }
 
@@ -287,12 +318,27 @@ export default function AdminPage() {
             <button onClick={fetchData} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh">
               <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             </button>
-            <button onClick={() => { setToken(''); setRegistrations([]); setMetrics(null); setSendResult(null) }} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
+            <button onClick={() => { setToken(''); setRegistrations([]); setMetrics(null); setSendResult(null); setNotification(null); setAuthError('') }} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
           </div>
         </div>
 
         {authError && (
           <div style={{ padding: 12, borderRadius: 6, background: 'rgba(255,68,68,0.1)', border: '1px solid rgba(255,68,68,0.3)', color: '#ff4444', fontSize: 13, marginBottom: 24 }}>{authError}</div>
+        )}
+
+        {notification && (
+          <div style={{
+            padding: '10px 16px',
+            borderRadius: 6,
+            fontSize: 13,
+            fontWeight: 600,
+            marginBottom: 16,
+            background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)',
+            border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`,
+            color: notification.type === 'success' ? '#4ade80' : '#ff4444',
+          }}>
+            {notification.message}
+          </div>
         )}
 
         {/* Metric cards */}
@@ -471,50 +517,85 @@ export default function AdminPage() {
 
         {/* Confirm action modal */}
         {confirmAction && (
-          <div style={s.overlay} onClick={() => !actionLoading && setConfirmAction(null)}>
+          <div style={s.overlay} onClick={() => !actionLoading && !sending && setConfirmAction(null)}>
             <div style={s.modal} onClick={(e) => e.stopPropagation()}>
-              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>
-                {confirmAction.type === 'verify' && 'Verify Registration'}
-                {confirmAction.type === 'reject' && 'Reject Registration'}
-                {confirmAction.type === 'delete' && 'Delete Registration'}
-              </h3>
-              <p style={{ color: '#888', fontSize: 14, marginBottom: 4 }}>
-                {confirmAction.type === 'verify' && 'Mark this registration as verified? This will set Payment Status to "Paid" and Verification Status to "Verified".'}
-                {confirmAction.type === 'reject' && 'Reject this registration? This will set Verification Status to "Rejected" and add a remark.'}
-                {confirmAction.type === 'delete' && 'Are you sure? This action cannot be undone. The row will be permanently removed from Google Sheets.'}
-              </p>
-              {confirmAction.type !== 'delete' && (
-                <p style={{ color: '#666', fontSize: 13, marginBottom: 16 }}>
-                  <strong style={{ color: '#ccc' }}>{confirmAction.row.player1Name}</strong> — {confirmAction.row.registrationId}
-                </p>
+              {confirmAction.type === 'send-confirmations' ? (
+                <>
+                  <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>
+                    Send Confirmation Emails
+                  </h3>
+                  <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>
+                    Send confirmation emails to all verified but unconfirmed registrations ({emailsReady} pending)?
+                  </p>
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                    <button
+                      onClick={() => setConfirmAction(null)}
+                      style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmSend}
+                      disabled={sending}
+                      style={{
+                        ...s.btnSm,
+                        background: '#4ade80',
+                        color: '#000',
+                        fontWeight: 700,
+                        ...(sending ? { opacity: 0.6, cursor: 'not-allowed' } : {}),
+                      }}
+                    >
+                      {sending ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Sending...</> : `Send (${emailsReady})`}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>
+                    {confirmAction.type === 'verify' && 'Verify Registration'}
+                    {confirmAction.type === 'reject' && 'Reject Registration'}
+                    {confirmAction.type === 'delete' && 'Delete Registration'}
+                  </h3>
+                  <p style={{ color: '#888', fontSize: 14, marginBottom: 4 }}>
+                    {confirmAction.type === 'verify' && 'Mark this registration as verified? This will set Payment Status to "Paid" and Verification Status to "Verified".'}
+                    {confirmAction.type === 'reject' && 'Reject this registration? This will set Verification Status to "Rejected" and add a remark.'}
+                    {confirmAction.type === 'delete' && 'Are you sure? This action cannot be undone. The row will be permanently removed from Google Sheets.'}
+                  </p>
+                  {confirmAction.row && (
+                    <p style={{
+                      color: confirmAction.type === 'delete' ? '#ff4444' : '#666',
+                      fontSize: 13,
+                      marginBottom: 16,
+                    }}>
+                      <strong style={{ color: '#ccc' }}>{confirmAction.row.player1Name}</strong> — {confirmAction.row.registrationId}
+                    </p>
+                  )}
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                    <button
+                      onClick={() => setConfirmAction(null)}
+                      disabled={actionLoading}
+                      style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmThen}
+                      disabled={actionLoading}
+                      style={{
+                        ...s.btnSm,
+                        background: confirmAction.type === 'delete' || confirmAction.type === 'reject' ? '#ff4444' : '#4ade80',
+                        color: '#000',
+                        fontWeight: 700,
+                        ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}),
+                      }}
+                    >
+                      {actionLoading ? (
+                        <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Processing...</>
+                      ) : confirmAction.type === 'delete' ? 'Delete' : confirmAction.type === 'reject' ? 'Reject' : 'Verify'}
+                    </button>
+                  </div>
+                </>
               )}
-              {confirmAction.type === 'delete' && (
-                <p style={{ color: '#ff4444', fontSize: 13, marginBottom: 16 }}>
-                  <strong>{confirmAction.row.player1Name}</strong> — {confirmAction.row.registrationId}
-                </p>
-              )}
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                <button
-                  onClick={() => setConfirmAction(null)}
-                  disabled={actionLoading}
-                  style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmThen}
-                  disabled={actionLoading}
-                  style={{
-                    ...s.btnSm,
-                    background: confirmAction.type === 'delete' ? '#ff4444' : confirmAction.type === 'reject' ? '#ff4444' : '#4ade80',
-                    color: '#000',
-                    fontWeight: 700,
-                    ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}),
-                  }}
-                >
-                  {actionLoading ? 'Processing...' : confirmAction.type === 'delete' ? 'Delete' : confirmAction.type === 'reject' ? 'Reject' : 'Verify'}
-                </button>
-              </div>
             </div>
           </div>
         )}

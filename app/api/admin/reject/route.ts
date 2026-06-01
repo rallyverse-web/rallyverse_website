@@ -27,10 +27,19 @@ export async function POST(req: NextRequest) {
 
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: `${sheetTabName}!R${sheetRow}:T${sheetRow}`,
+      range: `${sheetTabName}!R${sheetRow}`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [['Rejected by Admin', 'Rejected']],
+        values: [['Rejected by Admin']],
+      },
+    })
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `${sheetTabName}!T${sheetRow}`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [['Rejected']],
       },
     })
 

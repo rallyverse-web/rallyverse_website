@@ -31,7 +31,7 @@ export async function getSheetId(sheets: ReturnType<typeof getSheetsClient>, spr
   const sheet = sheetMeta.data.sheets?.find(
     (s) => s.properties?.title === sheetTabName
   )
-  if (!sheet?.properties?.sheetId) {
+  if (sheet?.properties?.sheetId === undefined || sheet?.properties?.sheetId === null) {
     throw new Error(`Sheet "${sheetTabName}" not found`)
   }
   return sheet.properties.sheetId
