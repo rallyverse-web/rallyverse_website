@@ -12,12 +12,13 @@ export const EMAIL = {
   from: 'RallyVerse <registrations@rallyverse.social>',
   replyTo: 'rallyverseofficial@gmail.com',
   supportEmail: 'rallyverseofficial@gmail.com',
+  secondaryFrom: 'RallyVerse <hello@rallyverse.social>',
 }
 
 // ─── Contact ──────────────────────────────────────────────────────
 export const CONTACT = {
   phone: '+91 89517 60369',
-  email: 'hello@rallyverse.app',
+  email: 'rallyverseofficial@gmail.com',
   supportEmail: EMAIL.supportEmail,
   whatsapp: '+91 89517 60369',
   whatsappUrl: 'https://wa.me/918951760369',
