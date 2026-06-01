@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
 import { formatRegistrationDate, generateRegistrationId } from '@/lib/utils'
+import { EMAIL } from '@/lib/config'
+import { registrationReceivedEmail } from '@/lib/email'
 
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -113,30 +115,21 @@ export async function POST(req: NextRequest) {
         const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+91 98765 43210'
         const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
 
+        const { subject, html } = registrationReceivedEmail({
+          playerName: player1Name,
+          registrationId,
+          category,
+          whatsappNumber,
+          whatsappGroupLink,
+          entryFee: process.env.NEXT_PUBLIC_ENTRY_FEE || '800',
+        })
+
         await resend.emails.send({
-          from: 'RallyVerse <onboarding@resend.dev>',
+          from: EMAIL.from,
+          replyTo: EMAIL.replyTo,
           to: player1Email,
-          subject: 'Registration Received \u2013 RallyVerse Badminton Tournament',
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
-              <p>Hi ${player1Name},</p>
-              <p>Thank you for registering for the RallyVerse Badminton Tournament.</p>
-              <p>We have successfully received your registration details.</p>
-              <p><strong>Registration ID:</strong> ${registrationId}</p>
-              <p>Our team will now verify your payment and confirm your registration shortly.</p>
-              <p>Please send your payment screenshot on WhatsApp:</p>
-              <p style="font-size: 18px; font-weight: bold; color: #FF5E00;">
-                <a href="https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}" style="color: #FF5E00; text-decoration: none;">${whatsappNumber}</a>
-              </p>
-              <p>Join the official tournament WhatsApp group:</p>
-              <p style="text-align: center; margin: 28px 0;">
-                <a href="${whatsappGroupLink}" style="display: inline-block; background: linear-gradient(135deg, #FF5E00, #FF8C00); color: #FFFFFF; font-weight: bold; padding: 14px 32px; border-radius: 6px; text-decoration: none; font-size: 16px;">Join WhatsApp Group</a>
-              </p>
-              <p>We'll share match schedules, announcements, and event updates there.</p>
-              <p>Thank you for being a part of RallyVerse.</p>
-              <p>Regards,<br/>Team RallyVerse</p>
-            </div>
-          `,
+          subject,
+          html,
         })
       } catch (emailError) {
         console.error('Email send failed (non-blocking):', emailError)

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
+import { EMAIL } from '@/lib/config'
+import { registrationConfirmedEmail } from '@/lib/email'
 
 async function authorize(req: NextRequest) {
   const authHeader = req.headers.get('authorization') || ''
@@ -85,23 +87,21 @@ export async function POST(req: NextRequest) {
       try {
         console.log(`[send-confirmations] Sending to ${playerEmail} (${playerName}) row ${sheetRowNum}`)
 
+        const category = row[2] || ''
+        const registrationId = row[0] || ''
+        const { subject, html } = registrationConfirmedEmail({
+          playerName,
+          registrationId,
+          category,
+          whatsappGroupLink,
+        })
+
         const emailResult = await resend.emails.send({
-          from: 'RallyVerse <onboarding@resend.dev>',
+          from: EMAIL.from,
+          replyTo: EMAIL.replyTo,
           to: playerEmail,
-          subject: 'Registration Confirmed \u2013 RallyVerse Badminton Tournament',
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
-              <p>Hi ${playerName},</p>
-              <p>Your registration for the RallyVerse Badminton Tournament has been successfully verified and confirmed.</p>
-              <p>We look forward to seeing you on the court.</p>
-              <p>Please ensure you have joined the official WhatsApp group for schedules, announcements, and event updates.</p>
-              <p style="text-align: center; margin: 28px 0;">
-                <a href="${whatsappGroupLink}" style="display: inline-block; background: linear-gradient(135deg, #FF5E00, #FF8C00); color: #FFFFFF; font-weight: bold; padding: 14px 32px; border-radius: 6px; text-decoration: none; font-size: 16px;">Join WhatsApp Group</a>
-              </p>
-              <p>Thank you for being part of RallyVerse.</p>
-              <p>Regards,<br/>Team RallyVerse</p>
-            </div>
-          `,
+          subject,
+          html,
         })
 
         console.log(`[send-confirmations] Email sent to ${playerEmail}:`, JSON.stringify(emailResult))

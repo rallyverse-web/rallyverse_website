@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Mail, MessageCircle, MapPin } from 'lucide-react'
+import { Mail, MessageCircle, MapPin, Headset } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import SocialIcons from '@/components/SocialIcons'
-import { CONTACT, ADDRESS_FULL, SOCIAL } from '@/lib/config'
+import { CONTACT, ADDRESS_FULL, SOCIAL, EMAIL } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Contact — RallyVerse | Get in Touch',
@@ -12,9 +12,15 @@ export const metadata: Metadata = {
 const contactMethods = [
   {
     icon: Mail,
-    label: 'Email',
+    label: 'General Inquiries',
     value: CONTACT.email,
     href: SOCIAL.email,
+  },
+  {
+    icon: Headset,
+    label: 'Event Support',
+    value: EMAIL.supportEmail,
+    href: `mailto:${EMAIL.supportEmail}`,
   },
   {
     icon: MessageCircle,
@@ -52,7 +58,7 @@ export default function ContactPage() {
         </AnimatedSection>
 
         {/* ── Contact Methods ─────────────────────────────────── */}
-        <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
           {contactMethods.map((method, i) => {
             const Icon = method.icon
             return (

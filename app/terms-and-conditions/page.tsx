@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { CONTACT } from '@/lib/config'
+import { EMAIL } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions — RallyVerse',
@@ -65,7 +65,7 @@ const sections = [
   {
     title: 'Contact',
     content:
-      `If you have any questions about these Terms & Conditions, please contact us at ${CONTACT.email}.`,
+      `If you have any questions about these Terms & Conditions, please contact us at ${EMAIL.supportEmail}.`,
   },
 ]
 

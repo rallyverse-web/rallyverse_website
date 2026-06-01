@@ -7,9 +7,17 @@ export const SITE = {
     'RallyVerse is a community built around badminton, movement, competition, and meaningful experiences.',
 }
 
+// ─── Email ────────────────────────────────────────────────────────
+export const EMAIL = {
+  from: 'RallyVerse <registrations@rallyverse.social>',
+  replyTo: 'rallyverseofficial@gmail.com',
+  supportEmail: 'rallyverseofficial@gmail.com',
+}
+
 // ─── Contact ──────────────────────────────────────────────────────
 export const CONTACT = {
   email: 'hello@rallyverse.app',
+  supportEmail: EMAIL.supportEmail,
   whatsapp: '+91 98765 43210',
   whatsappUrl: 'https://wa.me/919876543210',
 }

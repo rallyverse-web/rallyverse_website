@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { CONTACT } from '@/lib/config'
+import { CONTACT, EMAIL } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — RallyVerse',
@@ -60,7 +60,7 @@ const sections = [
   {
     title: 'Contact Us',
     content:
-      `If you have any questions about this Privacy Policy or how your data is handled, please contact us at ${CONTACT.email} or reach out via our WhatsApp number.`,
+      `If you have any questions about this Privacy Policy or how your data is handled, please contact us at ${EMAIL.supportEmail} or reach out via our WhatsApp number.`,
   },
 ]
 

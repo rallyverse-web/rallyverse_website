@@ -497,7 +497,7 @@ Resend is the email delivery service that sends "Registration Received" and "Reg
 
 ### Step 3: Configure Domain (Optional but Recommended)
 
-For production, you should use your own domain instead of `onboarding@resend.dev`.
+For production, you should use your own domain instead of `onboarding@resend.dev`. The application now uses `registrations@rallyverse.social` as the sender.
 
 1. Go to [Domains](https://resend.com/domains) in Resend
 2. Click **Add Domain**
@@ -505,7 +505,7 @@ For production, you should use your own domain instead of `onboarding@resend.dev
 4. Resend will give you DNS records to add to your domain provider
 5. Add the DNS records (TXT, CNAME) at your domain registrar
 6. Wait for verification (can take a few minutes to 24 hours)
-7. Update the `from` field in the code from `onboarding@resend.dev` to your domain
+7. Update the `from` field in `lib/config.ts` from `onboarding@resend.dev` to your domain
 
 ### Step 4: Test Email Delivery
 
