@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { CONTACT } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — RallyVerse',
@@ -49,7 +50,7 @@ const sections = [
   {
     title: 'Your Rights',
     content:
-      'You have the right to access, update, or delete your personal information held by us at any time. You can request a copy of the data we hold about you, ask us to correct any inaccuracies, or request that we delete your data. To exercise these rights, please contact us at hello@rallyverse.in.',
+      `You have the right to access, update, or delete your personal information held by us at any time. You can request a copy of the data we hold about you, ask us to correct any inaccuracies, or request that we delete your data. To exercise these rights, please contact us at ${CONTACT.email}.`,
   },
   {
     title: 'Changes to This Policy',
@@ -59,7 +60,7 @@ const sections = [
   {
     title: 'Contact Us',
     content:
-      'If you have any questions about this Privacy Policy or how your data is handled, please contact us at hello@rallyverse.in or reach out via our WhatsApp number.',
+      `If you have any questions about this Privacy Policy or how your data is handled, please contact us at ${CONTACT.email} or reach out via our WhatsApp number.`,
   },
 ]
 

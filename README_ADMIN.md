@@ -23,13 +23,13 @@ The RallyVerse Registration & Admin System handles the entire lifecycle of a tou
 User Registration
        │
        ▼
-Website Form (rallyverse.in/register)
+Website Form (rallyverse.social/register)
        │
        ▼
 Google Sheets (the database — all data lives here)
        │
        ▼
-Admin Dashboard (rallyverse.in/admin — password protected)
+Admin Dashboard (rallyverse.social/admin — password protected)
        │
        ▼
 Confirmation Email (sent via Resend)
@@ -41,9 +41,9 @@ Confirmation Email (sent via Resend)
 
 | Component | Purpose |
 |-----------|---------|
-| Registration Form (rallyverse.in/register) | 3-step form where players enter their details |
+| Registration Form (rallyverse.social/register) | 3-step form where players enter their details |
 | Google Sheet | Stores all registration data as rows |
-| Admin Dashboard (rallyverse.in/admin) | Password-protected panel for managing registrations |
+| Admin Dashboard (rallyverse.social/admin) | Password-protected panel for managing registrations |
 | Resend | Email delivery service — sends registration received and confirmation emails |
 
 ---
@@ -52,7 +52,7 @@ Confirmation Email (sent via Resend)
 
 ### Step 1 — Player Fills Registration Form
 
-The player visits `rallyverse.in/register` and completes a 3-step form:
+The player visits `rallyverse.social/register` and completes a 3-step form:
 
 - **Step 1**: Select category (Men's Singles, Women's Singles, Men's Doubles, etc.) and optional team name
 - **Step 2**: Enter player details (name, phone, email, skill level, city, college/organization)
@@ -102,7 +102,7 @@ In the Google Sheet, the admin:
 
 ### Step 6 — Admin Clicks "Send Confirmation Emails"
 
-In the Admin Dashboard at `rallyverse.in/admin`:
+In the Admin Dashboard at `rallyverse.social/admin`:
 
 1. Log in with the admin password
 2. View the metrics to see how many verified registrations are pending confirmation
@@ -191,7 +191,7 @@ The Google Sheet has **24 columns** (A through X). Each row represents one regis
 
 ### Accessing the Admin Dashboard
 
-**URL**: `https://rallyverse.in/admin`
+**URL**: `https://rallyverse.social/admin`
 
 The admin page is protected by a password. When you visit the page, you'll see a login screen asking for the admin password.
 
@@ -237,7 +237,7 @@ This is the primary admin action. It sends confirmation emails to all verified r
    - Set `Payment Status` (column S) to `Paid`
    - Set `Verification Status` (column T) to `Verified`
 
-2. **Go to the Admin Dashboard** at `rallyverse.in/admin`
+2. **Go to the Admin Dashboard** at `rallyverse.social/admin`
 
 3. **Click "Send Confirmation Emails"**
    - The system reads the sheet and finds all rows where:
@@ -330,7 +330,7 @@ The system uses environment variables for all configuration. These must be set i
 | Property | Value |
 |----------|-------|
 | **Purpose** | The public URL of the website. |
-| **Example** | `NEXT_PUBLIC_SITE_URL=https://www.rallyverse.in` |
+| **Example** | `NEXT_PUBLIC_SITE_URL=https://rallyverse.social` |
 | **Required** | Yes |
 
 ### NEXT_PUBLIC_UPI_ID
@@ -472,7 +472,7 @@ Set `GOOGLE_SHEET_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`, and `GOOGLE_PRIVATE_KEY` 
 ### Step 8: Test
 
 1. Start the local server: `npm run dev`
-2. Submit a test registration at `http://localhost:3000/register`
+2. Submit a test registration at `https://rallyverse.social/register`
 3. Check the Google Sheet — a new row should appear with the data
 
 ---
@@ -501,7 +501,7 @@ For production, you should use your own domain instead of `onboarding@resend.dev
 
 1. Go to [Domains](https://resend.com/domains) in Resend
 2. Click **Add Domain**
-3. Enter your domain (e.g., `rallyverse.in`)
+3. Enter your domain (e.g., `rallyverse.social`)
 4. Resend will give you DNS records to add to your domain provider
 5. Add the DNS records (TXT, CNAME) at your domain registrar
 6. Wait for verification (can take a few minutes to 24 hours)
@@ -561,7 +561,7 @@ For production, you should use your own domain instead of `onboarding@resend.dev
 | Wrong `ADMIN_PASSWORD` | Check the value in environment variables matches what you're typing |
 | `ADMIN_PASSWORD` not set | Add it to the `.env` file or Vercel environment variables |
 | Deployment not updated | After changing env vars, redeploy the project on Vercel |
-| Wrong URL | Make sure you're visiting `https://rallyverse.in/admin` (not `/Admin` or `/admin/`) |
+| Wrong URL | Make sure you're visiting `https://rallyverse.social/admin` (not `/Admin` or `/admin/`) |
 
 ### 401 Unauthorized Error on Admin API
 
@@ -653,8 +653,8 @@ These enhancements are planned for future versions of the system:
 
 | Page | URL |
 |------|-----|
-| Registration Form | `https://rallyverse.in/register` |
-| Admin Dashboard | `https://rallyverse.in/admin` |
+| Registration Form | `https://rallyverse.social/register` |
+| Admin Dashboard | `https://rallyverse.social/admin` |
 | Google Sheet | (see `GOOGLE_SHEET_ID` in env vars) |
 
 ### Key Commands (for developers)

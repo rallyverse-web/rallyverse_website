@@ -19,6 +19,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://rallyverse.social'),
   title: 'RallyVerse — Rally Beyond Routine | Sports, Adventure & Community in Bengaluru',
   description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
   keywords: [
@@ -33,13 +34,27 @@ export const metadata: Metadata = {
     'marathons Bangalore 2026',
     'sports universe Bengaluru'
   ],
+  twitter: {
+    card: 'summary_large_image',
+    title: 'RallyVerse — Rally Beyond Routine',
+    description: 'A universe built for people who move, compete, explore, and connect. Bengaluru\'s home for sports, adventure, and community.',
+    images: ['/logo_transparent.png'],
+  },
   openGraph: {
     title: 'RallyVerse — Rally Beyond Routine',
     description: 'A universe built for people who move, compete, explore, and connect. Bengaluru\'s home for sports, adventure, and community.',
-    url: 'https://www.rallyverse.in',
+    url: 'https://rallyverse.social',
     siteName: 'RallyVerse',
     locale: 'en_IN',
     type: 'website',
+    images: [
+      {
+        url: '/logo_transparent.png',
+        width: 512,
+        height: 512,
+        alt: 'RallyVerse Logo',
+      },
+    ],
   },
   robots: {
     index: true,
@@ -79,7 +94,7 @@ export default function RootLayout({
             `,
           }}
         />
-        <link rel="canonical" href="https://www.rallyverse.in" />
+        <link rel="canonical" href="https://rallyverse.social" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -87,8 +102,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "RallyVerse",
-              "url": "https://www.rallyverse.in",
-              "logo": "https://www.rallyverse.in/logo/logo_transparent.png",
+              "url": "https://rallyverse.social",
+              "logo": "https://rallyverse.social/logo_transparent.png",
               "description": "Competitive badminton tournaments, community treks, marathons and cycling events in Bengaluru.",
               "address": {
                 "@type": "PostalAddress",
@@ -107,16 +122,33 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "SportsEvent",
               "name": "Rally Series 01 — Badminton Tournament Bengaluru",
-              "description": "Competitive badminton tournament in Bengaluru with brackets for all skill levels. Men's Singles, Women's Singles, Doubles, Mixed.",
+              "description": "Rally Series 01 is a competitive badminton tournament in Bengaluru featuring Men's Doubles and Mixed Doubles categories. Players compete in a professionally organized one-day event designed to bring together badminton enthusiasts and foster a strong sporting community.",
+              "image": "https://rallyverse.social/logo_transparent.png",
+              "startDate": "2026-07-01T09:30:00+05:30",
+              "endDate": "2026-07-01T17:00:00+05:30",
               "location": {
                 "@type": "Place",
-                "name": "Bengaluru, Karnataka, India"
+                "name": "Rajajinagar, Bengaluru, Karnataka, India",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Rajajinagar",
+                  "addressRegion": "Bengaluru",
+                  "addressCountry": "IN"
+                }
+              },
+              "offers": {
+                "@type": "Offer",
+                "price": "799",
+                "priceCurrency": "INR",
+                "url": "https://rallyverse.social/register",
+                "availability": "https://schema.org/LimitedAvailability"
               },
               "organizer": {
                 "@type": "Organization",
                 "name": "RallyVerse",
-                "url": "https://www.rallyverse.in"
+                "url": "https://rallyverse.social"
               },
+              "sport": "Badminton",
               "eventStatus": "https://schema.org/EventScheduled",
               "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode"
             })

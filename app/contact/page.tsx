@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Mail, MessageCircle, MapPin } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import SocialIcons from '@/components/SocialIcons'
+import { CONTACT, ADDRESS_FULL, SOCIAL } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Contact — RallyVerse | Get in Touch',
@@ -12,19 +13,19 @@ const contactMethods = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'hello@rallyverse.in',
-    href: 'mailto:hello@rallyverse.in',
+    value: CONTACT.email,
+    href: SOCIAL.email,
   },
   {
     icon: MessageCircle,
     label: 'WhatsApp',
-    value: '+91-XXXXX-XXXXX',
-    href: 'https://wa.me/91XXXXXXXXXX',
+    value: CONTACT.whatsapp,
+    href: SOCIAL.whatsapp,
   },
   {
     icon: MapPin,
     label: 'Location',
-    value: 'Bengaluru, Karnataka, India',
+    value: ADDRESS_FULL,
     href: null,
   },
 ]

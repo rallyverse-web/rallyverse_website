@@ -1,83 +1,32 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { motion } from 'motion/react'
-import {
-  Instagram,
-  Linkedin,
-  Mail,
-  ArrowUpRight,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import { Instagram, Linkedin, Mail, MessageCircle, ArrowUpRight } from 'lucide-react'
 import ThemedLogo from '@/components/ThemedLogo'
 import ShinyText from '@/components/ShinyText'
+import { SITE, CONTACT, ADDRESS, SOCIAL, QUICK_LINKS, LEGAL_LINKS } from '@/lib/config'
 
-// ─── Data ────────────────────────────────────────────────────────
-
-const exploreLinks = [
-  { label: 'The Court', href: '/events' },
-  { label: 'The Trail', href: '/events' },
-  { label: 'The Road', href: '/events' },
-  { label: 'The Ride', href: '/events' },
+// ─── Social icon data (single source of truth) ────────────────
+const socialItems = [
+  { label: 'Instagram', href: SOCIAL.instagram, icon: Instagram },
+  { label: 'LinkedIn', href: SOCIAL.linkedin, icon: Linkedin },
+  { label: 'WhatsApp', href: SOCIAL.whatsapp, icon: MessageCircle },
+  { label: 'Email', href: SOCIAL.email, icon: Mail },
 ]
 
-const navLinks = [
-  { label: 'Home', href: '#hero' },
-  { label: 'About', href: '/about' },
-  { label: 'Events', href: '/events' },
-  { label: 'Community', href: '#community' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '/contact' },
+// ─── Column data ─────────────────────────────────────────────
+const contactItems = [
+  { label: 'Email', value: CONTACT.email, href: SOCIAL.email },
+  { label: 'WhatsApp', value: CONTACT.whatsapp, href: SOCIAL.whatsapp },
 ]
-
-interface SocialLink {
-  label: string
-  href: string
-  icon: LucideIcon | 'playo' | 'whatsapp'
-}
-
-const socialLinks: SocialLink[] = [
-  { label: 'Instagram', href: 'https://instagram.com/rallyverse', icon: Instagram },
-  { label: 'LinkedIn', href: 'https://linkedin.com/company/rallyverse', icon: Linkedin },
-  { label: 'Playo', href: '#', icon: 'playo' },
-  { label: 'Email', href: 'mailto:hello@rallyverse.in', icon: Mail },
-  { label: 'WhatsApp', href: '#', icon: 'whatsapp' },
-]
-
-// ─── Inline icons (same stroke style as Lucide) ─────────────────
-
-const iconMap: Record<string, (size?: number) => React.ReactNode> = {
-  playo: (size = 18) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="6 3 20 12 6 21 6 3" />
-    </svg>
-  ),
-  whatsapp: (size = 18) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
-      <path d="M9 10a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4z" />
-    </svg>
-  ),
-}
-
-// ─── Helpers ─────────────────────────────────────────────────────
-
-function scrollTo(href: string) {
-  if (href.startsWith('/')) return
-  const id = href.replace('#', '')
-  const el = document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
-
-// ─── Component ───────────────────────────────────────────────────
 
 export default function Footer() {
   const router = useRouter()
 
   return (
     <div id="contact">
-      {/* ── Pre‑footer CTA ──────────────────────────────────────── */}
+      {/* ── Pre‑footer CTA ────────────────────────────────────── */}
       <section
         className="relative overflow-hidden px-6 py-20 md:py-28"
         style={{ backgroundColor: 'var(--bg-primary)' }}
@@ -125,7 +74,7 @@ export default function Footer() {
         </div>
       </section>
 
-      {/* ── Main Footer ─────────────────────────────────────────── */}
+      {/* ── Main Footer ───────────────────────────────────────── */}
       <footer
         className="px-6 py-16 md:py-20"
         style={{
@@ -134,33 +83,34 @@ export default function Footer() {
         }}
       >
         <div className="mx-auto max-w-[1100px]">
-          {/* Grid */}
-          <div className="grid gap-12 md:grid-cols-5 md:gap-8">
-            {/* ── Brand ─────────────────────────────────────────── */}
-            <div className="md:col-span-1 max-md:order-first">
-              <Link href="/" className="mb-5 inline-block">
+          {/* Grid — 4 columns on desktop */}
+          <div className="grid gap-12 md:grid-cols-4 md:gap-8">
+
+            {/* ── Column 1: Brand ─────────────────────────────── */}
+            <div className="md:col-span-1">
+              <button type="button" onClick={() => router.push('/')} className="mb-5 inline-block">
                 <ThemedLogo context="footer" />
-              </Link>
-              <p className="max-w-[240px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                A universe where people rally through sports, adventure, and shared experiences.
+              </button>
+              <p className="max-w-[260px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                {SITE.description}
               </p>
             </div>
 
-            {/* ── Explore ─────────────────────────────────────── */}
+            {/* ── Column 2: Quick Links ───────────────────────── */}
             <div>
               <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'var(--text-faint)' }}>
-                Explore
+                Quick Links
               </h3>
-              <ul className="flex flex-col gap-2.5">
-                {exploreLinks.map((link) => (
+              <ul className="flex flex-col gap-3">
+                {QUICK_LINKS.map((link) => (
                   <li key={link.label}>
                     <button
                       type="button"
                       onClick={() => router.push(link.href)}
                       className="text-sm transition-colors duration-200"
-                      style={{ color: 'var(--text-primary)' }}
+                      style={{ color: 'var(--text-muted)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-primary)' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
                     >
                       {link.label}
                     </button>
@@ -169,76 +119,59 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* ── Navigation ───────────────────────────────────── */}
+            {/* ── Column 3: Contact ────────────────────────────── */}
             <div>
               <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'var(--text-faint)' }}>
-                Navigation
+                Contact
               </h3>
-              <ul className="flex flex-col gap-2.5">
-                {navLinks.map((link) => (
-                  <li key={link.label}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (link.href.startsWith('/')) {
-                          router.push(link.href)
-                        } else {
-                          scrollTo(link.href)
-                        }
-                      }}
+              <ul className="flex flex-col gap-3">
+                {contactItems.map((item) => (
+                  <li key={item.label}>
+                    <a
+                      href={item.href}
+                      target={item.href.startsWith('http') ? '_blank' : undefined}
+                      rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                       className="text-sm transition-colors duration-200"
-                      style={{ color: 'var(--text-primary)' }}
+                      style={{ color: 'var(--text-muted)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-primary)' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
                     >
-                      {link.label}
-                    </button>
+                      {item.value}
+                    </a>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* ── Legal ────────────────────────────────────────── */}
+            {/* ── Column 4: Location ──────────────────────────── */}
             <div>
               <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'var(--text-faint)' }}>
-                Legal
+                Location
               </h3>
-              <ul className="flex flex-col gap-2.5">
-                {[
-                  { label: 'Privacy Policy', href: '/privacy-policy' },
-                  { label: 'Terms & Conditions', href: '/terms-and-conditions' },
-                  { label: 'Contact', href: '/contact' },
-                ].map((link) => (
-                  <li key={link.label}>
-                    <button
-                      type="button"
-                      onClick={() => router.push(link.href)}
-                      className="text-sm transition-colors duration-200"
-                      style={{ color: 'var(--text-primary)' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-primary)' }}
-                    >
-                      {link.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <address className="not-italic text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                <span className="block">{SITE.name}</span>
+                <span className="block">{ADDRESS.line1}</span>
+                <span className="block">{ADDRESS.city}, {ADDRESS.state}</span>
+                <span className="block">{ADDRESS.country}</span>
+              </address>
             </div>
+          </div>
 
-            {/* ── Connect ───────────────────────────────────────── */}
-            <div>
-              <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'var(--text-faint)' }}>
-                Connect
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {socialLinks.map((s) => {
-                  const isExternal = s.href.startsWith('http') || s.href.startsWith('mailto')
+          {/* ── Social Icons Row ───────────────────────────────── */}
+          <div className="mt-12 pt-8" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'var(--text-faint)' }}>
+                Follow Us
+              </p>
+              <div className="flex gap-3">
+                {socialItems.map((s) => {
+                  const Icon = s.icon
                   return (
-                    <Link
+                    <a
                       key={s.label}
                       href={s.href}
-                      target={isExternal ? '_blank' : undefined}
-                      rel={isExternal ? 'noopener noreferrer' : undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex items-center justify-center h-10 w-10 rounded-lg transition-all duration-200"
                       style={{
                         backgroundColor: 'var(--bg-surface)',
@@ -257,51 +190,42 @@ export default function Footer() {
                         e.currentTarget.style.borderColor = 'var(--border-subtle)'
                         e.currentTarget.style.transform = 'translateY(0)'
                       }}
-                      aria-label={`RallyVerse on ${s.label}`}
+                      aria-label={`${SITE.name} on ${s.label}`}
                     >
-                      {typeof s.icon === 'string'
-                        ? iconMap[s.icon]?.()
-                        : <s.icon size={18} />}
-                    </Link>
+                      <Icon size={18} />
+                    </a>
                   )
                 })}
               </div>
             </div>
           </div>
 
-          {/* ── Bottom bar ──────────────────────────────────────── */}
-          <div className="mt-14 mb-0">
+          {/* ── Bottom Bar ────────────────────────────────────── */}
+          <div className="mt-10">
             <div className="mb-6 h-px" style={{ backgroundColor: 'var(--border-subtle)' }} />
-            <div className="flex flex-col items-center gap-2 text-center md:flex-row md:justify-between md:text-left">
+            <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
               <p className="text-[13px]" style={{ color: 'var(--text-faint)' }}>
-                &copy; 2026 RallyVerse. All rights reserved.
+                &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
               </p>
               <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => router.push('/privacy-policy')}
-                  className="text-[13px] transition-colors duration-200"
-                  style={{ color: 'var(--text-faint)' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
-                >
-                  Privacy Policy
-                </button>
-                <span className="text-[13px]" style={{ color: 'var(--text-faint)' }}>&middot;</span>
-                <button
-                  type="button"
-                  onClick={() => router.push('/terms-and-conditions')}
-                  className="text-[13px] transition-colors duration-200"
-                  style={{ color: 'var(--text-faint)' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
-                >
-                  Terms &amp; Conditions
-                </button>
+                {LEGAL_LINKS.map((link, i) => (
+                  <span key={link.label}>
+                    <button
+                      type="button"
+                      onClick={() => router.push(link.href)}
+                      className="text-[13px] transition-colors duration-200"
+                      style={{ color: 'var(--text-faint)' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
+                    >
+                      {link.label}
+                    </button>
+                    {i < LEGAL_LINKS.length - 1 && (
+                      <span className="mx-4 text-[13px]" style={{ color: 'var(--text-faint)' }}>&middot;</span>
+                    )}
+                  </span>
+                ))}
               </div>
-              <p className="text-[13px]" style={{ color: 'var(--text-faint)' }}>
-                Bengaluru, Karnataka, India
-              </p>
             </div>
           </div>
         </div>

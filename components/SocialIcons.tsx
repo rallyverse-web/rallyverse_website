@@ -1,11 +1,12 @@
 'use client'
 
 import { Mail, Instagram, Linkedin } from 'lucide-react'
+import { SOCIAL } from '@/lib/config'
 
 const socialLinks = [
-  { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/rallyverse' },
-  { icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com/company/rallyverse' },
-  { icon: Mail, label: 'Email', href: 'mailto:hello@rallyverse.in' },
+  { icon: Instagram, label: 'Instagram', href: SOCIAL.instagram },
+  { icon: Linkedin, label: 'LinkedIn', href: SOCIAL.linkedin },
+  { icon: Mail, label: 'Email', href: SOCIAL.email },
 ]
 
 export default function SocialIcons() {
