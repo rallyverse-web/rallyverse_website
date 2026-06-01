@@ -198,6 +198,53 @@ export function registrationConfirmedEmail(params: {
   }
 }
 
+// ─── Verification Complete (payment verified, awaiting confirmation) ─
+export function verificationCompleteEmail(params: {
+  playerName: string
+  registrationId: string
+  category: string
+  whatsappGroupLink: string
+}): { subject: string; html: string } {
+  const { playerName, registrationId, category, whatsappGroupLink } = params
+
+  const content = `
+    <h1 style="${STYLES.heading}">Payment Verified</h1>
+    <p>Hi ${playerName},</p>
+    <p>Your payment for <strong style="color:${COLORS.text};">Rally Series 01 — Badminton Tournament</strong> has been <strong style="color:${COLORS.accent};">verified successfully</strong>.</p>
+
+    <hr style="${STYLES.divider}" />
+
+    <p style="${STYLES.label}">Registration ID</p>
+    <p style="${STYLES.value}">${registrationId}</p>
+
+    <p style="${STYLES.label}">Category</p>
+    <p style="${STYLES.value}">${category}</p>
+
+    <p style="${STYLES.label}">Payment Status</p>
+    <p style="${STYLES.value}">Paid ✓</p>
+
+    <hr style="${STYLES.divider}" />
+
+    <p>You will receive a confirmation email shortly once your registration is fully approved.</p>
+    <p>Meanwhile, join the official WhatsApp group for match schedules and updates:</p>
+    <p style="text-align:center;margin:24px 0;">
+      <a href="${whatsappGroupLink}" style="${STYLES.button}">
+        Join WhatsApp Group
+      </a>
+    </p>
+
+    <hr style="${STYLES.divider}" />
+
+    <p>Need help? Email <a href="mailto:${EMAIL.supportEmail}" style="${STYLES.footerLink}">${EMAIL.supportEmail}</a>.</p>
+    <p style="margin-top:16px;">Regards,<br/><strong style="color:${COLORS.text};">Team RallyVerse</strong></p>
+  `
+
+  return {
+    subject: `Payment Verified — RallyVerse Badminton Tournament (${registrationId})`,
+    html: baseHtml(content),
+  }
+}
+
 // ─── Action Required / Rejection ──────────────────────────────
 export function actionRequiredEmail(params: {
   playerName: string

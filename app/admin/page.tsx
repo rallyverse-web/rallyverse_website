@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   CheckCircle,
   Clock,
+  Download,
   Edit,
   Loader2,
   Mail,
@@ -231,7 +232,8 @@ export default function AdminPage() {
     const { type, row } = confirmAction
     const rowIndex = parseInt(row.rowIndex, 10)
     try {
-      const res = await fetch(`/api/admin/${type}`, {
+      const endpoint = type === 'send-verification' ? 'send-verification' : type
+      const res = await fetch(`/api/admin/${endpoint}`, {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({ rowIndex }),
@@ -239,7 +241,7 @@ export default function AdminPage() {
       if (res.status === 401) { setToken(''); return }
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Action failed'); setActionLoading(false); return }
       setConfirmAction(null)
-      notify('success', `Registration ${type === 'delete' ? 'deleted' : type === 'verify' ? 'verified' : 'rejected'} successfully`)
+      notify('success', `Registration ${type === 'delete' ? 'deleted' : type === 'verify' ? 'verified' : type === 'reject' ? 'rejected' : 'verification email sent'} successfully`)
       fetchData()
     } catch { notify('error', 'Action failed due to network error') }
     finally { setActionLoading(false) }
@@ -283,6 +285,28 @@ export default function AdminPage() {
     } catch { notify('error', 'Edit failed due to network error') }
     finally { setSaving(false) }
   }
+
+  /* ── CSV export ── */
+  const downloadCSV = useCallback(() => {
+    const headers = TABLE_COLUMNS.map((c) => c.label).join(',')
+    const rows = filtered.map((r) =>
+      TABLE_COLUMNS.map((c) => {
+        let val = r[c.key] || ''
+        if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+          val = `"${val.replace(/"/g, '""')}"`
+        }
+        return val
+      }).join(',')
+    )
+    const csv = [headers, ...rows].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `rallyverse-registrations-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [filtered])
 
   /* ── Login screen ── */
   if (!token) {
@@ -378,6 +402,23 @@ export default function AdminPage() {
           </select>
           <span style={{ color: '#666', fontSize: 12 }}>{filtered.length} registration{filtered.length !== 1 ? 's' : ''}</span>
 
+          {/* CSV export */}
+          <button
+            onClick={downloadCSV}
+            style={{
+              ...s.btn,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              background: 'transparent',
+              border: '1px solid #333',
+              fontSize: 13,
+            }}
+          >
+            <Download size={14} />
+            CSV
+          </button>
+
           {/* Email send section — inline with filters */}
           {emailsReady > 0 && (
             <button
@@ -469,6 +510,11 @@ export default function AdminPage() {
                         {row.verificationStatus === 'Pending' && (
                           <button style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444' }} onClick={() => setConfirmAction({ type: 'reject', row })}>Reject</button>
                         )}
+                        {row.verificationStatus === 'Verified' && row.confirmationSent === 'No' && (
+                          <button style={{ ...s.btnSm, background: '#88888820', color: '#4ade80' }} onClick={() => setConfirmAction({ type: 'send-verification', row })}>
+                            <Mail size={12} style={{ marginRight: 3, verticalAlign: 'middle' }} />Notify
+                          </button>
+                        )}
                         <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => openEdit(row)}>
                           <Edit size={12} style={{ marginRight: 3, verticalAlign: 'middle' }} />Edit
                         </button>
@@ -555,11 +601,13 @@ export default function AdminPage() {
                     {confirmAction.type === 'verify' && 'Verify Registration'}
                     {confirmAction.type === 'reject' && 'Reject Registration'}
                     {confirmAction.type === 'delete' && 'Delete Registration'}
+                    {confirmAction.type === 'send-verification' && 'Send Verification Email'}
                   </h3>
                   <p style={{ color: '#888', fontSize: 14, marginBottom: 4 }}>
                     {confirmAction.type === 'verify' && 'Mark this registration as verified? This will set Payment Status to "Paid" and Verification Status to "Verified".'}
                     {confirmAction.type === 'reject' && 'Reject this registration? This will set Verification Status to "Rejected" and add a remark.'}
                     {confirmAction.type === 'delete' && 'Are you sure? This action cannot be undone. The row will be permanently removed from Google Sheets.'}
+                    {confirmAction.type === 'send-verification' && 'Send a verification/payment-confirmed email to this player?'}
                   </p>
                   {confirmAction.row && (
                     <p style={{
@@ -583,15 +631,15 @@ export default function AdminPage() {
                       disabled={actionLoading}
                       style={{
                         ...s.btnSm,
-                        background: confirmAction.type === 'delete' || confirmAction.type === 'reject' ? '#ff4444' : '#4ade80',
-                        color: '#000',
+                        background: confirmAction.type === 'delete' || confirmAction.type === 'reject' ? '#ff4444' : confirmAction.type === 'send-verification' ? '#88888820' : '#4ade80',
+                        color: confirmAction.type === 'send-verification' ? '#4ade80' : '#000',
                         fontWeight: 700,
                         ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}),
                       }}
                     >
                       {actionLoading ? (
                         <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Processing...</>
-                      ) : confirmAction.type === 'delete' ? 'Delete' : confirmAction.type === 'reject' ? 'Reject' : 'Verify'}
+                      ) : confirmAction.type === 'delete' ? 'Delete' : confirmAction.type === 'reject' ? 'Reject' : confirmAction.type === 'send-verification' ? 'Send Email' : 'Verify'}
                     </button>
                   </div>
                 </>
