@@ -16,6 +16,7 @@ export const EMAIL = {
 
 // ─── Contact ──────────────────────────────────────────────────────
 export const CONTACT = {
+  phone: '+91 89517 60369',
   email: 'hello@rallyverse.app',
   supportEmail: EMAIL.supportEmail,
   whatsapp: '+91 89517 60369',

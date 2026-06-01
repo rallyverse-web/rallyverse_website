@@ -60,7 +60,7 @@ const sections = [
   {
     title: 'Contact Us',
     content:
-      `If you have any questions about this Privacy Policy or how your data is handled, please contact us at ${EMAIL.supportEmail} or reach out via our WhatsApp number.`,
+       `If you have any questions about this Privacy Policy or how your data is handled, please contact us at ${EMAIL.supportEmail} or reach out via WhatsApp at ${CONTACT.phone}.`,
   },
 ]
 

@@ -4,7 +4,7 @@ import { motion } from 'motion/react'
 import { MessageCircle, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 
-const WHATSAPP_LINK = 'https://chat.whatsapp.com/your-invite-link'
+const WHATSAPP_LINK = 'https://wa.me/918951760369'
 
 export default function CommunityProof() {
   return (

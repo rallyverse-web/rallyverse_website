@@ -38,7 +38,10 @@ function emailFooter(): string {
         <a href="${SITE.domain}" style="${STYLES.footerLink}">${SITE.domain}</a>
       </p>
       <p style="${STYLES.footerText}">
-        Need help? Email <a href="mailto:${EMAIL.supportEmail}" style="${STYLES.footerLink}">${EMAIL.supportEmail}</a>
+        Phone: <a href="${CONTACT.whatsappUrl}" style="${STYLES.footerLink}">${CONTACT.phone}</a>
+      </p>
+      <p style="${STYLES.footerText}">
+        Email: <a href="mailto:${EMAIL.supportEmail}" style="${STYLES.footerLink}">${EMAIL.supportEmail}</a>
       </p>
       <p style="font-size:11px;color:${COLORS.textMuted};margin-top:12px;">
         &copy; ${new Date().getFullYear()} ${SITE.name}. All rights reserved.

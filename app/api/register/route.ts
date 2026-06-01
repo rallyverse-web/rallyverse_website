@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
       try {
         const { Resend } = await import('resend')
         const resend = new Resend(process.env.RESEND_API_KEY)
-        const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+91 98765 43210'
+        const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+91 89517 60369'
         const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
 
         const { subject, html } = registrationReceivedEmail({
