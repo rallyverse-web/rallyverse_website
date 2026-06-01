@@ -8,13 +8,15 @@ import ShinyText from '@/components/ShinyText'
 import ThemedLogo from '@/components/ThemedLogo'
 import ThemeToggle from '@/components/ThemeToggle'
 
-const navLinks = [
+type NavLink = { label: string; href: string; isRoute?: boolean }
+
+const navLinks: NavLink[] = [
   { label: 'Home', href: '#hero' },
-  { label: 'About', href: '#about' },
-  { label: 'Events', href: '#events' },
+  { label: 'About', href: '/about', isRoute: true },
+  { label: 'Events', href: '/events', isRoute: true },
   { label: 'Community', href: '#community' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Contact', href: '/contact', isRoute: true },
 ]
 
 const sectionIds = ['hero', 'about', 'events', 'community', 'faq', 'contact']
@@ -44,8 +46,10 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', updateViewportState)
   }, [])
 
-  // IntersectionObserver for active section tracking
+  // IntersectionObserver for active section tracking (homepage only)
   useEffect(() => {
+    if (pathname !== '/') return
+
     const observers: IntersectionObserver[] = []
     const sectionMap = new Map<string, number>()
 
@@ -76,10 +80,18 @@ export default function Navbar() {
     })
 
     return () => observers.forEach((o) => o.disconnect())
-  }, [])
+  }, [pathname])
 
   const handleNavClick = async (href: string) => {
     setMenuOpen(false)
+
+    // Route-based navigation
+    if (href.startsWith('/')) {
+      router.push(href)
+      return
+    }
+
+    // Hash-based navigation (scroll to section)
     const sectionId = href.replace('#', '')
     setActiveSection(sectionId)
 
@@ -122,7 +134,9 @@ export default function Navbar() {
           {/* Desktop nav links */}
           <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.href.replace('#', '')
+              const isActive = link.isRoute
+                ? pathname === link.href
+                : activeSection === link.href.replace('#', '')
               return (
                 <button
                   key={link.href}
@@ -230,7 +244,9 @@ export default function Navbar() {
               {/* Drawer nav links */}
               <nav className="flex flex-col gap-0">
                 {navLinks.map((link, i) => {
-                  const isActive = activeSection === link.href.replace('#', '')
+                  const isActive = link.isRoute
+                    ? pathname === link.href
+                    : activeSection === link.href.replace('#', '')
                   return (
                     <motion.button
                       key={link.href}

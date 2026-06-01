@@ -16,19 +16,19 @@ import ShinyText from '@/components/ShinyText'
 // ─── Data ────────────────────────────────────────────────────────
 
 const exploreLinks = [
-  { label: 'The Court', href: '#events' },
-  { label: 'The Trail', href: '#events' },
-  { label: 'The Road', href: '#events' },
-  { label: 'The Ride', href: '#events' },
+  { label: 'The Court', href: '/events' },
+  { label: 'The Trail', href: '/events' },
+  { label: 'The Road', href: '/events' },
+  { label: 'The Ride', href: '/events' },
 ]
 
 const navLinks = [
   { label: 'Home', href: '#hero' },
-  { label: 'About', href: '#about' },
-  { label: 'Events', href: '#events' },
+  { label: 'About', href: '/about' },
+  { label: 'Events', href: '/events' },
   { label: 'Community', href: '#community' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Contact', href: '/contact' },
 ]
 
 interface SocialLink {
@@ -64,6 +64,7 @@ const iconMap: Record<string, (size?: number) => React.ReactNode> = {
 // ─── Helpers ─────────────────────────────────────────────────────
 
 function scrollTo(href: string) {
+  if (href.startsWith('/')) return
   const id = href.replace('#', '')
   const el = document.getElementById(id)
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -134,9 +135,9 @@ export default function Footer() {
       >
         <div className="mx-auto max-w-[1100px]">
           {/* Grid */}
-          <div className="grid gap-12 md:grid-cols-4 md:gap-8">
+          <div className="grid gap-12 md:grid-cols-5 md:gap-8">
             {/* ── Brand ─────────────────────────────────────────── */}
-            <div className="md:col-span-1">
+            <div className="md:col-span-1 max-md:order-first">
               <Link href="/" className="mb-5 inline-block">
                 <ThemedLogo context="footer" />
               </Link>
@@ -155,7 +156,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <button
                       type="button"
-                      onClick={() => scrollTo(link.href)}
+                      onClick={() => router.push(link.href)}
                       className="text-sm transition-colors duration-200"
                       style={{ color: 'var(--text-primary)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
@@ -178,7 +179,40 @@ export default function Footer() {
                   <li key={link.label}>
                     <button
                       type="button"
-                      onClick={() => scrollTo(link.href)}
+                      onClick={() => {
+                        if (link.href.startsWith('/')) {
+                          router.push(link.href)
+                        } else {
+                          scrollTo(link.href)
+                        }
+                      }}
+                      className="text-sm transition-colors duration-200"
+                      style={{ color: 'var(--text-primary)' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-primary)' }}
+                    >
+                      {link.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* ── Legal ────────────────────────────────────────── */}
+            <div>
+              <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'var(--text-faint)' }}>
+                Legal
+              </h3>
+              <ul className="flex flex-col gap-2.5">
+                {[
+                  { label: 'Privacy Policy', href: '/privacy-policy' },
+                  { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+                  { label: 'Contact', href: '/contact' },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <button
+                      type="button"
+                      onClick={() => router.push(link.href)}
                       className="text-sm transition-colors duration-200"
                       style={{ color: 'var(--text-primary)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
@@ -242,9 +276,29 @@ export default function Footer() {
               <p className="text-[13px]" style={{ color: 'var(--text-faint)' }}>
                 &copy; 2026 RallyVerse. All rights reserved.
               </p>
-              <p className="text-[13px] font-medium tracking-wider" style={{ color: 'var(--text-muted)' }}>
-                Rally Beyond Routine
-              </p>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => router.push('/privacy-policy')}
+                  className="text-[13px] transition-colors duration-200"
+                  style={{ color: 'var(--text-faint)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
+                >
+                  Privacy Policy
+                </button>
+                <span className="text-[13px]" style={{ color: 'var(--text-faint)' }}>&middot;</span>
+                <button
+                  type="button"
+                  onClick={() => router.push('/terms-and-conditions')}
+                  className="text-[13px] transition-colors duration-200"
+                  style={{ color: 'var(--text-faint)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
+                >
+                  Terms &amp; Conditions
+                </button>
+              </div>
               <p className="text-[13px]" style={{ color: 'var(--text-faint)' }}>
                 Bengaluru, Karnataka, India
               </p>

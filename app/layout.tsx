@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Bebas_Neue, Inter } from 'next/font/google'
+import Script from 'next/script'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/Footer'
 import { ThemeProvider } from '@/lib/theme'
@@ -121,6 +122,18 @@ export default function RootLayout({
             })
           }}
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-MHFCSTPCV5"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-MHFCSTPCV5');
+          `}
+        </Script>
       </head>
       <body>
         <ThemeProvider>
