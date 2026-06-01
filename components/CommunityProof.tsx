@@ -3,8 +3,9 @@
 import { motion } from 'motion/react'
 import { MessageCircle, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
+import { CONTACT } from '@/lib/config'
 
-const WHATSAPP_LINK = 'https://wa.me/918951760369'
+const WHATSAPP_LINK = CONTACT.whatsappUrl
 
 export default function CommunityProof() {
   return (

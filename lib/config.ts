@@ -24,16 +24,21 @@ export const CONTACT = {
   whatsappUrl: 'https://wa.me/918951760369',
 }
 
-// ─── Address (temporary — replace once permanent space is secured) ─
+// ─── Address ─────────────────────────────────────────────────────
 export const ADDRESS = {
-  line1: 'Whitefield',
+  area: 'Rajajinagar',
   city: 'Bengaluru',
   state: 'Karnataka',
   country: 'India',
-  isTemporary: true,
 }
 
-export const ADDRESS_FULL = `${ADDRESS.line1}, ${ADDRESS.city}, ${ADDRESS.state}, ${ADDRESS.country}`
+export const ADDRESS_FULL = `${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state}, ${ADDRESS.country}`
+
+// ─── Registration Categories ──────────────────────────────────────
+export const CATEGORIES = [
+  'Mixed Doubles',
+  "Men's Doubles",
+]
 
 // ─── Social ───────────────────────────────────────────────────────
 export const SOCIAL = {

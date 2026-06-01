@@ -4,6 +4,7 @@ import Script from 'next/script'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/Footer'
 import { ThemeProvider } from '@/lib/theme'
+import { SITE, ADDRESS, ADDRESS_FULL, CATEGORIES } from '@/lib/config'
 import './globals.css'
 
 const bebasNeue = Bebas_Neue({
@@ -101,14 +102,14 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              "name": "RallyVerse",
-              "url": "https://rallyverse.social",
-              "logo": "https://rallyverse.social/logo_transparent.png",
-              "description": "Competitive badminton tournaments, community treks, marathons and cycling events in Bengaluru.",
+              "name": SITE.name,
+              "url": SITE.domain,
+              "logo": `${SITE.domain}/logo_transparent.png`,
+              "description": `Competitive badminton tournaments, community treks, marathons and cycling events in ${ADDRESS.city}.`,
               "address": {
                 "@type": "PostalAddress",
-                "addressLocality": "Bengaluru",
-                "addressRegion": "Karnataka",
+                "addressLocality": ADDRESS.city,
+                "addressRegion": ADDRESS.state,
                 "addressCountry": "IN"
               },
               "sameAs": [
@@ -124,19 +125,19 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "SportsEvent",
-              "name": "Rally Series 01 — Badminton Tournament Bengaluru",
-              "description": "Rally Series 01 is a competitive badminton tournament in Bengaluru featuring Men's Doubles and Mixed Doubles categories. Players compete in a professionally organized one-day event designed to bring together badminton enthusiasts and foster a strong sporting community.",
-              "image": "https://rallyverse.social/logo_transparent.png",
+              "name": `Rally Series 01 — Badminton Tournament ${ADDRESS.city}`,
+              "description": `Rally Series 01 is a competitive badminton tournament in ${ADDRESS.city} featuring ${CATEGORIES.join(' and ')} categories. Players compete in a professionally organized one-day event designed to bring together badminton enthusiasts and foster a strong sporting community.`,
+              "image": `${SITE.domain}/logo_transparent.png`,
               "startDate": "2026-07-01T09:30:00+05:30",
               "endDate": "2026-07-01T17:00:00+05:30",
               "location": {
                 "@type": "Place",
-                "name": "Rajajinagar, Bengaluru, Karnataka, India",
+                "name": ADDRESS_FULL,
                 "address": {
                   "@type": "PostalAddress",
-                  "streetAddress": "Rajajinagar",
-                  "addressLocality": "Bengaluru",
-                  "addressRegion": "Karnataka",
+                  "streetAddress": ADDRESS.area,
+                  "addressLocality": ADDRESS.city,
+                  "addressRegion": ADDRESS.state,
                   "postalCode": "560010",
                   "addressCountry": "IN"
                 }
@@ -145,14 +146,14 @@ export default function RootLayout({
                 "@type": "Offer",
                 "price": "799",
                 "priceCurrency": "INR",
-                "url": "https://rallyverse.social/register",
+                "url": `${SITE.domain}/register`,
                 "availability": "https://schema.org/LimitedAvailability",
                 "validFrom": "2026-06-01T00:00:00+05:30"
               },
               "organizer": {
                 "@type": "Organization",
-                "name": "RallyVerse",
-                "url": "https://rallyverse.social"
+                "name": SITE.name,
+                "url": SITE.domain
               },
               "sport": "Badminton",
               "eventStatus": "https://schema.org/EventScheduled",

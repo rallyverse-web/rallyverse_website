@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
 import { formatRegistrationDate, generateRegistrationId } from '@/lib/utils'
-import { EMAIL } from '@/lib/config'
+import { CONTACT, EMAIL } from '@/lib/config'
 import { registrationReceivedEmail } from '@/lib/email'
 
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
       try {
         const { Resend } = await import('resend')
         const resend = new Resend(process.env.RESEND_API_KEY)
-        const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+91 89517 60369'
+        const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || CONTACT.phone
         const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
 
         const { subject, html } = registrationReceivedEmail({

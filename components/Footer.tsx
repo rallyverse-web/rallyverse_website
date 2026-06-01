@@ -150,7 +150,7 @@ export default function Footer() {
               </h3>
               <address className="not-italic text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                 <span className="block">{SITE.name}</span>
-                <span className="block">{ADDRESS.line1}</span>
+                <span className="block">{ADDRESS.area}</span>
                 <span className="block">{ADDRESS.city}, {ADDRESS.state}</span>
                 <span className="block">{ADDRESS.country}</span>
               </address>

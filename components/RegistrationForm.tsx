@@ -5,6 +5,7 @@ import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
 import PaymentQR from '@/components/PaymentQR'
+import { CATEGORIES, CONTACT } from '@/lib/config'
 
 type FormDataState = {
   category: string
@@ -22,14 +23,6 @@ type FormDataState = {
   upiId: string
   paymentPhone: string
 }
-
-const categories = [
-  "Men's Singles",
-  "Women's Singles",
-  "Men's Doubles",
-  "Women's Doubles",
-  'Mixed Doubles',
-]
 
 const skillLevels = ['Beginner', 'Intermediate', 'Advanced']
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
@@ -96,7 +89,7 @@ export default function RegistrationForm() {
   const needsPlayer2 = useMemo(() => isDoublesCategory(formData.category), [formData.category])
   const upiId = process.env.NEXT_PUBLIC_UPI_ID || 'adityag,007@ptaxis'
   const entryFee = process.env.NEXT_PUBLIC_ENTRY_FEE || '800'
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+91 89517 60369'
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || CONTACT.phone
   const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -319,7 +312,7 @@ export default function RegistrationForm() {
               <option value="" disabled>
                 Select category
               </option>
-              {categories.map((category) => (
+              {CATEGORIES.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>
@@ -374,7 +367,7 @@ export default function RegistrationForm() {
               <label htmlFor="player1Phone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                 Player 1 WhatsApp Number <span style={{ color: 'var(--accent-primary)' }}>*</span>
               </label>
-              <input id="player1Phone" name="player1Phone" type="tel" value={formData.player1Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="+91 89517 60369" />
+              <input id="player1Phone" name="player1Phone" type="tel" value={formData.player1Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder={CONTACT.phone} />
               <FieldError message={errors.player1Phone} />
             </div>
             <div>
@@ -412,7 +405,7 @@ export default function RegistrationForm() {
                 <label htmlFor="player2Phone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
                   Player 2 WhatsApp Number <span style={{ color: 'var(--accent-primary)' }}>*</span>
                 </label>
-                <input id="player2Phone" name="player2Phone" type="tel" value={formData.player2Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="+91 89517 60369" />
+                <input id="player2Phone" name="player2Phone" type="tel" value={formData.player2Phone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder={CONTACT.phone} />
                 <FieldError message={errors.player2Phone} />
               </div>
               <div>
@@ -491,7 +484,7 @@ export default function RegistrationForm() {
             <label htmlFor="paymentPhone" className={labelClass} style={{ color: 'var(--text-muted)' }}>
               Phone Number Used For Payment <span style={{ color: 'var(--accent-primary)' }}>*</span>
             </label>
-            <input id="paymentPhone" name="paymentPhone" type="tel" value={formData.paymentPhone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder="+91 89517 60369" />
+            <input id="paymentPhone" name="paymentPhone" type="tel" value={formData.paymentPhone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder={CONTACT.phone} />
             <FieldError message={errors.paymentPhone} />
           </div>
         </div>
