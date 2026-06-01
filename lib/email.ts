@@ -1,5 +1,7 @@
 import { SITE, CONTACT, EMAIL } from './config'
 
+const LOGO_URL = `${SITE.domain}/logo/logo_transparent.png`
+
 // ─── Brand colors ─────────────────────────────────────────────
 const COLORS = {
   bg: '#0B0D10',
@@ -16,8 +18,6 @@ const STYLES = {
   body: `font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:${COLORS.bg};color:${COLORS.text};margin:0;padding:0;`,
   container: `max-width:560px;margin:0 auto;padding:32px 24px;`,
   header: `text-align:center;padding:32px 0 24px;border-bottom:1px solid ${COLORS.border};`,
-  logoText: `font-size:28px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:${COLORS.text};`,
-  logoAccent: `font-size:28px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:${COLORS.accent};`,
   content: `padding:32px 0;line-height:1.7;font-size:15px;color:${COLORS.textMuted};`,
   heading: `font-size:22px;font-weight:700;color:${COLORS.text};margin:0 0 8px;`,
   label: `font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:${COLORS.textMuted};margin:0 0 4px;`,
@@ -58,8 +58,8 @@ function baseHtml(content: string): string {
 
         <!-- Header -->
         <tr><td style="${STYLES.header}">
-          <span style="${STYLES.logoText}">RALLY</span><span style="${STYLES.logoAccent}">VERSE</span>
-          <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${COLORS.textMuted};margin:4px 0 0;">
+          <img src="${LOGO_URL}" alt="RallyVerse" width="200" height="54" style="display:block;max-width:200px;height:auto;margin:0 auto;outline:none;border:none;" />
+          <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${COLORS.textMuted};margin:6px 0 0;">
             Rally Beyond Routine
           </p>
         </td></tr>
