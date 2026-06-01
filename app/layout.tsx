@@ -111,7 +111,10 @@ export default function RootLayout({
                 "addressRegion": "Karnataka",
                 "addressCountry": "IN"
               },
-              "sameAs": []
+              "sameAs": [
+                "https://www.instagram.com/rallyverseofficial?igsh=eDQ3bm9kODkycml3",
+                "https://linkedin.com/company/rallyverse"
+              ]
             })
           }}
         />

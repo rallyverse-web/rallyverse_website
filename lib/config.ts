@@ -36,7 +36,7 @@ export const ADDRESS_FULL = `${ADDRESS.line1}, ${ADDRESS.city}, ${ADDRESS.state}
 
 // ─── Social ───────────────────────────────────────────────────────
 export const SOCIAL = {
-  instagram: 'https://instagram.com/rallyverse',
+  instagram: 'https://www.instagram.com/rallyverseofficial?igsh=eDQ3bm9kODkycml3',
   linkedin: 'https://linkedin.com/company/rallyverse',
   whatsapp: CONTACT.whatsappUrl,
   email: `mailto:${CONTACT.email}`,
