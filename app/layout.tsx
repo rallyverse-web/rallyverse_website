@@ -131,8 +131,10 @@ export default function RootLayout({
                 "name": "Rajajinagar, Bengaluru, Karnataka, India",
                 "address": {
                   "@type": "PostalAddress",
-                  "addressLocality": "Rajajinagar",
-                  "addressRegion": "Bengaluru",
+                  "streetAddress": "Rajajinagar",
+                  "addressLocality": "Bengaluru",
+                  "addressRegion": "Karnataka",
+                  "postalCode": "560010",
                   "addressCountry": "IN"
                 }
               },
@@ -141,7 +143,8 @@ export default function RootLayout({
                 "price": "799",
                 "priceCurrency": "INR",
                 "url": "https://rallyverse.social/register",
-                "availability": "https://schema.org/LimitedAvailability"
+                "availability": "https://schema.org/LimitedAvailability",
+                "validFrom": "2026-06-01T00:00:00+05:30"
               },
               "organizer": {
                 "@type": "Organization",
