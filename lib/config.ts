@@ -18,8 +18,8 @@ export const EMAIL = {
 export const CONTACT = {
   email: 'hello@rallyverse.app',
   supportEmail: EMAIL.supportEmail,
-  whatsapp: '+91 98765 43210',
-  whatsappUrl: 'https://wa.me/919876543210',
+  whatsapp: '+91 89517 60369',
+  whatsappUrl: 'https://wa.me/918951760369',
 }
 
 // ─── Address (temporary — replace once permanent space is secured) ─
