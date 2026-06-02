@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { MessageCircle, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import WhatsAppIcon from '@/components/WhatsAppIcon'
 import AnimatedSection from '@/components/AnimatedSection'
 import { WHATSAPP } from '@/lib/config'
 
@@ -55,7 +56,7 @@ export default function CommunityProof() {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
             >
-              <MessageCircle size={20} />
+              <WhatsAppIcon size={20} />
               Join WhatsApp Community
               <ArrowRight size={16} />
             </motion.a>

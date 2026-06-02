@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { Mail, MessageCircle, MapPin, Headset } from 'lucide-react'
+import { Mail, MapPin, Headset } from 'lucide-react'
+import WhatsAppIcon from '@/components/WhatsAppIcon'
 import AnimatedSection from '@/components/AnimatedSection'
 import SocialIcons from '@/components/SocialIcons'
 import { CONTACT, ADDRESS_FULL, SOCIAL, WHATSAPP, EMAIL } from '@/lib/config'
@@ -23,8 +24,8 @@ const contactMethods = [
     href: `mailto:${EMAIL.supportEmail}`,
   },
   {
-    icon: MessageCircle,
-    label: 'WhatsApp',
+    icon: WhatsAppIcon,
+    label: 'WhatsApp Support',
     value: CONTACT.whatsapp,
     href: WHATSAPP.businessLink,
   },

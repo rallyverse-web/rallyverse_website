@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import { motion } from 'motion/react'
-import { Instagram, Linkedin, Mail, MessageCircle, ArrowUpRight } from 'lucide-react'
+import { Instagram, Linkedin, Mail, ArrowUpRight } from 'lucide-react'
+import WhatsAppIcon from '@/components/WhatsAppIcon'
 import ThemedLogo from '@/components/ThemedLogo'
 import ShinyText from '@/components/ShinyText'
 import { SITE, CONTACT, ADDRESS, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS } from '@/lib/config'
@@ -11,7 +12,7 @@ import { SITE, CONTACT, ADDRESS, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS } fr
 const socialItems = [
   { label: 'Instagram', href: SOCIAL.instagram, icon: Instagram },
   { label: 'LinkedIn', href: SOCIAL.linkedin, icon: Linkedin },
-  { label: 'WhatsApp', href: WHATSAPP.communityLink, icon: MessageCircle },
+  { label: 'WhatsApp Community', href: WHATSAPP.communityLink, icon: WhatsAppIcon },
   { label: 'Email', href: SOCIAL.email, icon: Mail },
 ]
 
