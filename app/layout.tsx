@@ -71,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" data-theme="color" suppressHydrationWarning className={`${bebasNeue.variable} ${inter.variable}`}>
+    <html lang="en-IN" data-theme="color" suppressHydrationWarning className={`${bebasNeue.variable} ${inter.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

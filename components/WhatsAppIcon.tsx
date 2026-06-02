@@ -5,12 +5,15 @@ interface WhatsAppIconProps extends SVGAttributes<SVGSVGElement> {
   className?: string
 }
 
+const SCALE = 1.2
+
 export default function WhatsAppIcon({ size = 24, className, ...props }: WhatsAppIconProps) {
+  const visualSize = Math.round(size * SCALE)
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
+      width={visualSize}
+      height={visualSize}
       viewBox="-83.77245 -140.29175 726.0279 841.7505"
       className={className}
       fill="currentColor"

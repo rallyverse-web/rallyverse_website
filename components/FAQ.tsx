@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion } from 'motion/react'
 import { ChevronDown } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import { CURRENT_EVENT, CONTACT, WHATSAPP, ADDRESS } from '@/lib/config'
@@ -118,6 +118,8 @@ export default function FAQ() {
                 onClick={() => toggle(i)}
                 className="flex w-full items-center justify-between gap-4 py-6 text-left transition-colors duration-200"
                 style={{ color: 'var(--text-primary)' }}
+                aria-expanded={openIndex === i}
+                aria-controls={`faq-answer-${i}`}
                 onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-primary)'}
                 onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
               >
@@ -134,21 +136,21 @@ export default function FAQ() {
                 </motion.span>
               </button>
 
-              <AnimatePresence initial={false}>
-                {openIndex === i && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    className="overflow-hidden"
-                  >
-                    <p className="pb-6 font-body text-[15px] leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
-                      {faq.answer}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <motion.div
+                id={`faq-answer-${i}`}
+                role="region"
+                initial={false}
+                animate={{
+                  height: openIndex === i ? 'auto' : 0,
+                  opacity: openIndex === i ? 1 : 0,
+                }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden"
+              >
+                <p className="pb-6 font-body text-[15px] leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
+                  {faq.answer}
+                </p>
+              </motion.div>
             </motion.div>
           ))}
         </div>
