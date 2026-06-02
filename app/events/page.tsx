@@ -53,8 +53,11 @@ export default function EventsPage() {
             "@context": "https://schema.org",
             "@type": "SportsEvent",
             "@id": `${eventUrl}#${CURRENT_EVENT.slug}`,
-            "url": eventUrl,
-            "mainEntityOfPage": eventUrl,
+            "url": `${SITE.domain}/register`,
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": eventUrl
+            },
             "name": CURRENT_EVENT.name,
             "description": CURRENT_EVENT.description,
             "image": {
@@ -91,8 +94,8 @@ export default function EventsPage() {
               "validFrom": CURRENT_EVENT.validFromISO
             },
             "organizer": {
-              "@type": "Organization",
-              "@id": `${SITE.domain}#organization`,
+              "@type": "SportsOrganization",
+              "@id": `${SITE.domain}#sportsorganization`,
               "name": SITE.name,
               "url": SITE.domain
             },

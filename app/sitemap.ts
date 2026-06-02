@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '',
     '/about',
     '/events',
+    '/events/rally-series-01-bengaluru-badminton-tournament-2026',
     '/register',
     '/contact',
     '/believers',

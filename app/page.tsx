@@ -8,10 +8,30 @@ import FirstEvent from '@/components/FirstEvent'
 import FAQ from '@/components/FAQ'
 import BelieversSection from '@/components/BelieversSection'
 import ManifestoStrip from '@/components/ManifestoStrip'
+import { faqs } from '@/lib/faqs'
+import { SITE } from '@/lib/config'
 
 export default function Page() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "@id": `${SITE.domain}#faq`,
+            "mainEntity": faqs.map((faq) => ({
+              "@type": "Question",
+              "name": faq.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer,
+              },
+            })),
+          }),
+        }}
+      />
       <Hero />
       <HeroIntro />
       <WhatWeDo />

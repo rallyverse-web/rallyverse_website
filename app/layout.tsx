@@ -4,7 +4,7 @@ import Script from 'next/script'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/Footer'
 import { ThemeProvider } from '@/lib/theme'
-import { SITE, ADDRESS, SOCIAL, CONTACT } from '@/lib/config'
+import { SITE, ADDRESS, SOCIAL, CONTACT, COMPANY } from '@/lib/config'
 import './globals.css'
 
 const bebasNeue = Bebas_Neue({
@@ -92,14 +92,15 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
-              "@id": `${SITE.domain}#organization`,
+              "@type": "SportsOrganization",
+              "@id": `${SITE.domain}#sportsorganization`,
               "name": SITE.name,
               "url": SITE.domain,
               "logo": `${SITE.domain}/logo_transparent.png`,
               "description": `Competitive badminton tournaments, community treks, marathons and cycling events in ${ADDRESS.city}.`,
               "address": {
                 "@type": "PostalAddress",
+                "streetAddress": ADDRESS.area,
                 "addressLocality": ADDRESS.city,
                 "addressRegion": ADDRESS.state,
                 "postalCode": ADDRESS.postalCode,
@@ -116,6 +117,41 @@ export default function RootLayout({
                 SOCIAL.linkedin
               ]
             })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": ["LocalBusiness", "SportsActivityLocation"],
+              "@id": `${SITE.domain}#localbusiness`,
+              "name": SITE.name,
+              "description": COMPANY.shortDescription,
+              "url": SITE.domain,
+              "telephone": CONTACT.phone,
+              "image": `${SITE.domain}/logo_transparent.png`,
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": ADDRESS.area,
+                "addressLocality": ADDRESS.city,
+                "addressRegion": ADDRESS.state,
+                "postalCode": ADDRESS.postalCode,
+                "addressCountry": "IN",
+              },
+              "priceRange": "\u20B9\u20B9",
+              "areaServed": {
+                "@type": "City",
+                "name": ADDRESS.city,
+              },
+              "sameAs": [
+                SOCIAL.instagram,
+                SOCIAL.linkedin,
+              ],
+              "parentOrganization": {
+                "@id": `${SITE.domain}#sportsorganization`,
+              },
+            }),
           }}
         />
         <Script

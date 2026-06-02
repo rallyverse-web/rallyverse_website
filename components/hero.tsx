@@ -60,6 +60,7 @@ export default function Hero() {
             stepDuration={0.4}
             threshold={0}
             rootMargin="0px"
+            as="h1"
             className="font-display text-[56px] sm:text-[96px] md:text-[140px] lg:text-[200px] leading-none tracking-tight rallyverse-gradient-text"
           />
         </div>
