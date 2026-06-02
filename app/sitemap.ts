@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/events',
     '/register',
     '/contact',
+    '/believers',
     '/privacy-policy',
     '/terms-and-conditions',
   ]

@@ -6,6 +6,7 @@ import WhoThisIsFor from '@/components/WhoThisIsFor'
 import CommunityProof from '@/components/CommunityProof'
 import FirstEvent from '@/components/FirstEvent'
 import FAQ from '@/components/FAQ'
+import BelieversSection from '@/components/BelieversSection'
 import ManifestoStrip from '@/components/ManifestoStrip'
 
 export default function Page() {
@@ -18,6 +19,7 @@ export default function Page() {
       <WhoThisIsFor />
       <CommunityProof />
       <FirstEvent />
+      <BelieversSection />
       <FAQ />
       <ManifestoStrip />
     </>

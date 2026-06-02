@@ -73,6 +73,7 @@ export const QUICK_LINKS = [
   { label: 'About Us', href: '/about' },
   { label: 'Events', href: '/events' },
   { label: 'Register', href: '/register' },
+  { label: 'Believers', href: '/believers' },
   { label: 'Contact', href: '/contact' },
 ]
 

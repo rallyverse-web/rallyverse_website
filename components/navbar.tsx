@@ -15,11 +15,12 @@ const navLinks: NavLink[] = [
   { label: 'About', href: '/about', isRoute: true },
   { label: 'Events', href: '/events', isRoute: true },
   { label: 'Community', href: '#community' },
+  { label: 'Believers', href: '/believers', isRoute: true },
   { label: 'FAQ', href: '#faq' },
   { label: 'Contact', href: '/contact', isRoute: true },
 ]
 
-const sectionIds = ['hero', 'about', 'events', 'community', 'faq', 'contact']
+const sectionIds = ['hero', 'about', 'events', 'community', 'faq', 'contact', 'believers']
 
 export default function Navbar() {
   const router = useRouter()
