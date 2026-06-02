@@ -4,38 +4,68 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { ChevronDown } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
-import { CURRENT_EVENT } from '@/lib/config'
+import { CURRENT_EVENT, CONTACT, WHATSAPP, ADDRESS } from '@/lib/config'
 
 const faqs = [
   {
-    question: 'Do I need to be a competitive player to join?',
+    question: 'What is RallyVerse?',
     answer:
-      'Not at all. We have brackets for Beginner, Intermediate, and Advanced levels. If you can hold a racket and want to compete, there\u2019s a spot for you.',
+      'RallyVerse is a badminton community that brings players together through games, tournaments, and shared experiences. We believe sport is more than competition. It\u2019s about connection, growth, and creating memorable experiences on and off the court.',
   },
   {
-    question: 'How much does it cost?',
+    question: 'When and where is Rally Series 01 happening?',
     answer:
-      `Registration for ${CURRENT_EVENT.name} is \u20B9${CURRENT_EVENT.registrationFee} per team. Payment is processed after registration via UPI.`,
+      `Rally Series 01 will take place on ${CURRENT_EVENT.date} from ${CURRENT_EVENT.time} at ${CURRENT_EVENT.venue}, Bengaluru.`,
   },
   {
-    question: 'Where will the tournaments be held?',
+    question: 'What categories are available?',
     answer:
-      `${CURRENT_EVENT.venue} in Bengaluru. Registered players will receive the exact location details after confirmation.`,
+      `For Rally Series 01, registrations are open for ${CURRENT_EVENT.categories.join(' and ')}. Only these categories are available for the first event.`,
   },
   {
-    question: 'How will I know when the first event is confirmed?',
+    question: 'What is the registration fee?',
     answer:
-      'We\u2019ll reach out directly on WhatsApp. That\u2019s why we ask for your number. No spam, only tournament updates.',
+      `The registration fee is \u20B9${CURRENT_EVENT.registrationFee} per team. This includes participation in the tournament and event operations.`,
   },
   {
-    question: "Can I play doubles if I don\u2019t have a partner?",
+    question: 'How do I register?',
     answer:
-      'Yes. Tell us in the registration form that you\u2019re open to being paired, and we\u2019ll match you with someone at your level.',
+      'Complete the registration form. Pay \u20B9799 using the QR code provided. Enter your payment details. Submit the form. Send your payment screenshot on WhatsApp for verification. Once verified, you\u2019ll receive a confirmation email.',
   },
   {
-    question: "What if I register but can\u2019t make it?",
+    question: 'Why do I need to send a payment screenshot?',
     answer:
-      'We understand. Just let us know and we\u2019ll move your spot to the next event in the series.',
+      'Payment screenshots help us verify registrations quickly and accurately. After registering, send your screenshot to the official RallyVerse WhatsApp Business account.',
+  },
+  {
+    question: 'Will both players receive confirmation emails?',
+    answer:
+      'Yes. For doubles registrations, confirmation emails are sent to both players using the email addresses provided during registration.',
+  },
+  {
+    question: 'How will I receive tournament updates?',
+    answer:
+      'All updates will be shared through the official RallyVerse WhatsApp Community. This includes match schedules, event announcements, important updates, and future RallyVerse events.',
+  },
+  {
+    question: 'Do I need to join the WhatsApp Community?',
+    answer:
+      'Yes, we strongly recommend joining. The WhatsApp Community is the primary channel for tournament communication and announcements.',
+  },
+  {
+    question: 'What skill levels can participate?',
+    answer:
+      'Players of all skill levels are welcome. Whether you\u2019re a recreational player or a competitive player, RallyVerse is designed to create a great experience for everyone.',
+  },
+  {
+    question: 'Can I edit my registration after submitting it?',
+    answer:
+      'If you need to make changes to your registration, contact the RallyVerse team on WhatsApp and we\u2019ll assist you.',
+  },
+  {
+    question: 'How can I contact RallyVerse?',
+    answer:
+      `Email: ${CONTACT.email}  |  WhatsApp: ${WHATSAPP.businessNumber}  |  Location: ${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state}`,
   },
 ]
 
