@@ -46,9 +46,9 @@ export default function BelieversSection() {
                 className="flex flex-col items-center text-center rounded-xl p-6 transition-all duration-200"
                 style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
               >
-                <div className="relative mb-3">
+                <div className="mb-2">
                   <div
-                    className="relative h-24 w-24 overflow-hidden rounded-full"
+                    className="relative mx-auto h-24 w-24 overflow-hidden rounded-full"
                     style={{ border: '2px solid var(--border-subtle)' }}
                   >
                     <Image
@@ -59,17 +59,19 @@ export default function BelieversSection() {
                       sizes="96px"
                     />
                   </div>
-                  <div
-                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-2 py-0.5"
-                    style={{
-                      backgroundColor: 'var(--accent-primary)',
-                      color: 'var(--btn-primary-text)',
-                    }}
-                  >
-                    <span className="font-body text-[8px] font-bold uppercase tracking-wider">
-                      Early Supporter
-                    </span>
-                  </div>
+                </div>
+
+                <div
+                  className="mx-auto mb-3 inline-flex items-center justify-center rounded-xl px-5 py-1"
+                  style={{
+                    backgroundColor: 'color-mix(in srgb, var(--accent-primary) 6%, transparent)',
+                    border: '1px solid color-mix(in srgb, var(--accent-primary) 40%, transparent)',
+                    boxShadow: '0 0 14px color-mix(in srgb, var(--accent-primary) 10%, transparent)',
+                  }}
+                >
+                  <span className="font-body text-[9px] font-semibold uppercase tracking-widest" style={{ color: 'var(--accent-primary)' }}>
+                    Early Supporter
+                  </span>
                 </div>
 
                 <h3 className="font-display text-[16px] uppercase leading-tight mb-1" style={{ color: 'var(--text-primary)' }}>

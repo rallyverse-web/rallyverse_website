@@ -103,9 +103,9 @@ export default function BelieversPage() {
                 className="flex flex-col items-center text-center rounded-xl p-8 transition-all duration-200 h-full"
                 style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
               >
-                <div className="relative mb-3">
+                <div className="mb-3">
                   <div
-                    className="relative h-32 w-32 overflow-hidden rounded-full"
+                    className="relative mx-auto h-32 w-32 overflow-hidden rounded-full"
                     style={{ border: '2px solid var(--border-subtle)' }}
                   >
                     <Image
@@ -116,20 +116,22 @@ export default function BelieversPage() {
                       sizes="128px"
                     />
                   </div>
-                  <div
-                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-3 py-1"
-                    style={{
-                      backgroundColor: 'var(--accent-primary)',
-                      color: 'var(--btn-primary-text)',
-                    }}
-                  >
-                    <span className="font-body text-[9px] font-bold uppercase tracking-wider">
-                      Early Supporter
-                    </span>
-                  </div>
                 </div>
 
-                <h2 className="font-display text-[20px] uppercase leading-tight mt-2 mb-1" style={{ color: 'var(--text-primary)' }}>
+                <div
+                  className="mx-auto mb-4 inline-flex items-center justify-center rounded-xl px-6 py-1.5"
+                  style={{
+                    backgroundColor: 'color-mix(in srgb, var(--accent-primary) 6%, transparent)',
+                    border: '1px solid color-mix(in srgb, var(--accent-primary) 40%, transparent)',
+                    boxShadow: '0 0 14px color-mix(in srgb, var(--accent-primary) 10%, transparent)',
+                  }}
+                >
+                  <span className="font-body text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'var(--accent-primary)' }}>
+                    Early Supporter
+                  </span>
+                </div>
+
+                <h2 className="font-display text-[20px] uppercase leading-tight mb-1" style={{ color: 'var(--text-primary)' }}>
                   {person.name}
                 </h2>
                 <p className="font-body text-[13px] font-medium tracking-wide mb-1" style={{ color: 'var(--accent-primary)' }}>
