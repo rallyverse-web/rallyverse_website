@@ -14,30 +14,29 @@ interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
   isColorTheme: boolean;
-  isBWTheme: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'color',
   toggleTheme: () => {},
   isColorTheme: true,
-  isBWTheme: false,
 });
+
+/** Read initial theme from <html data-theme="…"> already set by inline script. */
+function getInitialTheme(): Theme {
+  if (typeof document === 'undefined') return 'color';
+  const attr = document.documentElement.getAttribute('data-theme');
+  return attr === 'bw' ? 'bw' : 'color';
+}
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('color');
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    try {
-      const saved = localStorage.getItem('rallyverse-theme') as Theme | null;
-      const resolved: Theme = saved === 'bw' ? 'bw' : 'color';
-      setTheme(resolved);
-      document.documentElement.setAttribute('data-theme', resolved);
-    } catch {
-      document.documentElement.setAttribute('data-theme', 'color');
-    }
+    // Sync React state with the data-theme the inline script already set
+    const resolved = getInitialTheme();
+    setTheme(resolved);
+    document.documentElement.setAttribute('data-theme', resolved);
   }, []);
 
   const toggleTheme = () => {
@@ -51,21 +50,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  if (!mounted) {
-    return (
-      <div style={{ visibility: 'hidden' }}>
-        {children}
-      </div>
-    );
-  }
-
   return (
     <ThemeContext.Provider
       value={{
         theme,
         toggleTheme,
         isColorTheme: theme === 'color',
-        isBWTheme: theme === 'bw',
       }}
     >
       {children}

@@ -6,15 +6,16 @@ import { Instagram, Linkedin, Mail, ArrowUpRight } from 'lucide-react'
 import WhatsAppIcon from '@/components/WhatsAppIcon'
 import ThemedLogo from '@/components/ThemedLogo'
 import ShinyText from '@/components/ShinyText'
-import { SITE, COMPANY, CONTACT, ADDRESS, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS } from '@/lib/config'
+import { SITE, COMPANY, CONTACT, ADDRESS, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS, SOCIAL_LINKS } from '@/lib/config'
 
-// ─── Social icon data (single source of truth) ────────────────
-const socialItems = [
-  { label: 'Instagram', href: SOCIAL.instagram, icon: Instagram },
-  { label: 'LinkedIn', href: SOCIAL.linkedin, icon: Linkedin },
-  { label: 'WhatsApp Community', href: WHATSAPP.communityLink, icon: WhatsAppIcon },
-  { label: 'Email', href: SOCIAL.email, icon: Mail },
-]
+// ─── Social icon mapping (derived from config's SOCIAL_LINKS) ──
+const socialIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
+  Instagram,
+  LinkedIn: Linkedin,
+  WhatsApp: WhatsAppIcon,
+  'WhatsApp Community': WhatsAppIcon,
+  Email: Mail,
+}
 
 // ─── Column data ─────────────────────────────────────────────
 const contactItems = [
@@ -165,14 +166,15 @@ export default function Footer() {
                 Follow Us
               </p>
               <div className="flex gap-3">
-                {socialItems.map((s) => {
-                  const Icon = s.icon
+                {SOCIAL_LINKS.map((s) => {
+                  const Icon = socialIconMap[s.label]
+                  if (!Icon) return null
                   return (
                     <a
                       key={s.label}
                       href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      target={s.external ? '_blank' : undefined}
+                      rel={s.external ? 'noopener noreferrer' : undefined}
                       className="flex items-center justify-center h-10 w-10 rounded-lg transition-all duration-200 hover:scale-105"
                       style={{
                         backgroundColor: 'var(--bg-surface)',

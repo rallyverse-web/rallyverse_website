@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { MapPin, Calendar, Clock, Swords, Mountain, Timer, Bike, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
-import { CURRENT_EVENT } from '@/lib/config'
+import { SITE, ADDRESS, CURRENT_EVENT } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Events — RallyVerse | Badminton, Treks & Adventures in Bengaluru',
@@ -41,8 +41,64 @@ const futureEvents = [
 ]
 
 export default function EventsPage() {
+  const eventUrl = `${SITE.domain}/events`
+
   return (
     <div className="min-h-screen pt-28 pb-20" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SportsEvent",
+            "@id": `${eventUrl}#${CURRENT_EVENT.slug}`,
+            "url": eventUrl,
+            "mainEntityOfPage": eventUrl,
+            "name": CURRENT_EVENT.name,
+            "description": CURRENT_EVENT.description,
+            "image": {
+              "@type": "ImageObject",
+              "url": `${SITE.domain}/og`,
+              "width": 1200,
+              "height": 630
+            },
+            "startDate": CURRENT_EVENT.startISO,
+            "endDate": CURRENT_EVENT.endISO,
+            "eventStatus": CURRENT_EVENT.isDateConfirmed
+              ? "https://schema.org/EventScheduled"
+              : "https://schema.org/EventMovedOnline",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "location": {
+              "@type": "Place",
+              "@id": `${SITE.domain}#${CURRENT_EVENT.venueSlug}`,
+              "name": CURRENT_EVENT.venue,
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": `${CURRENT_EVENT.venue}, ${ADDRESS.area}`,
+                "addressLocality": ADDRESS.city,
+                "addressRegion": ADDRESS.state,
+                "postalCode": ADDRESS.postalCode,
+                "addressCountry": "IN"
+              }
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": String(CURRENT_EVENT.registrationFee),
+              "priceCurrency": "INR",
+              "url": `${SITE.domain}/register`,
+              "availability": "https://schema.org/LimitedAvailability",
+              "validFrom": CURRENT_EVENT.validFromISO
+            },
+            "organizer": {
+              "@type": "Organization",
+              "@id": `${SITE.domain}#organization`,
+              "name": SITE.name,
+              "url": SITE.domain
+            },
+            "sport": "Badminton"
+          })
+        }}
+      />
       <div className="mx-auto max-w-[1100px] px-6">
         {/* ── Header ───────────────────────────────────────── */}
         <AnimatedSection>

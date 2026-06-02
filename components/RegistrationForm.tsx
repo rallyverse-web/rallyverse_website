@@ -223,7 +223,9 @@ export default function RegistrationForm() {
 
         <div className="mt-6 flex flex-col items-center gap-4">
           <p className="font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-            Join the official RallyVerse WhatsApp Community to receive tournament updates, match schedules, announcements, and future events.
+            {WHATSAPP.hasCommunityChat
+              ? 'Join the official RallyVerse WhatsApp Community to receive tournament updates, match schedules, announcements, and future events.'
+              : 'Follow us on WhatsApp for tournament updates, match schedules, announcements, and future events.'}
           </p>
           <a
             href={WHATSAPP.communityLink}
@@ -235,7 +237,7 @@ export default function RegistrationForm() {
               color: 'var(--btn-primary-text)',
             }}
           >
-            Join WhatsApp Community
+            {WHATSAPP.hasCommunityChat ? 'Join WhatsApp Community' : 'Follow on WhatsApp'}
           </a>
         </div>
         <p className="mt-4 font-body text-base leading-relaxed" style={{ color: 'var(--text-primary)' }}>

@@ -18,16 +18,7 @@ export default function ThemeToggle() {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       transition={{ duration: 0.15 }}
-      aria-label={
-        isColorTheme
-          ? 'Switch to Black & White theme'
-          : 'Switch to Color theme'
-      }
-      title={
-        isColorTheme
-          ? 'Switch to Black & White'
-          : 'Switch to Color'
-      }
+      aria-label="Toggle theme"
     >
       <AnimatePresence mode="wait">
         {isColorTheme ? (

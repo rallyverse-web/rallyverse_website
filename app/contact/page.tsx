@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
-import { Mail, MapPin, Headset } from 'lucide-react'
+import { Mail, MapPin, Headset, Phone } from 'lucide-react'
 import WhatsAppIcon from '@/components/WhatsAppIcon'
 import AnimatedSection from '@/components/AnimatedSection'
 import SocialIcons from '@/components/SocialIcons'
-import { CONTACT, ADDRESS_FULL, SOCIAL, WHATSAPP, EMAIL } from '@/lib/config'
+import { SITE, CONTACT, ADDRESS, ADDRESS_FULL, SOCIAL, WHATSAPP, EMAIL } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Contact — RallyVerse | Get in Touch — Bengaluru Sports Community',
-  description: 'Reach out to RallyVerse via email, WhatsApp, or social media. Bengaluru, Karnataka, India.',
+  description: 'Reach out to RallyVerse via email, phone, WhatsApp, or social media. Bengaluru, Karnataka, India.',
   openGraph: {
     title: 'Contact — RallyVerse | Get in Touch — Bengaluru Sports Community',
-    description: 'Reach out to RallyVerse via email, WhatsApp, or social media. Bengaluru, Karnataka, India.',
+    description: 'Reach out to RallyVerse via email, phone, WhatsApp, or social media. Bengaluru, Karnataka, India.',
     url: 'https://rallyverse.social/contact',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Contact — RallyVerse | Get in Touch — Bengaluru Sports Community',
-    description: 'Reach out to RallyVerse via email, WhatsApp, or social media. Bengaluru, Karnataka, India.',
+    description: 'Reach out to RallyVerse via email, phone, WhatsApp, or social media. Bengaluru, Karnataka, India.',
     images: ['/og'],
   },
   alternates: {
@@ -35,12 +35,21 @@ export const metadata: Metadata = {
   },
 }
 
+const mapsQuery = encodeURIComponent(`${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state}, ${ADDRESS.country}`)
+const MAPS_HREF = `https://www.google.com/maps/search/${mapsQuery}`
+
 const contactMethods = [
   {
     icon: Mail,
     label: 'General Inquiries',
     value: CONTACT.email,
     href: SOCIAL.email,
+  },
+  {
+    icon: Phone,
+    label: 'Phone',
+    value: CONTACT.phone,
+    href: CONTACT.telUrl,
   },
   {
     icon: Headset,
@@ -58,13 +67,38 @@ const contactMethods = [
     icon: MapPin,
     label: 'Location',
     value: ADDRESS_FULL,
-    href: null,
+    href: MAPS_HREF,
   },
 ]
 
 export default function ContactPage() {
+  const domain = SITE.domain
+  const contactUrl = `${domain}/contact`
+
   return (
     <div className="min-h-screen pt-28 pb-20" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": `${domain}#organization`,
+            "url": domain,
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": CONTACT.phone,
+              "contactType": "customer service",
+              "availableLanguage": ["English", "Hindi", "Kannada"],
+              "areaServed": "IN",
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": contactUrl,
+            },
+          })
+        }}
+      />
       <div className="mx-auto max-w-[1100px] px-6">
         {/* ── Header ───────────────────────────────────────── */}
         <AnimatedSection>
@@ -83,8 +117,21 @@ export default function ContactPage() {
           </p>
         </AnimatedSection>
 
+        {/* ── Response Time Pledge ──────────────────────────── */}
+        <AnimatedSection delay={0.05}>
+          <div
+            className="mt-8 flex flex-wrap items-center justify-center gap-4 rounded-xl px-6 py-4 text-center text-sm"
+            style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
+          >
+            <span style={{ color: 'var(--accent-primary)' }}>⚡</span>
+            <span className="font-body" style={{ color: 'var(--text-muted)' }}>
+              We typically respond within <strong style={{ color: 'var(--text-primary)' }}>a few hours</strong> during business hours.
+            </span>
+          </div>
+        </AnimatedSection>
+
         {/* ── Contact Methods ─────────────────────────────────── */}
-        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {contactMethods.map((method, i) => {
             const Icon = method.icon
             return (
@@ -138,13 +185,13 @@ export default function ContactPage() {
           </div>
         </AnimatedSection>
 
-        {/* ── Note ──────────────────────────────────────────── */}
+        {/* ── Trust & Privacy ──────────────────────────────── */}
         <AnimatedSection>
           <div className="mt-12 text-center">
             <p className="font-body text-sm leading-relaxed" style={{ color: 'var(--text-faint)' }}>
-              RallyVerse is based in Bengaluru, Karnataka, India.
+              RallyVerse is based in {ADDRESS.area}, {ADDRESS.city}, {ADDRESS.state}, India.
               <br />
-              For event-related inquiries, please reach out via email or WhatsApp.
+              Your information stays private and will only be used to respond to your inquiry.
             </p>
           </div>
         </AnimatedSection>

@@ -34,6 +34,13 @@ const CLASS_MAP: Record<LogoContext, string> = {
   drawer:  'h-12 w-auto object-contain',
 };
 
+const SIZES_MAP: Record<LogoContext, string> = {
+  navbar:  '(max-width: 768px) 180px, 210px',
+  footer:  '(max-width: 768px) 210px, 240px',
+  hero:    '(max-width: 768px) 144px, 208px',
+  drawer:  '180px',
+};
+
 export default function ThemedLogo({
   context = 'navbar',
   className,
@@ -56,7 +63,8 @@ export default function ThemedLogo({
       width={width ?? dims.width}
       height={height ?? dims.height}
       className={cls}
-      priority={context === 'navbar' || context === 'hero'}
+      sizes={SIZES_MAP[context]}
+      priority={context === 'hero'}
       onError={() => setImgError(true)}
     />
   );

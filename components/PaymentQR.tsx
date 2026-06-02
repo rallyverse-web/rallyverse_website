@@ -15,7 +15,7 @@ export default function PaymentQR() {
           height: 'auto',
           aspectRatio: '1/1',
         }}
-        priority
+        loading="lazy"
       />
     </div>
   )

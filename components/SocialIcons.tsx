@@ -2,26 +2,28 @@
 
 import { Mail, Instagram, Linkedin } from 'lucide-react'
 import WhatsAppIcon from '@/components/WhatsAppIcon'
-import { SOCIAL, WHATSAPP } from '@/lib/config'
+import { SOCIAL_LINKS } from '@/lib/config'
 
-const socialLinks = [
-  { icon: Instagram, label: 'Instagram', href: SOCIAL.instagram },
-  { icon: Linkedin, label: 'LinkedIn', href: SOCIAL.linkedin },
-  { icon: WhatsAppIcon, label: 'WhatsApp Community', href: WHATSAPP.communityLink },
-  { icon: Mail, label: 'Email', href: SOCIAL.email },
-]
+const socialIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
+  Instagram,
+  LinkedIn: Linkedin,
+  WhatsApp: WhatsAppIcon,
+  'WhatsApp Community': WhatsAppIcon,
+  Email: Mail,
+}
 
 export default function SocialIcons() {
   return (
     <div className="flex justify-center gap-4">
-      {socialLinks.map((s) => {
-        const Icon = s.icon
+      {SOCIAL_LINKS.map((s) => {
+        const Icon = socialIconMap[s.label]
+        if (!Icon) return null
         return (
           <a
             key={s.label}
             href={s.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={s.external ? '_blank' : undefined}
+            rel={s.external ? 'noopener noreferrer' : undefined}
             className="flex items-center justify-center h-12 w-12 rounded-lg transition-all duration-200"
             style={{
               backgroundColor: 'var(--bg-primary)',
