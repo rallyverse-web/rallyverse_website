@@ -197,22 +197,16 @@ export default function RegistrationForm() {
       </div>
       <div className="max-w-[540px]">
         <p className="font-body text-base font-semibold" style={{ color: 'var(--accent-primary)' }}>
-          Registration Submitted Successfully!
-        </p>
-        <p className="mt-4 font-body text-base leading-relaxed" style={{ color: 'var(--text-primary)' }}>
-          Thank you for registering for the RallyVerse Badminton Tournament.
+          Payment Submitted Successfully
         </p>
         <p className="mt-1 font-body text-sm" style={{ color: 'var(--text-muted)' }}>
           Registration ID: <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{registrationId}</span>
         </p>
         <p className="mt-4 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          Our team will verify your payment details and confirm your registration shortly.
+          If you haven&apos;t already, please send your payment screenshot on WhatsApp for verification.
         </p>
 
         <div className="mt-6 flex flex-col items-center gap-4">
-          <p className="font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-            Please send your payment screenshot on WhatsApp for verification.
-          </p>
           <a
             href={WHATSAPP.businessLink}
             target="_blank"
@@ -454,26 +448,37 @@ export default function RegistrationForm() {
         <div className="flex flex-col gap-6">
           <div>
             <p className="font-display text-[32px] uppercase leading-none" style={{ color: 'var(--text-primary)' }}>
-              Step 3 / Payment
+              Complete Your Payment
             </p>
             <p className="mt-2 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              Complete the payment by scanning the QR code below. Then enter the UPI ID you used to make the payment.
+              Scan the QR code to pay. After payment, enter the details below and send the payment screenshot on WhatsApp.
             </p>
           </div>
 
-          <div className="rounded-md p-5" style={{ border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
-            <p className="font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Payment Details</p>
-            <div className="mt-4 grid gap-3 font-body text-sm" style={{ color: 'var(--text-primary)' }}>
-              <p>UPI ID: <span className="font-semibold" style={{ color: 'var(--accent-primary)' }}>{upiId}</span></p>
-              <p>Amount: <span className="font-semibold" style={{ color: 'var(--accent-primary)' }}>Rs. {entryFee}</span></p>
+          {/* Payment Card */}
+          <div className="flex flex-col items-center gap-5 rounded-md p-6 text-center" style={{ border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
+            <PaymentQR />
+
+            <div className="w-full space-y-2 font-body text-sm" style={{ color: 'var(--text-primary)' }}>
+              <p className="font-semibold text-base" style={{ color: 'var(--accent-primary)' }}>
+                Registration Fee: &#8377;{entryFee} per Team
+              </p>
+              <p><span className="font-medium" style={{ color: 'var(--text-muted)' }}>Venue:</span> {CURRENT_EVENT.venue}</p>
+              <p><span className="font-medium" style={{ color: 'var(--text-muted)' }}>Date:</span> {CURRENT_EVENT.date}</p>
+              <p><span className="font-medium" style={{ color: 'var(--text-muted)' }}>Time:</span> {CURRENT_EVENT.time}</p>
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-4">
-            <p className="font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-              Scan to Pay
-            </p>
-            <PaymentQR />
+          {/* Payment Steps */}
+          <div className="rounded-md p-5" style={{ border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
+            <p className="mb-3 font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>How to Complete Payment</p>
+            <ol className="list-inside list-decimal space-y-2 font-body text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+              <li>Scan the QR code above.</li>
+              <li>Pay <strong>&#8377;{entryFee}</strong>.</li>
+              <li>Enter your payment details below.</li>
+              <li>Submit registration.</li>
+              <li>Send payment screenshot on WhatsApp.</li>
+            </ol>
           </div>
 
           <div>
@@ -491,6 +496,10 @@ export default function RegistrationForm() {
             <input id="paymentPhone" name="paymentPhone" type="tel" value={formData.paymentPhone} onChange={handleChange} className={inputClass} style={inputBaseStyle} placeholder={CONTACT.phone} />
             <FieldError message={errors.paymentPhone} />
           </div>
+
+          <p className="font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+            After payment, send your payment screenshot on WhatsApp for verification.
+          </p>
         </div>
       )}
 

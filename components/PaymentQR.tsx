@@ -1,32 +1,22 @@
-'use client'
+import Image from 'next/image'
 
 export default function PaymentQR() {
-  const qrUrl = process.env.NEXT_PUBLIC_PAYMENT_QR_URL
-
-  if (!qrUrl) {
-    return (
-      <div
-        className="flex items-center justify-center rounded-md"
-        style={{
-          width: 180,
-          height: 180,
-          border: '1px dashed var(--border-subtle)',
-          backgroundColor: 'var(--bg-subtle)',
-        }}
-      >
-        <p className="px-4 text-center font-body text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          Scan QR from your UPI app to pay
-        </p>
-      </div>
-    )
-  }
-
   return (
-    <img
-      src={qrUrl}
-      alt="Payment QR Code"
-      className="rounded-md"
-      style={{ width: 180, height: 180, objectFit: 'contain' }}
-    />
+    <div className="flex items-center justify-center">
+      <Image
+        src="/qrcode.jpeg"
+        alt="Scan to pay ₹799 — RallyVerse UPI QR Code"
+        width={400}
+        height={400}
+        className="rounded-md"
+        style={{
+          width: '100%',
+          maxWidth: 280,
+          height: 'auto',
+          aspectRatio: '1/1',
+        }}
+        priority
+      />
+    </div>
   )
 }
