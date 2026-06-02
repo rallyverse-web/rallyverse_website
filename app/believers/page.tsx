@@ -59,6 +59,12 @@ export default function BelieversPage() {
           __html: JSON.stringify(personStructuredData()),
         }}
       />
+      <style>{`
+        .believers-whatsapp-cta:hover {
+          border-color: var(--accent-primary) !important;
+          color: var(--accent-primary) !important;
+        }
+      `}</style>
       <div className="mx-auto max-w-[1100px] px-6">
         <AnimatedSection>
           <div className="flex items-center gap-3 mb-5">
@@ -207,18 +213,10 @@ export default function BelieversPage() {
                 href={WHATSAPP.businessLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
+                className="believers-whatsapp-cta inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
                 style={{
                   border: '1px solid var(--border-subtle)',
                   color: 'var(--text-primary)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent-primary)'
-                  e.currentTarget.style.color = 'var(--accent-primary)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border-subtle)'
-                  e.currentTarget.style.color = 'var(--text-primary)'
                 }}
               >
                 Message on WhatsApp
