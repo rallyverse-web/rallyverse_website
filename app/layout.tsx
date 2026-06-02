@@ -23,18 +23,6 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://rallyverse.social'),
   title: 'RallyVerse — Rally Beyond Routine | Sports & Community in Bengaluru',
   description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
-  keywords: [
-    'RallyVerse Bengaluru',
-    'badminton tournaments Bengaluru 2026',
-    'sports community Bengaluru',
-    'Rally Beyond Routine',
-    'competitive badminton Bangalore',
-    'community sports events Bangalore',
-    'treks near Bangalore',
-    'cycling events Bengaluru',
-    'marathons Bangalore 2026',
-    'sports universe Bengaluru'
-  ],
   twitter: {
     card: 'summary_large_image',
     title: 'RallyVerse — Rally Beyond Routine | Sports & Community in Bengaluru',
