@@ -1,4 +1,4 @@
-import { SITE, CONTACT, EMAIL } from './config'
+import { SITE, CONTACT, EMAIL, WHATSAPP, CURRENT_EVENT } from './config'
 
 const LOGO_URL = `${SITE.domain}/logo/logo_transparent.png`
 
@@ -38,7 +38,7 @@ function emailFooter(): string {
         <a href="${SITE.domain}" style="${STYLES.footerLink}">${SITE.domain}</a>
       </p>
       <p style="${STYLES.footerText}">
-        Phone: <a href="${CONTACT.whatsappUrl}" style="${STYLES.footerLink}">${CONTACT.phone}</a>
+        Phone: <a href="${WHATSAPP.businessLink}" style="${STYLES.footerLink}">${CONTACT.phone}</a>
       </p>
       <p style="${STYLES.footerText}">
         Email: <a href="mailto:${EMAIL.supportEmail}" style="${STYLES.footerLink}">${EMAIL.supportEmail}</a>
@@ -87,16 +87,16 @@ export function registrationReceivedEmail(params: {
   playerName: string
   registrationId: string
   category: string
-  whatsappNumber: string
-  whatsappGroupLink: string
+  businessWhatsappLink: string
+  communityWhatsappLink: string
   entryFee: string
 }): { subject: string; html: string } {
-  const { playerName, registrationId, category, whatsappNumber, whatsappGroupLink, entryFee } = params
+  const { playerName, registrationId, category, businessWhatsappLink, communityWhatsappLink, entryFee } = params
 
   const content = `
     <h1 style="${STYLES.heading}">Registration Received</h1>
     <p>Hi ${playerName},</p>
-    <p>Thank you for registering for the RallyVerse Badminton Tournament. We have successfully received your registration details.</p>
+    <p>Thank you for registering for ${CURRENT_EVENT.name}. We have successfully received your registration details.</p>
 
     <hr style="${STYLES.divider}" />
 
@@ -104,12 +104,12 @@ export function registrationReceivedEmail(params: {
     <p style="${STYLES.value}">${registrationId}</p>
 
     <p style="${STYLES.label}">Event</p>
-    <p style="${STYLES.value}">Rally Series 01 — Badminton Tournament</p>
+    <p style="${STYLES.value}">${CURRENT_EVENT.name}</p>
 
     <p style="${STYLES.label}">Category</p>
     <p style="${STYLES.value}">${category}</p>
 
-    <p style="${STYLES.label}">Entry Fee</p>
+    <p style="${STYLES.label}">Registration Fee</p>
     <p style="${STYLES.value}">&#8377;${entryFee}</p>
 
     <p style="${STYLES.label}">Status</p>
@@ -119,28 +119,31 @@ export function registrationReceivedEmail(params: {
 
     <p>Our team will verify your payment and confirm your registration shortly.</p>
 
-    <p><strong>Send your payment screenshot on WhatsApp:</strong></p>
+    <p><strong>Venue:</strong> ${CURRENT_EVENT.venue}</p>
+    <p><strong>Date:</strong> ${CURRENT_EVENT.date} &middot; <strong>Time:</strong> ${CURRENT_EVENT.time}</p>
+
+    <p><strong>Send your payment screenshot on WhatsApp for verification:</strong></p>
     <p style="text-align:center;margin:24px 0;">
-      <a href="https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}" style="${STYLES.button}">
+      <a href="${businessWhatsappLink}" style="${STYLES.button}">
         Send Payment Screenshot
       </a>
     </p>
 
-    <p>Join the official tournament WhatsApp group for schedules, announcements, and event updates:</p>
+    <p>Join the RallyVerse WhatsApp Community to receive tournament updates, match schedules, announcements, and future events:</p>
     <p style="text-align:center;margin:24px 0;">
-      <a href="${whatsappGroupLink}" style="${STYLES.button}">
-        Join WhatsApp Group
+      <a href="${communityWhatsappLink}" style="${STYLES.button}">
+        Join WhatsApp Community
       </a>
     </p>
 
-    <p>If you have any questions, reply to this email or reach out to us at <a href="mailto:${EMAIL.supportEmail}" style="${STYLES.footerLink}">${EMAIL.supportEmail}</a>.</p>
+    <p>If you have any questions, reply to this email or reach out via WhatsApp at <a href="${businessWhatsappLink}" style="${STYLES.footerLink}">${WHATSAPP.businessNumber}</a>.</p>
 
     <p>Thank you for being part of RallyVerse.</p>
     <p style="margin-top:16px;">Regards,<br/><strong style="color:${COLORS.text};">Team RallyVerse</strong></p>
   `
 
   return {
-    subject: `Registration Received — RallyVerse Badminton Tournament (${registrationId})`,
+    subject: `Registration Received — ${CURRENT_EVENT.name} (${registrationId})`,
     html: baseHtml(content),
   }
 }
@@ -150,14 +153,15 @@ export function registrationConfirmedEmail(params: {
   playerName: string
   registrationId: string
   category: string
-  whatsappGroupLink: string
+  communityWhatsappLink: string
+  businessWhatsappLink: string
 }): { subject: string; html: string } {
-  const { playerName, registrationId, category, whatsappGroupLink } = params
+  const { playerName, registrationId, category, communityWhatsappLink, businessWhatsappLink } = params
 
   const content = `
     <h1 style="${STYLES.heading}">Registration Confirmed</h1>
     <p>Hi ${playerName},</p>
-    <p>Great news! Your registration for the <strong style="color:${COLORS.text};">Rally Series 01 — Badminton Tournament</strong> has been <strong style="color:${COLORS.accent};">verified and confirmed</strong>.</p>
+    <p>Great news! Your registration for <strong style="color:${COLORS.text};">${CURRENT_EVENT.name}</strong> has been <strong style="color:${COLORS.accent};">verified and confirmed</strong>.</p>
 
     <hr style="${STYLES.divider}" />
 
@@ -173,12 +177,15 @@ export function registrationConfirmedEmail(params: {
     <hr style="${STYLES.divider}" />
 
     <p><strong>What's next?</strong></p>
-    <p>Please join the official WhatsApp group for match schedules, announcements, and event updates:</p>
+    <p>Join the RallyVerse WhatsApp Community for match schedules, announcements, and event updates:</p>
     <p style="text-align:center;margin:24px 0;">
-      <a href="${whatsappGroupLink}" style="${STYLES.button}">
-        Join WhatsApp Group
+      <a href="${communityWhatsappLink}" style="${STYLES.button}">
+        Join WhatsApp Community
       </a>
     </p>
+
+    <p><strong>Venue:</strong> ${CURRENT_EVENT.venue}</p>
+    <p><strong>Date:</strong> ${CURRENT_EVENT.date} &middot; <strong>Time:</strong> ${CURRENT_EVENT.time}</p>
 
     <p><strong>On event day:</strong></p>
     <p style="margin:0;">• Report to the venue 30 minutes before your scheduled match.</p>
@@ -187,13 +194,13 @@ export function registrationConfirmedEmail(params: {
 
     <hr style="${STYLES.divider}" />
 
-    <p>Need help? Email <a href="mailto:${EMAIL.supportEmail}" style="${STYLES.footerLink}">${EMAIL.supportEmail}</a>.</p>
+    <p>For support or payment-related queries, contact us on WhatsApp: <a href="${businessWhatsappLink}" style="${STYLES.footerLink}">${WHATSAPP.businessNumber}</a>.</p>
     <p>We look forward to seeing you on the court.</p>
     <p style="margin-top:16px;">Regards,<br/><strong style="color:${COLORS.text};">Team RallyVerse</strong></p>
   `
 
   return {
-    subject: `Registration Confirmed — RallyVerse Badminton Tournament (${registrationId})`,
+    subject: `Registration Confirmed — ${CURRENT_EVENT.name} (${registrationId})`,
     html: baseHtml(content),
   }
 }
@@ -203,14 +210,15 @@ export function verificationCompleteEmail(params: {
   playerName: string
   registrationId: string
   category: string
-  whatsappGroupLink: string
+  communityWhatsappLink: string
+  businessWhatsappLink: string
 }): { subject: string; html: string } {
-  const { playerName, registrationId, category, whatsappGroupLink } = params
+  const { playerName, registrationId, category, communityWhatsappLink, businessWhatsappLink } = params
 
   const content = `
     <h1 style="${STYLES.heading}">Payment Verified</h1>
     <p>Hi ${playerName},</p>
-    <p>Your payment for <strong style="color:${COLORS.text};">Rally Series 01 — Badminton Tournament</strong> has been <strong style="color:${COLORS.accent};">verified successfully</strong>.</p>
+    <p>Your payment for <strong style="color:${COLORS.text};">${CURRENT_EVENT.name}</strong> has been <strong style="color:${COLORS.accent};">verified successfully</strong>.</p>
 
     <hr style="${STYLES.divider}" />
 
@@ -226,21 +234,21 @@ export function verificationCompleteEmail(params: {
     <hr style="${STYLES.divider}" />
 
     <p>You will receive a confirmation email shortly once your registration is fully approved.</p>
-    <p>Meanwhile, join the official WhatsApp group for match schedules and updates:</p>
+    <p>Meanwhile, join the RallyVerse WhatsApp Community for match schedules and updates:</p>
     <p style="text-align:center;margin:24px 0;">
-      <a href="${whatsappGroupLink}" style="${STYLES.button}">
-        Join WhatsApp Group
+      <a href="${communityWhatsappLink}" style="${STYLES.button}">
+        Join WhatsApp Community
       </a>
     </p>
 
     <hr style="${STYLES.divider}" />
 
-    <p>Need help? Email <a href="mailto:${EMAIL.supportEmail}" style="${STYLES.footerLink}">${EMAIL.supportEmail}</a>.</p>
+    <p>For support or payment-related queries, contact us on WhatsApp: <a href="${businessWhatsappLink}" style="${STYLES.footerLink}">${WHATSAPP.businessNumber}</a>.</p>
     <p style="margin-top:16px;">Regards,<br/><strong style="color:${COLORS.text};">Team RallyVerse</strong></p>
   `
 
   return {
-    subject: `Payment Verified — RallyVerse Badminton Tournament (${registrationId})`,
+    subject: `Payment Verified — ${CURRENT_EVENT.name} (${registrationId})`,
     html: baseHtml(content),
   }
 }
@@ -257,7 +265,7 @@ export function actionRequiredEmail(params: {
   const content = `
     <h1 style="${STYLES.heading}">Action Required</h1>
     <p>Hi ${playerName},</p>
-    <p>There is an issue with your registration for the <strong style="color:${COLORS.text};">Rally Series 01 — Badminton Tournament</strong> that needs your attention.</p>
+    <p>There is an issue with your registration for <strong style="color:${COLORS.text};">${CURRENT_EVENT.name}</strong> that needs your attention.</p>
 
     <hr style="${STYLES.divider}" />
 

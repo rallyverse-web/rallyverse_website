@@ -5,20 +5,20 @@ import { motion } from 'motion/react'
 import { Instagram, Linkedin, Mail, MessageCircle, ArrowUpRight } from 'lucide-react'
 import ThemedLogo from '@/components/ThemedLogo'
 import ShinyText from '@/components/ShinyText'
-import { SITE, CONTACT, ADDRESS, SOCIAL, QUICK_LINKS, LEGAL_LINKS } from '@/lib/config'
+import { SITE, CONTACT, ADDRESS, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS } from '@/lib/config'
 
 // ─── Social icon data (single source of truth) ────────────────
 const socialItems = [
   { label: 'Instagram', href: SOCIAL.instagram, icon: Instagram },
   { label: 'LinkedIn', href: SOCIAL.linkedin, icon: Linkedin },
-  { label: 'WhatsApp', href: SOCIAL.whatsapp, icon: MessageCircle },
+  { label: 'WhatsApp', href: WHATSAPP.communityLink, icon: MessageCircle },
   { label: 'Email', href: SOCIAL.email, icon: Mail },
 ]
 
 // ─── Column data ─────────────────────────────────────────────
 const contactItems = [
   { label: 'Email', value: CONTACT.email, href: SOCIAL.email },
-  { label: 'WhatsApp', value: CONTACT.whatsapp, href: SOCIAL.whatsapp },
+  { label: 'WhatsApp', value: CONTACT.whatsapp, href: WHATSAPP.businessLink },
 ]
 
 export default function Footer() {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
 import { formatRegistrationDate, generateRegistrationId } from '@/lib/utils'
-import { CONTACT, EMAIL } from '@/lib/config'
+import { CONTACT, EMAIL, WHATSAPP, CURRENT_EVENT } from '@/lib/config'
 import { registrationReceivedEmail } from '@/lib/email'
 
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     const sheets = getSheetsClient()
     const sheetTabName = process.env.GOOGLE_SHEET_TAB_NAME || 'Registrations'
 
-    const entryFee = process.env.NEXT_PUBLIC_ENTRY_FEE || '800'
+    const entryFee = process.env.NEXT_PUBLIC_ENTRY_FEE || String(CURRENT_EVENT.registrationFee)
 
     const row = [
       registrationId,
@@ -112,16 +112,16 @@ export async function POST(req: NextRequest) {
       try {
         const { Resend } = await import('resend')
         const resend = new Resend(process.env.RESEND_API_KEY)
-        const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || CONTACT.phone
-        const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
+
+        const fee = process.env.NEXT_PUBLIC_ENTRY_FEE || String(CURRENT_EVENT.registrationFee)
 
         const { subject, html } = registrationReceivedEmail({
           playerName: player1Name,
           registrationId,
           category,
-          whatsappNumber,
-          whatsappGroupLink,
-          entryFee: process.env.NEXT_PUBLIC_ENTRY_FEE || '800',
+          businessWhatsappLink: WHATSAPP.businessLink,
+          communityWhatsappLink: WHATSAPP.communityLink,
+          entryFee: fee,
         })
 
         await resend.emails.send({
@@ -131,6 +131,30 @@ export async function POST(req: NextRequest) {
           subject,
           html,
         })
+
+        console.log(`[register] Registration received email sent to player 1: ${player1Email} (${registrationId})`)
+
+        // Send to player 2 for doubles categories
+        if (isDoublesCategory(category) && player2Email) {
+          const { subject: subject2, html: html2 } = registrationReceivedEmail({
+            playerName: player2Name || 'Teammate',
+            registrationId,
+            category,
+            businessWhatsappLink: WHATSAPP.businessLink,
+            communityWhatsappLink: WHATSAPP.communityLink,
+            entryFee: fee,
+          })
+
+          await resend.emails.send({
+            from: EMAIL.from,
+            replyTo: EMAIL.replyTo,
+            to: player2Email,
+            subject: subject2,
+            html: html2,
+          })
+
+          console.log(`[register] Registration received email sent to player 2: ${player2Email} (${registrationId})`)
+        }
       } catch (emailError) {
         console.error('Email send failed (non-blocking):', emailError)
       }

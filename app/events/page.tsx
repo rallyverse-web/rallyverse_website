@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
-import { MapPin, Calendar, Swords, Mountain, Timer, Bike, ArrowRight } from 'lucide-react'
+import { MapPin, Calendar, Clock, Swords, Mountain, Timer, Bike, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
+import { CURRENT_EVENT } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Events — RallyVerse | Upcoming Tournaments & Adventures',
-  description: 'Discover upcoming RallyVerse events. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Series 01 is here.',
+  description: `Discover upcoming RallyVerse events. ${CURRENT_EVENT.name} is here.`,
 }
 
 const futureEvents = [
@@ -35,7 +36,7 @@ export default function EventsPage() {
           </p>
         </AnimatedSection>
 
-        {/* ── Featured: Rally Series 01 ───────────────────────── */}
+        {/* ── Featured: CURRENT_EVENT ────────────────────────── */}
         <div className="mt-16">
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-4">
@@ -64,18 +65,22 @@ export default function EventsPage() {
                   This is where it starts. Not just a tournament — the first chapter of something that will outlast any single scoreline or bracket result.
                 </p>
                 <p>
-                  Rally Series 01 is built for Bengaluru&apos;s most passionate players. Men&apos;s Singles. Women&apos;s Singles. Doubles. Mixed. From Beginner to Advanced, there is a court for you.
+                  {CURRENT_EVENT.name} features {CURRENT_EVENT.categories.join(' and ')} categories for Beginner to Advanced players.
                 </p>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-6">
                 <div className="flex items-center gap-2">
                   <MapPin size={16} style={{ color: 'var(--icon-color)' }} />
-                  <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>Bengaluru, India</span>
+                  <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{CURRENT_EVENT.venue}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar size={16} style={{ color: 'var(--icon-color)' }} />
-                  <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>Date TBA</span>
+                  <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{CURRENT_EVENT.date}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock size={16} style={{ color: 'var(--icon-color)' }} />
+                  <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{CURRENT_EVENT.time}</span>
                 </div>
               </div>
 
@@ -175,7 +180,7 @@ export default function EventsPage() {
               Ready to Make Your Move?
             </h2>
             <p className="mt-4 font-body text-base" style={{ color: 'var(--text-muted)' }}>
-              Be part of the first chapter. Register for Rally Series 01 today.
+              Be part of the first chapter. Register for {CURRENT_EVENT.name} today.
             </p>
             <a
               href="/register"

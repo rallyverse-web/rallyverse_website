@@ -1,6 +1,6 @@
 # RallyVerse Registration & Admin System
 
-A complete registration and admin management system for the RallyVerse Badminton Tournament. Built with Next.js, Google Sheets, and Resend.
+A complete registration and admin management system for the RallyVerse badminton events. Built with Next.js, Google Sheets, and Resend. Event details (name, venue, date, time, fee, categories) are centralized in `lib/config.ts` via the `CURRENT_EVENT` object — no hardcoded values.
 
 ---
 
@@ -54,7 +54,7 @@ Confirmation Email (sent via Resend)
 
 The player visits `rallyverse.social/register` and completes a 3-step form:
 
-- **Step 1**: Select category (Men's Singles, Women's Singles, Men's Doubles, etc.) and optional team name
+- **Step 1**: Select category (Men's Doubles or Mixed Doubles) and optional team name
 - **Step 2**: Enter player details (name, phone, email, skill level, city, college/organization)
 - **Step 3**: Enter payment details (UTR/transaction ID, phone number used for payment)
 
@@ -153,7 +153,7 @@ The Google Sheet has **24 columns** (A through X). Each row represents one regis
 | L | Player 2 Skill Level | Skill level of player 2 | `Advanced` | From form |
 | M | City | Player's city | `Bengaluru` | From form |
 | N | College/Organization | College or organization | `RV College of Engineering` | From form (optional) |
-| O | Amount Paid | Entry fee amount | `800` | Auto-filled from config |
+| O | Amount Paid | Entry fee amount | `799` | Auto-filled from config |
 | P | Transaction ID / UTR Number | Payment UTR or transaction ID | `HDFC12345678` | From form |
 | Q | Payment Phone Number | Phone used for payment | `+91 98765 43210` | From form |
 | R | Payment Screenshot Link | Link to uploaded payment screenshot | (blank — manual upload) | Manual |
@@ -346,24 +346,32 @@ The system uses environment variables for all configuration. These must be set i
 | Property | Value |
 |----------|-------|
 | **Purpose** | The entry fee (in INR) displayed on the payment step and recorded in the Amount Paid column. |
-| **Example** | `NEXT_PUBLIC_ENTRY_FEE=800` |
+| **Example** | `NEXT_PUBLIC_ENTRY_FEE=799` |
 | **Required** | Yes |
 
 ### NEXT_PUBLIC_WHATSAPP_NUMBER
 
 | Property | Value |
 |----------|-------|
-| **Purpose** | The WhatsApp number displayed on the success screen after registration. Players are asked to send payment screenshots here. |
+| **Purpose** | Optional override for the business WhatsApp phone number (display text). Defaults to the value in `WHATSAPP.businessNumber` in `lib/config.ts`. |
 | **Example** | `NEXT_PUBLIC_WHATSAPP_NUMBER=+91 98765 43210` |
-| **Required** | Yes |
+| **Required** | No (has config fallback) |
 
-### NEXT_PUBLIC_WHATSAPP_GROUP_LINK
+### NEXT_PUBLIC_COMMUNITY_WHATSAPP_LINK
 
 | Property | Value |
 |----------|-------|
-| **Purpose** | The invite link to the official tournament WhatsApp group. Shown on the success screen and in all emails. |
-| **Example** | `NEXT_PUBLIC_WHATSAPP_GROUP_LINK=https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK` |
-| **Required** | Yes |
+| **Purpose** | The community WhatsApp group invite link. Used for "Join WhatsApp Community" CTAs across the site and emails. |
+| **Example** | `NEXT_PUBLIC_COMMUNITY_WHATSAPP_LINK=https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK` |
+| **Required** | No (has config fallback) |
+
+### NEXT_PUBLIC_BUSINESS_WHATSAPP_LINK
+
+| Property | Value |
+|----------|-------|
+| **Purpose** | The business WhatsApp direct link (`https://wa.me/...`). Used for payment screenshots, support queries, and organizer communication. |
+| **Example** | `NEXT_PUBLIC_BUSINESS_WHATSAPP_LINK=https://wa.me/918951760369` |
+| **Required** | No (has config fallback) |
 
 ### Configuring for Local Development
 

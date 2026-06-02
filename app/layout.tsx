@@ -4,7 +4,7 @@ import Script from 'next/script'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/Footer'
 import { ThemeProvider } from '@/lib/theme'
-import { SITE, ADDRESS, ADDRESS_FULL, CATEGORIES } from '@/lib/config'
+import { SITE, ADDRESS, ADDRESS_FULL, CATEGORIES, CURRENT_EVENT } from '@/lib/config'
 import './globals.css'
 
 const bebasNeue = Bebas_Neue({
@@ -125,17 +125,17 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "SportsEvent",
-              "name": `Rally Series 01 — Badminton Tournament ${ADDRESS.city}`,
-              "description": `Rally Series 01 is a competitive badminton tournament in ${ADDRESS.city} featuring ${CATEGORIES.join(' and ')} categories. Players compete in a professionally organized one-day event designed to bring together badminton enthusiasts and foster a strong sporting community.`,
+              "name": CURRENT_EVENT.name,
+              "description": `${CURRENT_EVENT.name} is a competitive badminton tournament in ${ADDRESS.city} featuring ${CATEGORIES.join(' and ')} categories. Players compete in a professionally organized one-day event designed to bring together badminton enthusiasts and foster a strong sporting community.`,
               "image": `${SITE.domain}/logo_transparent.png`,
-              "startDate": "2026-07-01T09:30:00+05:30",
-              "endDate": "2026-07-01T17:00:00+05:30",
+              "startDate": "2026-07-05T11:00:00+05:30",
+              "endDate": "2026-07-05T19:00:00+05:30",
               "location": {
                 "@type": "Place",
-                "name": ADDRESS_FULL,
+                "name": CURRENT_EVENT.venue,
                 "address": {
                   "@type": "PostalAddress",
-                  "streetAddress": ADDRESS.area,
+                  "streetAddress": `${CURRENT_EVENT.venue}, ${ADDRESS.area}`,
                   "addressLocality": ADDRESS.city,
                   "addressRegion": ADDRESS.state,
                   "postalCode": "560010",
@@ -144,7 +144,7 @@ export default function RootLayout({
               },
               "offers": {
                 "@type": "Offer",
-                "price": "799",
+                "price": String(CURRENT_EVENT.registrationFee),
                 "priceCurrency": "INR",
                 "url": `${SITE.domain}/register`,
                 "availability": "https://schema.org/LimitedAvailability",

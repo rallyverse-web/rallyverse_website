@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
-import { EMAIL } from '@/lib/config'
+import { EMAIL, WHATSAPP } from '@/lib/config'
 import { verificationCompleteEmail } from '@/lib/email'
 
 async function authorize(req: NextRequest) {
@@ -30,8 +30,6 @@ export async function POST(req: NextRequest) {
     const sheets = getSheetsClient()
     const spreadsheetId = process.env.GOOGLE_SHEET_ID
     const sheetTabName = process.env.GOOGLE_SHEET_TAB_NAME || 'Sheet1'
-    const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
-
     const sheetRow = rowIndex + 2
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -43,12 +41,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Registration not found' }, { status: 404 })
     }
 
-    const playerName = row[4] || ''
-    const playerEmail = row[6] || ''
+    const player1Name = row[4] || ''
+    const player1Email = row[6] || ''
+    const player2Name = row[8] || ''
+    const player2Email = row[10] || ''
     const registrationId = row[0] || ''
     const category = row[2] || ''
+    const isDoubles = category.includes('Doubles')
 
-    if (!playerEmail) {
+    if (!player1Email) {
       return NextResponse.json({ error: 'No email address for this registration' }, { status: 400 })
     }
 
@@ -56,25 +57,47 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY)
 
     const { subject, html } = verificationCompleteEmail({
-      playerName,
+      playerName: player1Name,
       registrationId,
       category,
-      whatsappGroupLink,
+      communityWhatsappLink: WHATSAPP.communityLink,
+      businessWhatsappLink: WHATSAPP.businessLink,
     })
 
     const emailResult = await resend.emails.send({
       from: EMAIL.from,
       replyTo: EMAIL.replyTo,
-      to: playerEmail,
+      to: player1Email,
       subject,
       html,
     })
 
-    console.log(`[send-verification] Email sent to ${playerEmail} (${registrationId}):`, JSON.stringify(emailResult))
+    console.log(`[send-verification] Email sent to ${player1Email} (${registrationId}):`, JSON.stringify(emailResult))
+
+    // Send to player 2 for doubles categories
+    if (isDoubles && player2Email) {
+      const { subject: subject2, html: html2 } = verificationCompleteEmail({
+        playerName: player2Name || 'Teammate',
+        registrationId,
+        category,
+        communityWhatsappLink: WHATSAPP.communityLink,
+        businessWhatsappLink: WHATSAPP.businessLink,
+      })
+
+      await resend.emails.send({
+        from: EMAIL.from,
+        replyTo: EMAIL.replyTo,
+        to: player2Email,
+        subject: subject2,
+        html: html2,
+      })
+
+      console.log(`[send-verification] Email sent to player 2 ${player2Email} (${registrationId})`)
+    }
 
     return NextResponse.json({
       success: true,
-      message: `Verification email sent to ${playerEmail}`,
+      message: `Verification email sent to ${player1Email}${isDoubles && player2Email ? ` and ${player2Email}` : ''}`,
     })
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error)

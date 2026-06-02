@@ -15,13 +15,25 @@ export const EMAIL = {
   secondaryFrom: 'RallyVerse <hello@rallyverse.social>',
 }
 
+// ─── WhatsApp (single source of truth for all WhatsApp links) ────
+export const WHATSAPP = {
+  communityLink:
+    process.env.NEXT_PUBLIC_COMMUNITY_WHATSAPP_LINK ||
+    'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK',
+  businessLink:
+    process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP_LINK ||
+    'https://wa.me/918951760369',
+  businessNumber:
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+91 89517 60369',
+}
+
 // ─── Contact ──────────────────────────────────────────────────────
 export const CONTACT = {
-  phone: '+91 89517 60369',
+  phone: WHATSAPP.businessNumber,
   email: 'rallyverseofficial@gmail.com',
   supportEmail: EMAIL.supportEmail,
-  whatsapp: '+91 89517 60369',
-  whatsappUrl: 'https://wa.me/918951760369',
+  whatsapp: WHATSAPP.businessNumber,
+  whatsappUrl: WHATSAPP.businessLink,
 }
 
 // ─── Address ─────────────────────────────────────────────────────
@@ -34,17 +46,24 @@ export const ADDRESS = {
 
 export const ADDRESS_FULL = `${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state}, ${ADDRESS.country}`
 
-// ─── Registration Categories ──────────────────────────────────────
-export const CATEGORIES = [
-  'Mixed Doubles',
-  "Men's Doubles",
-]
+// ─── Current Event (single source of truth for Rally Series 01) ──
+export const CURRENT_EVENT = {
+  name: 'Rally Series 01 — Bengaluru Badminton',
+  venue: 'A2V Badminton Academy',
+  date: '5 July 2026',
+  time: '11:00 AM – 7:00 PM',
+  registrationFee: 799,
+  categories: ['Mixed Doubles', "Men's Doubles"] as const,
+}
+
+// ─── Registration Categories (derived from current event) ────────
+export const CATEGORIES = [...CURRENT_EVENT.categories]
 
 // ─── Social ───────────────────────────────────────────────────────
 export const SOCIAL = {
   instagram: 'https://www.instagram.com/rallyverseofficial?igsh=eDQ3bm9kODkycml3',
   linkedin: 'https://linkedin.com/company/rallyverse',
-  whatsapp: CONTACT.whatsappUrl,
+  whatsapp: WHATSAPP.businessLink,
   email: `mailto:${CONTACT.email}`,
 }
 

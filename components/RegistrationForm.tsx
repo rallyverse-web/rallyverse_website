@@ -5,7 +5,7 @@ import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
 import PaymentQR from '@/components/PaymentQR'
-import { CATEGORIES, CONTACT } from '@/lib/config'
+import { CATEGORIES, CONTACT, WHATSAPP, CURRENT_EVENT } from '@/lib/config'
 
 type FormDataState = {
   category: string
@@ -87,10 +87,8 @@ export default function RegistrationForm() {
   const [registrationId, setRegistrationId] = useState('')
 
   const needsPlayer2 = useMemo(() => isDoublesCategory(formData.category), [formData.category])
-  const upiId = process.env.NEXT_PUBLIC_UPI_ID || 'adityag,007@ptaxis'
-  const entryFee = process.env.NEXT_PUBLIC_ENTRY_FEE || '800'
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || CONTACT.phone
-  const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
+  const upiId = process.env.NEXT_PUBLIC_UPI_ID || 'adityag.007@ptaxis'
+  const entryFee = process.env.NEXT_PUBLIC_ENTRY_FEE || String(CURRENT_EVENT.registrationFee)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target
@@ -210,36 +208,42 @@ export default function RegistrationForm() {
         <p className="mt-4 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           Our team will verify your payment details and confirm your registration shortly.
         </p>
-        <p className="mt-4 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          Please send a screenshot of your payment on WhatsApp:
-        </p>
-        <a
-          href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-1 inline-block font-body text-base font-semibold transition-colors hover:opacity-80"
-          style={{ color: 'var(--accent-primary)' }}
-        >
-          {whatsappNumber}
-        </a>
-        <p className="mt-5 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          While we process registrations, join the official tournament WhatsApp group to receive updates, schedules, and announcements.
-        </p>
-        <a
-          href={whatsappGroupLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-2 rounded-md px-10 py-5 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-          style={{
-            background: 'var(--rallyverse-gradient)',
-            color: 'var(--btn-primary-text)',
-          }}
-        >
-          Join WhatsApp Group
-        </a>
-        <p className="mt-5 font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          If you have any questions, feel free to contact the RallyVerse team.
-        </p>
+
+        <div className="mt-6 flex flex-col items-center gap-4">
+          <p className="font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+            Please send your payment screenshot on WhatsApp for verification.
+          </p>
+          <a
+            href={WHATSAPP.businessLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-md px-10 py-5 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: 'var(--rallyverse-gradient)',
+              color: 'var(--btn-primary-text)',
+            }}
+          >
+            Send Payment Screenshot
+          </a>
+        </div>
+
+        <div className="mt-6 flex flex-col items-center gap-4">
+          <p className="font-body text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+            Join the official RallyVerse WhatsApp Community to receive tournament updates, match schedules, announcements, and future events.
+          </p>
+          <a
+            href={WHATSAPP.communityLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-md px-10 py-5 font-body text-base font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: 'var(--rallyverse-gradient)',
+              color: 'var(--btn-primary-text)',
+            }}
+          >
+            Join WhatsApp Community
+          </a>
+        </div>
         <p className="mt-4 font-body text-base leading-relaxed" style={{ color: 'var(--text-primary)' }}>
           See you on the court!
         </p>

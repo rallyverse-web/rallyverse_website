@@ -1,9 +1,10 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { MapPin, Calendar } from 'lucide-react'
+import { MapPin, Calendar, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import ShinyText from '@/components/ShinyText'
+import { CURRENT_EVENT } from '@/lib/config'
 
 export default function FirstEvent() {
   const router = useRouter()
@@ -13,31 +14,31 @@ export default function FirstEvent() {
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-10 px-6 md:grid-cols-2 md:gap-16 md:items-start">
         <AnimatedSection>
           <p className="mb-5 font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-            FIRST CHAPTER · BENGALURU 2026
+            UPCOMING EVENTS · BENGALURU
           </p>
 
           <div className="font-display text-[36px] leading-none uppercase sm:text-[48px] md:text-[88px]" style={{ color: 'var(--text-primary)' }}>
-            EVERY UNIVERSE
+            EXPERIENCES
             <br />
-            HAS A BEGINNING.
+            THAT MOVE YOU.
           </div>
           <div className="mt-2 font-display text-[18px] uppercase sm:text-[22px] md:text-[36px]" style={{ color: 'var(--accent-primary)' }}>
-            RALLY SERIES 01 · BENGALURU BADMINTON
+            RALLYVERSE
           </div>
 
           <div className="mt-7 space-y-5 font-body text-base leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
             <p>
-              This is where it starts. Not just a tournament. It's the first chapter of something that will outlast any single scoreline or bracket result.
+              RallyVerse is a universe of experiences — from competitive badminton tournaments to community treks, marathons, and cycling events. The first chapter begins now.
             </p>
             <p>
-              Rally Series 01 is built for Bengaluru&apos;s most passionate players. Men&apos;s Singles. Women&apos;s Singles. Doubles. Mixed. From Beginner to Advanced, there is a court for you.
+              {CURRENT_EVENT.name} is currently open for registration featuring {CURRENT_EVENT.categories.join(' and ')} categories. Whether you are a seasoned competitor or a first-time player, there is a place for you on the court.
             </p>
             <p>
-              Spots are deliberately limited because every player deserves a well-run experience. When you&apos;re here, you&apos;ll feel the difference.
+              Spots are deliberately limited because every player deserves a well-run experience.
             </p>
           </div>
 
-          <div className="mt-9">
+          <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
             <button
               type="button"
               onClick={() => router.push('/register')}
@@ -49,7 +50,7 @@ export default function FirstEvent() {
             >
               <span className="relative z-10">
                 <ShinyText
-                  text="Secure Your Spot"
+                  text="Register Now"
                   disabled={false}
                   speed={3}
                   className="font-semibold"
@@ -59,9 +60,17 @@ export default function FirstEvent() {
               <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'var(--rallyverse-gradient)' }} />
             </button>
 
-            <p className="mt-4 text-center font-body text-xs" style={{ color: 'var(--text-muted)' }}>
-              First registrants help shape the Verse.
-            </p>
+            <button
+              type="button"
+              onClick={() => router.push('/events')}
+              className="inline-flex items-center gap-2 rounded-md px-8 py-4 font-body text-sm font-semibold transition-all duration-200"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
+            >
+              View All Events
+              <ArrowRight size={16} />
+            </button>
           </div>
         </AnimatedSection>
 
@@ -80,10 +89,10 @@ export default function FirstEvent() {
               </div>
               <div className="text-center">
                 <p className="font-display text-[18px] tracking-wider" style={{ color: 'var(--text-primary)' }}>
-                  RALLY SERIES 01
+                  {CURRENT_EVENT.name}
                 </p>
                 <p className="mt-1 font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                  BENGALURU &middot; 2026
+                  {CURRENT_EVENT.date} &middot; {CURRENT_EVENT.time}
                 </p>
               </div>
             </div>
@@ -91,11 +100,11 @@ export default function FirstEvent() {
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <MapPin size={14} style={{ color: 'var(--icon-color)' }} />
-                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>Bengaluru, India</span>
+                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{CURRENT_EVENT.venue}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar size={14} style={{ color: 'var(--icon-color)' }} />
-                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>Date TBA</span>
+                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{CURRENT_EVENT.date}</span>
               </div>
             </div>
           </div>

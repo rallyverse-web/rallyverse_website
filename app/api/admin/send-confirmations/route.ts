@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
-import { EMAIL } from '@/lib/config'
+import { EMAIL, WHATSAPP } from '@/lib/config'
 import { registrationConfirmedEmail } from '@/lib/email'
 
 async function authorize(req: NextRequest) {
@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
     const sheets = getSheetsClient()
     const spreadsheetId = process.env.GOOGLE_SHEET_ID
     const sheetTabName = process.env.GOOGLE_SHEET_TAB_NAME || 'Sheet1'
-    const whatsappGroupLink = process.env.NEXT_PUBLIC_WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/REPLACE_WITH_ACTUAL_LINK'
 
     console.log('[send-confirmations] Reading sheet:', sheetTabName)
 
@@ -74,37 +73,63 @@ export async function POST(req: NextRequest) {
 
     for (const { index, row } of toSend) {
       const sheetRowNum = index + 2
-      const playerName = row[4] || ''
-      const playerEmail = row[6] || ''
+      const player1Name = row[4] || ''
+      const player1Email = row[6] || ''
+      const player2Name = row[8] || ''
+      const player2Email = row[10] || ''
+      const category = row[2] || ''
+      const registrationId = row[0] || ''
 
-      if (!playerEmail) {
-        console.warn(`[send-confirmations] Row ${sheetRowNum}: No email for ${playerName}, skipping`)
-        details.push(`Row ${sheetRowNum}: ${playerName} — no email`)
+      if (!player1Email) {
+        console.warn(`[send-confirmations] Row ${sheetRowNum}: No email for ${player1Name}, skipping`)
+        details.push(`Row ${sheetRowNum}: ${player1Name} — no email`)
         failed++
         continue
       }
 
-      try {
-        console.log(`[send-confirmations] Sending to ${playerEmail} (${playerName}) row ${sheetRowNum}`)
+      const isDoubles = category.includes('Doubles')
 
-        const category = row[2] || ''
-        const registrationId = row[0] || ''
+      try {
+        console.log(`[send-confirmations] Sending to ${player1Email} (${player1Name}) row ${sheetRowNum}`)
+
         const { subject, html } = registrationConfirmedEmail({
-          playerName,
+          playerName: player1Name,
           registrationId,
           category,
-          whatsappGroupLink,
+          communityWhatsappLink: WHATSAPP.communityLink,
+          businessWhatsappLink: WHATSAPP.businessLink,
         })
 
         const emailResult = await resend.emails.send({
           from: EMAIL.from,
           replyTo: EMAIL.replyTo,
-          to: playerEmail,
+          to: player1Email,
           subject,
           html,
         })
 
-        console.log(`[send-confirmations] Email sent to ${playerEmail}:`, JSON.stringify(emailResult))
+        console.log(`[send-confirmations] Email sent to ${player1Email}:`, JSON.stringify(emailResult))
+
+        // Send to player 2 for doubles categories
+        if (isDoubles && player2Email) {
+          const { subject: subject2, html: html2 } = registrationConfirmedEmail({
+            playerName: player2Name || 'Teammate',
+            registrationId,
+            category,
+            communityWhatsappLink: WHATSAPP.communityLink,
+            businessWhatsappLink: WHATSAPP.businessLink,
+          })
+
+          await resend.emails.send({
+            from: EMAIL.from,
+            replyTo: EMAIL.replyTo,
+            to: player2Email,
+            subject: subject2,
+            html: html2,
+          })
+
+          console.log(`[send-confirmations] Email sent to player 2 ${player2Email}:`, JSON.stringify(emailResult))
+        }
 
         await sheets.spreadsheets.values.update({
           spreadsheetId,
@@ -116,12 +141,12 @@ export async function POST(req: NextRequest) {
         })
 
         console.log(`[send-confirmations] Sheet row ${sheetRowNum} updated (U=Yes, V=${row[21] || 'No'}, W=${confirmationDate})`)
-        details.push(`Row ${sheetRowNum}: ${playerName} ✓`)
+        details.push(`Row ${sheetRowNum}: ${player1Name} ✓`)
         sent++
       } catch (emailError) {
         const errMsg = emailError instanceof Error ? emailError.message : String(emailError)
-        console.error(`[send-confirmations] FAILED row ${sheetRowNum} (${playerEmail}): ${errMsg}`)
-        details.push(`Row ${sheetRowNum}: ${playerName} ✗ ${errMsg}`)
+        console.error(`[send-confirmations] FAILED row ${sheetRowNum} (${player1Email}): ${errMsg}`)
+        details.push(`Row ${sheetRowNum}: ${player1Name} ✗ ${errMsg}`)
         failed++
       }
     }

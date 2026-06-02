@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { ChevronDown } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
+import { CURRENT_EVENT } from '@/lib/config'
 
 const faqs = [
   {
@@ -14,12 +15,12 @@ const faqs = [
   {
     question: 'How much does it cost?',
     answer:
-      'Entry fees will be announced with the first event. No payment is required to register your interest now.',
+      `Registration for ${CURRENT_EVENT.name} is \u20B9${CURRENT_EVENT.registrationFee} per team. Payment is processed after registration via UPI.`,
   },
   {
     question: 'Where will the tournaments be held?',
     answer:
-      'Venues across Bengaluru. We\u2019re finalising court partnerships now. Registered players will be the first to know location details.',
+      `${CURRENT_EVENT.venue} in Bengaluru. Registered players will receive the exact location details after confirmation.`,
   },
   {
     question: 'How will I know when the first event is confirmed?',
