@@ -61,8 +61,8 @@ export const CATEGORIES = [...CURRENT_EVENT.categories]
 
 // ─── Social ───────────────────────────────────────────────────────
 export const SOCIAL = {
-  instagram: 'https://www.instagram.com/rallyverseofficial?igsh=eDQ3bm9kODkycml3',
-  linkedin: 'https://linkedin.com/company/rallyverse',
+  instagram: 'https://www.instagram.com/rallyverse_official/',
+  linkedin: 'https://www.linkedin.com/company/rallyversesm/',
   whatsapp: WHATSAPP.businessLink,
   email: `mailto:${CONTACT.email}`,
 }

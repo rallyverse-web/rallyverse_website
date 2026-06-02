@@ -4,7 +4,7 @@ import Script from 'next/script'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/Footer'
 import { ThemeProvider } from '@/lib/theme'
-import { SITE, ADDRESS, ADDRESS_FULL, CATEGORIES, CURRENT_EVENT } from '@/lib/config'
+import { SITE, ADDRESS, ADDRESS_FULL, CATEGORIES, CURRENT_EVENT, SOCIAL } from '@/lib/config'
 import './globals.css'
 
 const bebasNeue = Bebas_Neue({
@@ -113,8 +113,8 @@ export default function RootLayout({
                 "addressCountry": "IN"
               },
               "sameAs": [
-                "https://www.instagram.com/rallyverseofficial?igsh=eDQ3bm9kODkycml3",
-                "https://linkedin.com/company/rallyverse"
+                SOCIAL.instagram,
+                SOCIAL.linkedin
               ]
             })
           }}

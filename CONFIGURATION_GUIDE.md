@@ -199,6 +199,54 @@ To update, change `WHATSAPP.businessLink` in `lib/config.ts` or set
 
 ---
 
+## If I need to update Instagram later
+
+**Edit this file:** `lib/config.ts`
+
+Look for `SOCIAL.instagram` in the `SOCIAL` config object.
+
+Current value:
+
+```
+https://www.instagram.com/rallyverse_official/
+```
+
+Used in these locations:
+
+| Location | Usage |
+|---|---|
+| `components/SocialIcons.tsx` | Instagram icon link |
+| `components/Footer.tsx` | Instagram icon in social icons row |
+| `app/layout.tsx` | Structured data `sameAs` array |
+
+All consume `SOCIAL.instagram` from `lib/config.ts`. Change it once to update everywhere.
+
+---
+
+## If I need to update LinkedIn later
+
+**Edit this file:** `lib/config.ts`
+
+Look for `SOCIAL.linkedin` in the `SOCIAL` config object.
+
+Current value:
+
+```
+https://www.linkedin.com/company/rallyversesm/
+```
+
+Used in these locations:
+
+| Location | Usage |
+|---|---|
+| `components/SocialIcons.tsx` | LinkedIn icon link |
+| `components/Footer.tsx` | LinkedIn icon in social icons row |
+| `app/layout.tsx` | Structured data `sameAs` array |
+
+All consume `SOCIAL.linkedin` from `lib/config.ts`. Change it once to update everywhere.
+
+---
+
 ## Environment Variables Audit
 
 ### Override variables (optional — config file values are the default)
@@ -259,6 +307,8 @@ To update, change `WHATSAPP.businessLink` in `lib/config.ts` or set
 | `app/events/page.tsx` | Uses `CURRENT_EVENT` for venue, date, time, categories |
 | `app/layout.tsx` | Structured data schema uses `CURRENT_EVENT` |
 | `lib/email.ts` | Email subjects/body use `CURRENT_EVENT.name` |
+| `lib/config.ts` | Updated `SOCIAL.instagram` and `SOCIAL.linkedin` to official RallyVerse URLs |
+| `app/layout.tsx` | Structured data `sameAs` now uses `SOCIAL.instagram` and `SOCIAL.linkedin` from config |
 
 ---
 
@@ -279,6 +329,8 @@ These files consume values from `lib/config.ts` and needed no WhatsApp-specific 
 - [x] **Address update** → Edit `lib/config.ts` (`ADDRESS` object)
 - [x] **Event details update** → Edit `lib/config.ts` (`CURRENT_EVENT` object) — name, venue, date, time, fee, categories
 - [x] **Category update** → Edit `lib/config.ts` (`CATEGORIES` array, derived from `CURRENT_EVENT.categories`)
+- [x] **Instagram update** → Edit `lib/config.ts` (`SOCIAL.instagram`)
+- [x] **LinkedIn update** → Edit `lib/config.ts` (`SOCIAL.linkedin`)
 - [x] **WhatsApp community link update** → Edit `lib/config.ts` (`WHATSAPP.communityLink`) or set `NEXT_PUBLIC_COMMUNITY_WHATSAPP_LINK`
 - [x] **WhatsApp business link update** → Edit `lib/config.ts` (`WHATSAPP.businessLink`) or set `NEXT_PUBLIC_BUSINESS_WHATSAPP_LINK`
 - [x] **Env vars that may need updating** → See table above (Vercel dashboard)
