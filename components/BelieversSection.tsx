@@ -46,27 +46,58 @@ export default function BelieversSection() {
                 className="flex flex-col items-center text-center rounded-xl p-6 transition-all duration-200"
                 style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
               >
-                <div
-                  className="relative mb-4 h-24 w-24 overflow-hidden rounded-full"
-                  style={{ border: '2px solid var(--border-subtle)' }}
-                >
-                  <Image
-                    src={person.image}
-                    alt={person.name}
-                    fill
-                    className="object-cover"
-                    sizes="96px"
-                  />
+                <div className="relative mb-3">
+                  <div
+                    className="relative h-24 w-24 overflow-hidden rounded-full"
+                    style={{ border: '2px solid var(--border-subtle)' }}
+                  >
+                    <Image
+                      src={person.image}
+                      alt={person.name}
+                      fill
+                      className="object-cover"
+                      sizes="96px"
+                    />
+                  </div>
+                  <div
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-2 py-0.5"
+                    style={{
+                      backgroundColor: 'var(--accent-primary)',
+                      color: 'var(--btn-primary-text)',
+                    }}
+                  >
+                    <span className="font-body text-[8px] font-bold uppercase tracking-wider">
+                      Early Supporter
+                    </span>
+                  </div>
                 </div>
+
                 <h3 className="font-display text-[16px] uppercase leading-tight mb-1" style={{ color: 'var(--text-primary)' }}>
                   {person.name}
                 </h3>
-                <p className="font-body text-[12px] font-medium tracking-wide mb-3" style={{ color: 'var(--accent-primary)' }}>
+                <p className="font-body text-[12px] font-medium tracking-wide mb-1" style={{ color: 'var(--accent-primary)' }}>
                   {person.headline}
                 </p>
+
+                <div
+                  className="w-full rounded-lg px-4 py-3 mb-4"
+                  style={{
+                    backgroundColor: 'color-mix(in srgb, var(--accent-primary) 8%, transparent)',
+                    borderLeft: '3px solid var(--accent-primary)',
+                  }}
+                >
+                  <p
+                    className="font-body text-[12px] leading-relaxed italic"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {person.quote}
+                  </p>
+                </div>
+
                 <p className="font-body text-[13px] leading-relaxed mb-4 line-clamp-3" style={{ color: 'var(--text-muted)' }}>
                   {person.description}
                 </p>
+
                 <a
                   href={person.linkedin}
                   target="_blank"

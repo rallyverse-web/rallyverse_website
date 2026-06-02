@@ -9,7 +9,7 @@ export default function ThemeToggle() {
   return (
     <motion.button
       onClick={toggleTheme}
-      className="relative flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer"
+      className="relative flex items-center justify-center h-10 w-10 rounded-lg border cursor-pointer"
       style={{
         backgroundColor: 'var(--toggle-bg)',
         borderColor: 'var(--toggle-border)',
@@ -91,12 +91,7 @@ export default function ThemeToggle() {
         )}
       </AnimatePresence>
 
-      <span
-        className="text-xs font-medium tracking-wider uppercase select-none"
-        style={{ color: 'var(--toggle-icon-color)' }}
-      >
-        {isColorTheme ? 'B&W' : 'Color'}
-      </span>
+
     </motion.button>
   );
 }
