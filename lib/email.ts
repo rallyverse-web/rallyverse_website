@@ -1,6 +1,18 @@
+import fs from 'fs'
+import path from 'path'
 import { SITE, CONTACT, EMAIL, WHATSAPP, CURRENT_EVENT } from './config'
 
 const LOGO_URL = `${SITE.domain}/logo/logo_transparent.png`
+const POSTER_URL = `${SITE.domain}/posters/color_poster.png`
+
+export function getColorPosterAttachment(): { filename: string; content: Buffer } {
+  const posterPath = path.join(process.cwd(), 'public', 'posters', 'color_poster.png')
+  const content = fs.readFileSync(posterPath)
+  return {
+    filename: 'RallyVerse-Poster.png',
+    content,
+  }
+}
 
 // ─── Brand colors ─────────────────────────────────────────────
 const COLORS = {
@@ -122,6 +134,10 @@ export function registrationReceivedEmail(params: {
     <p><strong>Venue:</strong> ${CURRENT_EVENT.venue}</p>
     <p><strong>Date:</strong> ${CURRENT_EVENT.date} &middot; <strong>Time:</strong> ${CURRENT_EVENT.time}</p>
 
+    <div style="margin:24px 0;text-align:center;">
+      <img src="${POSTER_URL}" alt="${CURRENT_EVENT.name}" style="max-width:100%;height:auto;border-radius:8px;border:1px solid ${COLORS.border};" />
+    </div>
+
     <p><strong>Send your payment screenshot on WhatsApp for verification:</strong></p>
     <p style="text-align:center;margin:24px 0;">
       <a href="${businessWhatsappLink}" style="${STYLES.button}">
@@ -186,6 +202,10 @@ export function registrationConfirmedEmail(params: {
 
     <p><strong>Venue:</strong> ${CURRENT_EVENT.venue}</p>
     <p><strong>Date:</strong> ${CURRENT_EVENT.date} &middot; <strong>Time:</strong> ${CURRENT_EVENT.time}</p>
+
+    <div style="margin:24px 0;text-align:center;">
+      <img src="${POSTER_URL}" alt="${CURRENT_EVENT.name}" style="max-width:100%;height:auto;border-radius:8px;border:1px solid ${COLORS.border};" />
+    </div>
 
     <p><strong>On event day:</strong></p>
     <p style="margin:0;">• Report to the venue 30 minutes before your scheduled match.</p>

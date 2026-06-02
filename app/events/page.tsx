@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { MapPin, Calendar, Clock, Swords, Mountain, Timer, Bike, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
+import EventPoster from '@/components/EventPoster'
 import { SITE, ADDRESS, CURRENT_EVENT } from '@/lib/config'
 
 export const metadata: Metadata = {
@@ -181,22 +182,7 @@ export default function EventsPage() {
             </AnimatedSection>
 
             <AnimatedSection delay={0.15}>
-              <div className="aspect-[3/4] w-full rounded-xl flex flex-col items-center justify-center gap-6" style={{
-                border: '1px solid var(--border-subtle)',
-                backgroundColor: 'var(--bg-surface)',
-              }}>
-                <div className="font-display text-[80px] leading-none tracking-wide" style={{ color: 'var(--text-faint)' }}>
-                  RV
-                </div>
-                <div className="text-center">
-                  <p className="font-display text-[18px] tracking-wider" style={{ color: 'var(--text-primary)' }}>
-                    RALLY SERIES 01
-                  </p>
-                  <p className="mt-1 font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                    BENGALURU &middot; 2026
-                  </p>
-                </div>
-              </div>
+              <EventPoster variant="card" priority />
             </AnimatedSection>
           </div>
         </div>

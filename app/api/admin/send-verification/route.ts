@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
 import { EMAIL, WHATSAPP } from '@/lib/config'
-import { verificationCompleteEmail } from '@/lib/email'
+import { verificationCompleteEmail, getColorPosterAttachment } from '@/lib/email'
 
 async function authorize(req: NextRequest) {
   const authHeader = req.headers.get('authorization') || ''
@@ -56,6 +56,8 @@ export async function POST(req: NextRequest) {
     const { Resend } = await import('resend')
     const resend = new Resend(process.env.RESEND_API_KEY)
 
+    const posterAttachment = getColorPosterAttachment()
+
     const { subject, html } = verificationCompleteEmail({
       playerName: player1Name,
       registrationId,
@@ -70,6 +72,7 @@ export async function POST(req: NextRequest) {
       to: player1Email,
       subject,
       html,
+      attachments: [posterAttachment],
     })
 
     console.log(`[send-verification] Email sent to ${player1Email} (${registrationId}):`, JSON.stringify(emailResult))
@@ -90,6 +93,7 @@ export async function POST(req: NextRequest) {
         to: player2Email,
         subject: subject2,
         html: html2,
+        attachments: [posterAttachment],
       })
 
       console.log(`[send-verification] Email sent to player 2 ${player2Email} (${registrationId})`)

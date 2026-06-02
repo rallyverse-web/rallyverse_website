@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useMemo, useState } from 'react'
 import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
+import EventPoster from '@/components/EventPoster'
 import PaymentQR from '@/components/PaymentQR'
 import { CATEGORIES, CONTACT, WHATSAPP, CURRENT_EVENT } from '@/lib/config'
 
@@ -195,6 +196,11 @@ export default function RegistrationForm() {
       >
         <CheckCircle size={32} style={{ color: 'var(--accent-primary)' }} />
       </div>
+
+      <div className="w-full max-w-[320px]">
+        <EventPoster variant="sidebar" />
+      </div>
+
       <div className="max-w-[540px]">
         <p className="font-body text-base font-semibold" style={{ color: 'var(--accent-primary)' }}>
           Payment Submitted Successfully
@@ -459,6 +465,10 @@ export default function RegistrationForm() {
 
           {/* Payment Card */}
           <div className="flex flex-col items-center gap-5 rounded-md p-6 text-center" style={{ border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
+            <div className="w-full max-w-[280px]">
+              <EventPoster variant="sidebar" />
+            </div>
+
             <PaymentQR />
 
             <div className="w-full space-y-2 font-body text-sm" style={{ color: 'var(--text-primary)' }}>

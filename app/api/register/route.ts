@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
 import { formatRegistrationDate, generateRegistrationId } from '@/lib/utils'
 import { CONTACT, EMAIL, WHATSAPP, CURRENT_EVENT } from '@/lib/config'
-import { registrationReceivedEmail } from '@/lib/email'
+import { registrationReceivedEmail, getColorPosterAttachment } from '@/lib/email'
 
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -124,12 +124,15 @@ export async function POST(req: NextRequest) {
           entryFee: fee,
         })
 
+        const posterAttachment = getColorPosterAttachment()
+
         await resend.emails.send({
           from: EMAIL.from,
           replyTo: EMAIL.replyTo,
           to: player1Email,
           subject,
           html,
+          attachments: [posterAttachment],
         })
 
         console.log(`[register] Registration received email sent to player 1: ${player1Email} (${registrationId})`)
@@ -151,6 +154,7 @@ export async function POST(req: NextRequest) {
             to: player2Email,
             subject: subject2,
             html: html2,
+            attachments: [posterAttachment],
           })
 
           console.log(`[register] Registration received email sent to player 2: ${player2Email} (${registrationId})`)

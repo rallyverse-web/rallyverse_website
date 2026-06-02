@@ -55,7 +55,7 @@ export const events: RallyEvent[] = [
     registered: 58,
     capacity: 64,
     rallyPoints: 180,
-    image: 'https://picsum.photos/seed/smashcup/640/360',
+    image: '/posters/color_poster.png',
   },
   {
     id: 5,
@@ -99,7 +99,7 @@ export const events: RallyEvent[] = [
     registered: 41,
     capacity: 48,
     rallyPoints: 170,
-    image: 'https://picsum.photos/seed/shuttle/640/360',
+    image: '/posters/color_poster.png',
   },
   {
     id: 9,

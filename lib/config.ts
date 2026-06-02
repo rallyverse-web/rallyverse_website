@@ -86,6 +86,12 @@ export const CURRENT_EVENT = {
     "Rally Series 01 is a competitive badminton tournament in Bengaluru featuring Mixed Doubles and Men's Doubles categories. Players compete in a professionally organized one-day event designed to bring together badminton enthusiasts.",
 }
 
+// ─── Current Event Posters (theme-based switching) ───────────────
+export const CURRENT_EVENT_POSTERS = {
+  color: '/posters/color_poster.png',
+  bw: '/posters/bw_poster.png',
+}
+
 // ─── Registration Categories (derived from current event) ────────
 export const CATEGORIES = [...CURRENT_EVENT.categories]
 

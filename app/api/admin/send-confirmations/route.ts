@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSheetsClient } from '@/lib/google'
 import { EMAIL, WHATSAPP } from '@/lib/config'
-import { registrationConfirmedEmail } from '@/lib/email'
+import { registrationConfirmedEmail, getColorPosterAttachment } from '@/lib/email'
 
 async function authorize(req: NextRequest) {
   const authHeader = req.headers.get('authorization') || ''
@@ -92,6 +92,8 @@ export async function POST(req: NextRequest) {
       try {
         console.log(`[send-confirmations] Sending to ${player1Email} (${player1Name}) row ${sheetRowNum}`)
 
+        const posterAttachment = getColorPosterAttachment()
+
         const { subject, html } = registrationConfirmedEmail({
           playerName: player1Name,
           registrationId,
@@ -106,6 +108,7 @@ export async function POST(req: NextRequest) {
           to: player1Email,
           subject,
           html,
+          attachments: [posterAttachment],
         })
 
         console.log(`[send-confirmations] Email sent to ${player1Email}:`, JSON.stringify(emailResult))
@@ -126,6 +129,7 @@ export async function POST(req: NextRequest) {
             to: player2Email,
             subject: subject2,
             html: html2,
+            attachments: [posterAttachment],
           })
 
           console.log(`[send-confirmations] Email sent to player 2 ${player2Email}:`, JSON.stringify(emailResult))

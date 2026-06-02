@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { MapPin, Calendar, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import ShinyText from '@/components/ShinyText'
+import EventPoster from '@/components/EventPoster'
 import { CURRENT_EVENT } from '@/lib/config'
 
 export default function FirstEvent() {
@@ -76,26 +77,7 @@ export default function FirstEvent() {
 
         <AnimatedSection delay={0.15}>
           <div className="group">
-            <div className="flex aspect-[3/4] w-full flex-col items-center justify-center gap-6 rounded-xl transition-all duration-300 group-hover:glow-orange"
-              style={{
-                border: '1px solid var(--border-subtle)',
-                backgroundColor: 'var(--bg-surface)',
-              }}
-            >
-              <div className="font-display text-[80px] leading-none tracking-wide transition-colors duration-300"
-                style={{ color: 'var(--text-faint)' }}
-              >
-                RV
-              </div>
-              <div className="text-center">
-                <p className="font-display text-[18px] tracking-wider" style={{ color: 'var(--text-primary)' }}>
-                  {CURRENT_EVENT.name}
-                </p>
-                <p className="mt-1 font-body text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                  {CURRENT_EVENT.date} &middot; {CURRENT_EVENT.time}
-                </p>
-              </div>
-            </div>
+            <EventPoster variant="card" />
 
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
