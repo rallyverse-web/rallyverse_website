@@ -1,12 +1,12 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion } from 'motion/react'
 import { Instagram, Linkedin, Mail, ArrowUpRight } from 'lucide-react'
 import WhatsAppIcon from '@/components/WhatsAppIcon'
 import ThemedLogo from '@/components/ThemedLogo'
 import ShinyText from '@/components/ShinyText'
-import { SITE, CONTACT, ADDRESS, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS } from '@/lib/config'
+import { SITE, COMPANY, CONTACT, ADDRESS, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS } from '@/lib/config'
 
 // ─── Social icon data (single source of truth) ────────────────
 const socialItems = [
@@ -18,13 +18,12 @@ const socialItems = [
 
 // ─── Column data ─────────────────────────────────────────────
 const contactItems = [
+  { label: 'Phone', value: CONTACT.phone, href: CONTACT.telUrl },
   { label: 'Email', value: CONTACT.email, href: SOCIAL.email },
   { label: 'WhatsApp', value: CONTACT.whatsapp, href: WHATSAPP.businessLink },
 ]
 
 export default function Footer() {
-  const router = useRouter()
-
   return (
     <div id="contact">
       {/* ── Pre‑footer CTA ────────────────────────────────────── */}
@@ -54,9 +53,8 @@ export default function Footer() {
           >
             Join a community built around movement, adventure, and meaningful experiences.
           </motion.p>
-          <button
-            type="button"
-            onClick={() => router.push('/register')}
+          <Link
+            href="/register"
             className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
             style={{
               background: 'var(--rallyverse-gradient)',
@@ -71,12 +69,13 @@ export default function Footer() {
               shineColor="rgba(255,255,255,0.6)"
             />
             <ArrowUpRight size={16} aria-hidden="true" />
-          </button>
+          </Link>
         </div>
       </section>
 
       {/* ── Main Footer ───────────────────────────────────────── */}
       <footer
+        aria-label="Site footer"
         className="px-6 py-16 md:py-20"
         style={{
           borderTop: '1px solid var(--border-subtle)',
@@ -87,13 +86,16 @@ export default function Footer() {
           {/* Grid — 4 columns on desktop */}
           <div className="grid gap-12 md:grid-cols-4 md:gap-8">
 
-            {/* ── Column 1: Brand ─────────────────────────────── */}
+            {/* ── Column 1: Brand + Trust ──────────────────────── */}
             <div className="md:col-span-1">
-              <button type="button" onClick={() => router.push('/')} className="mb-5 inline-block">
+              <Link href="/" className="mb-5 inline-block">
                 <ThemedLogo context="footer" />
-              </button>
-              <p className="max-w-[260px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+              </Link>
+              <p className="mb-3 max-w-[260px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                 {SITE.description}
+              </p>
+              <p className="max-w-[260px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                {COMPANY.shortDescription}
               </p>
             </div>
 
@@ -105,16 +107,15 @@ export default function Footer() {
               <ul className="flex flex-col gap-3">
                 {QUICK_LINKS.map((link) => (
                   <li key={link.label}>
-                    <button
-                      type="button"
-                      onClick={() => router.push(link.href)}
+                    <Link
+                      href={link.href}
                       className="text-sm transition-colors duration-200"
                       style={{ color: 'var(--text-muted)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
                     >
                       {link.label}
-                    </button>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -150,9 +151,8 @@ export default function Footer() {
                 Location
               </h3>
               <address className="not-italic text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                <span className="block">{SITE.name}</span>
                 <span className="block">{ADDRESS.area}</span>
-                <span className="block">{ADDRESS.city}, {ADDRESS.state}</span>
+                <span className="block">{ADDRESS.city}, {ADDRESS.state} {ADDRESS.postalCode}</span>
                 <span className="block">{ADDRESS.country}</span>
               </address>
             </div>
@@ -173,7 +173,7 @@ export default function Footer() {
                       href={s.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center h-10 w-10 rounded-lg transition-all duration-200"
+                      className="flex items-center justify-center h-10 w-10 rounded-lg transition-all duration-200 hover:scale-105"
                       style={{
                         backgroundColor: 'var(--bg-surface)',
                         color: 'var(--text-muted)',
@@ -183,13 +183,11 @@ export default function Footer() {
                         e.currentTarget.style.backgroundColor = 'var(--accent-primary)'
                         e.currentTarget.style.color = 'var(--btn-primary-text)'
                         e.currentTarget.style.borderColor = 'var(--accent-primary)'
-                        e.currentTarget.style.transform = 'translateY(-2px)'
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'var(--bg-surface)'
                         e.currentTarget.style.color = 'var(--text-muted)'
                         e.currentTarget.style.borderColor = 'var(--border-subtle)'
-                        e.currentTarget.style.transform = 'translateY(0)'
                       }}
                       aria-label={`${SITE.name} on ${s.label}`}
                     >
@@ -211,16 +209,15 @@ export default function Footer() {
               <div className="flex gap-4">
                 {LEGAL_LINKS.map((link, i) => (
                   <span key={link.label}>
-                    <button
-                      type="button"
-                      onClick={() => router.push(link.href)}
+                    <Link
+                      href={link.href}
                       className="text-[13px] transition-colors duration-200"
                       style={{ color: 'var(--text-faint)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
                     >
                       {link.label}
-                    </button>
+                    </Link>
                     {i < LEGAL_LINKS.length - 1 && (
                       <span className="mx-4 text-[13px]" style={{ color: 'var(--text-faint)' }}>&middot;</span>
                     )}

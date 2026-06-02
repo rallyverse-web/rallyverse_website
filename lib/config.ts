@@ -7,6 +7,12 @@ export const SITE = {
     'RallyVerse is a community built around badminton, movement, competition, and meaningful experiences.',
 }
 
+// ─── Company Bio (E-E-A-T signals for footer / trust) ───────────
+export const COMPANY = {
+  shortDescription:
+    'A Bengaluru-based sports community organizing badminton tournaments, events, and social experiences — Rally Beyond Routine.',
+}
+
 // ─── Email ────────────────────────────────────────────────────────
 export const EMAIL = {
   from: 'RallyVerse <registrations@rallyverse.social>',
@@ -30,6 +36,7 @@ export const WHATSAPP = {
 // ─── Contact ──────────────────────────────────────────────────────
 export const CONTACT = {
   phone: WHATSAPP.businessNumber,
+  telUrl: `tel:${WHATSAPP.businessNumber.replace(/[\s+]/g, '')}`,
   email: 'rallyverseofficial@gmail.com',
   supportEmail: EMAIL.supportEmail,
   whatsapp: WHATSAPP.businessNumber,
@@ -41,10 +48,11 @@ export const ADDRESS = {
   area: 'Rajajinagar',
   city: 'Bengaluru',
   state: 'Karnataka',
+  postalCode: '560010',
   country: 'India',
 }
 
-export const ADDRESS_FULL = `${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state}, ${ADDRESS.country}`
+export const ADDRESS_FULL = `${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state} ${ADDRESS.postalCode}, ${ADDRESS.country}`
 
 // ─── Current Event (single source of truth for Rally Series 01) ──
 export const CURRENT_EVENT = {

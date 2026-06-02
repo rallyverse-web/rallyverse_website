@@ -129,7 +129,7 @@ export default function RootLayout({
                   "streetAddress": `${CURRENT_EVENT.venue}, ${ADDRESS.area}`,
                   "addressLocality": ADDRESS.city,
                   "addressRegion": ADDRESS.state,
-                  "postalCode": "560010",
+                  "postalCode": ADDRESS.postalCode,
                   "addressCountry": "IN"
                 }
               },
