@@ -1,11 +1,13 @@
 'use client'
 
 import { Mail, Instagram, Linkedin } from 'lucide-react'
-import { SOCIAL } from '@/lib/config'
+import WhatsAppIcon from '@/components/WhatsAppIcon'
+import { SOCIAL, WHATSAPP } from '@/lib/config'
 
 const socialLinks = [
   { icon: Instagram, label: 'Instagram', href: SOCIAL.instagram },
   { icon: Linkedin, label: 'LinkedIn', href: SOCIAL.linkedin },
+  { icon: WhatsAppIcon, label: 'WhatsApp Community', href: WHATSAPP.communityLink },
   { icon: Mail, label: 'Email', href: SOCIAL.email },
 ]
 
