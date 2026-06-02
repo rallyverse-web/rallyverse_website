@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
-import { ExternalLink, ArrowRight } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import { believers } from '@/data/believers'
-import { WHATSAPP } from '@/lib/config'
 
 export const metadata: Metadata = {
   title: 'Believers — RallyVerse | Early Supporters & Community Builders',
@@ -59,12 +57,7 @@ export default function BelieversPage() {
           __html: JSON.stringify(personStructuredData()),
         }}
       />
-      <style>{`
-        .believers-whatsapp-cta:hover {
-          border-color: var(--accent-primary) !important;
-          color: var(--accent-primary) !important;
-        }
-      `}</style>
+
       <div className="mx-auto max-w-[1100px] px-6">
         <AnimatedSection>
           <div className="flex items-center gap-3 mb-5">
@@ -188,45 +181,6 @@ export default function BelieversPage() {
           </AnimatedSection>
         )}
 
-        <AnimatedSection delay={0.2}>
-          <div
-            className="mt-24 text-center rounded-xl px-8 py-16"
-            style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
-          >
-            <h2 className="font-display text-[28px] leading-none uppercase sm:text-[36px] md:text-[44px]" style={{ color: 'var(--text-primary)' }}>
-              Believe in the Vision?
-            </h2>
-            <p className="mx-auto mt-4 max-w-lg font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              If RallyVerse resonates with you and you&apos;d like to support the journey, we&apos;d love to hear from you.
-            </p>
-            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
-                style={{
-                  background: 'var(--rallyverse-gradient)',
-                  color: 'var(--btn-primary-text)',
-                }}
-              >
-                Connect With Us
-                <ArrowRight size={16} />
-              </Link>
-              <a
-                href={WHATSAPP.businessLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="believers-whatsapp-cta inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
-                style={{
-                  border: '1px solid var(--border-subtle)',
-                  color: 'var(--text-primary)',
-                }}
-              >
-                Message on WhatsApp
-                <ExternalLink size={16} />
-              </a>
-            </div>
-          </div>
-        </AnimatedSection>
       </div>
     </div>
   )
