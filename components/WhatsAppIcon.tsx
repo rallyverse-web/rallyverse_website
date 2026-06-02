@@ -9,7 +9,7 @@ interface WhatsAppIconProps {
 export default function WhatsAppIcon({ size = 24, className, style }: WhatsAppIconProps) {
   return (
     <Image
-      src="/whatsapp_icon.png"
+      src="/whatsapp_icon.svg"
       alt="WhatsApp"
       width={size}
       height={size}

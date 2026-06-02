@@ -6,8 +6,33 @@ import SocialIcons from '@/components/SocialIcons'
 import { CONTACT, ADDRESS_FULL, SOCIAL, WHATSAPP, EMAIL } from '@/lib/config'
 
 export const metadata: Metadata = {
-  title: 'Contact — RallyVerse | Get in Touch',
+  title: 'Contact — RallyVerse | Get in Touch — Bengaluru Sports Community',
   description: 'Reach out to RallyVerse via email, WhatsApp, or social media. Bengaluru, Karnataka, India.',
+  openGraph: {
+    title: 'Contact — RallyVerse | Get in Touch — Bengaluru Sports Community',
+    description: 'Reach out to RallyVerse via email, WhatsApp, or social media. Bengaluru, Karnataka, India.',
+    url: 'https://rallyverse.social/contact',
+    siteName: 'RallyVerse',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: '/og',
+        width: 1200,
+        height: 630,
+        alt: 'RallyVerse — Rally Beyond Routine',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contact — RallyVerse | Get in Touch — Bengaluru Sports Community',
+    description: 'Reach out to RallyVerse via email, WhatsApp, or social media. Bengaluru, Karnataka, India.',
+    images: ['/og'],
+  },
+  alternates: {
+    canonical: '/contact',
+  },
 }
 
 const contactMethods = [

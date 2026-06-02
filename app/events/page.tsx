@@ -4,8 +4,33 @@ import AnimatedSection from '@/components/AnimatedSection'
 import { CURRENT_EVENT } from '@/lib/config'
 
 export const metadata: Metadata = {
-  title: 'Events — RallyVerse | Upcoming Tournaments & Adventures',
-  description: `Discover upcoming RallyVerse events. ${CURRENT_EVENT.name} is here.`,
+  title: 'Events — RallyVerse | Badminton, Treks & Adventures in Bengaluru',
+  description: `Discover upcoming RallyVerse events. ${CURRENT_EVENT.name} is here. Badminton tournaments, treks, marathons, and cycling in Bengaluru.`,
+  openGraph: {
+    title: 'Events — RallyVerse | Badminton, Treks & Adventures in Bengaluru',
+    description: `Discover upcoming RallyVerse events. ${CURRENT_EVENT.name} is here. Badminton tournaments, treks, marathons, and cycling in Bengaluru.`,
+    url: 'https://rallyverse.social/events',
+    siteName: 'RallyVerse',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: '/og',
+        width: 1200,
+        height: 630,
+        alt: 'RallyVerse — Rally Beyond Routine',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Events — RallyVerse | Badminton, Treks & Adventures in Bengaluru',
+    description: `Discover upcoming RallyVerse events. ${CURRENT_EVENT.name} is here. Badminton tournaments, treks, marathons, and cycling in Bengaluru.`,
+    images: ['/og'],
+  },
+  alternates: {
+    canonical: '/events',
+  },
 }
 
 const futureEvents = [

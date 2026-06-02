@@ -3,8 +3,33 @@ import { Swords, Mountain, Timer, Bike, Target, Heart, Globe } from 'lucide-reac
 import AnimatedSection from '@/components/AnimatedSection'
 
 export const metadata: Metadata = {
-  title: 'About — RallyVerse | Rally Beyond Routine',
+  title: 'About — RallyVerse | Rally Beyond Routine — Bengaluru Sports Community',
   description: 'RallyVerse is a community-first universe built for people who move, compete, explore, and connect. Learn about our mission, vision, and why we exist.',
+  openGraph: {
+    title: 'About — RallyVerse | Rally Beyond Routine — Bengaluru Sports Community',
+    description: 'RallyVerse is a community-first universe built for people who move, compete, explore, and connect. Learn about our mission, vision, and why we exist.',
+    url: 'https://rallyverse.social/about',
+    siteName: 'RallyVerse',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: '/og',
+        width: 1200,
+        height: 630,
+        alt: 'RallyVerse — Rally Beyond Routine',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About — RallyVerse | Rally Beyond Routine — Bengaluru Sports Community',
+    description: 'RallyVerse is a community-first universe built for people who move, compete, explore, and connect. Learn about our mission, vision, and why we exist.',
+    images: ['/og'],
+  },
+  alternates: {
+    canonical: '/about',
+  },
 }
 
 const values = [

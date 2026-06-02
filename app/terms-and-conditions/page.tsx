@@ -4,6 +4,31 @@ import { CONTACT, EMAIL } from '@/lib/config'
 export const metadata: Metadata = {
   title: 'Terms & Conditions — RallyVerse',
   description: 'RallyVerse Terms & Conditions. Understand the rules for registration, event participation, payments, refunds, and code of conduct.',
+  openGraph: {
+    title: 'Terms & Conditions — RallyVerse',
+    description: 'RallyVerse Terms & Conditions. Understand the rules for registration, event participation, payments, refunds, and code of conduct.',
+    url: 'https://rallyverse.social/terms-and-conditions',
+    siteName: 'RallyVerse',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: '/og',
+        width: 1200,
+        height: 630,
+        alt: 'RallyVerse — Rally Beyond Routine',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Terms & Conditions — RallyVerse',
+    description: 'RallyVerse Terms & Conditions. Understand the rules for registration, event participation, payments, refunds, and code of conduct.',
+    images: ['/og'],
+  },
+  alternates: {
+    canonical: '/terms-and-conditions',
+  },
 }
 
 const sections = [

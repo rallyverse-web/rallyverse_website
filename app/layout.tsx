@@ -21,7 +21,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://rallyverse.social'),
-  title: 'RallyVerse — Rally Beyond Routine | Sports, Adventure & Community in Bengaluru',
+  title: 'RallyVerse — Rally Beyond Routine | Sports & Community in Bengaluru',
   description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
   keywords: [
     'RallyVerse Bengaluru',
@@ -37,23 +37,23 @@ export const metadata: Metadata = {
   ],
   twitter: {
     card: 'summary_large_image',
-    title: 'RallyVerse — Rally Beyond Routine',
-    description: 'A universe built for people who move, compete, explore, and connect. Bengaluru\'s home for sports, adventure, and community.',
-    images: ['/logo_transparent.png'],
+    title: 'RallyVerse — Rally Beyond Routine | Sports & Community in Bengaluru',
+    description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
+    images: ['/og'],
   },
   openGraph: {
-    title: 'RallyVerse — Rally Beyond Routine',
-    description: 'A universe built for people who move, compete, explore, and connect. Bengaluru\'s home for sports, adventure, and community.',
+    title: 'RallyVerse — Rally Beyond Routine | Sports & Community in Bengaluru',
+    description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
     url: 'https://rallyverse.social',
     siteName: 'RallyVerse',
     locale: 'en_IN',
     type: 'website',
     images: [
       {
-        url: '/logo_transparent.png',
-        width: 512,
-        height: 512,
-        alt: 'RallyVerse Logo',
+        url: '/og',
+        width: 1200,
+        height: 630,
+        alt: 'RallyVerse — Rally Beyond Routine',
       },
     ],
   },
@@ -61,8 +61,12 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  alternates: {
+    canonical: '/',
+  },
   icons: {
     icon: [
+      { url: '/favicon.svg', sizes: 'any', type: 'image/svg+xml' },
       { url: '/favicon.ico', sizes: 'any' },
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
@@ -95,7 +99,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <link rel="canonical" href="https://rallyverse.social" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -127,7 +130,7 @@ export default function RootLayout({
               "@type": "SportsEvent",
               "name": CURRENT_EVENT.name,
               "description": `${CURRENT_EVENT.name} is a competitive badminton tournament in ${ADDRESS.city} featuring ${CATEGORIES.join(' and ')} categories. Players compete in a professionally organized one-day event designed to bring together badminton enthusiasts and foster a strong sporting community.`,
-              "image": `${SITE.domain}/logo_transparent.png`,
+              "image": `${SITE.domain}/og`,
               "startDate": "2026-07-05T11:00:00+05:30",
               "endDate": "2026-07-05T19:00:00+05:30",
               "location": {

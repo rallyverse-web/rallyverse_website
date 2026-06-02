@@ -4,6 +4,31 @@ import { CONTACT, EMAIL } from '@/lib/config'
 export const metadata: Metadata = {
   title: 'Privacy Policy — RallyVerse',
   description: 'RallyVerse Privacy Policy. Learn how we collect, use, and protect your personal data.',
+  openGraph: {
+    title: 'Privacy Policy — RallyVerse',
+    description: 'RallyVerse Privacy Policy. Learn how we collect, use, and protect your personal data.',
+    url: 'https://rallyverse.social/privacy-policy',
+    siteName: 'RallyVerse',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: '/og',
+        width: 1200,
+        height: 630,
+        alt: 'RallyVerse — Rally Beyond Routine',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy — RallyVerse',
+    description: 'RallyVerse Privacy Policy. Learn how we collect, use, and protect your personal data.',
+    images: ['/og'],
+  },
+  alternates: {
+    canonical: '/privacy-policy',
+  },
 }
 
 const sections = [
