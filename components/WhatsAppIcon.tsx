@@ -1,24 +1,20 @@
-import { type LucideProps } from 'lucide-react'
+import Image from 'next/image'
 
-export default function WhatsAppIcon(props: LucideProps) {
+interface WhatsAppIconProps {
+  size?: number
+  className?: string
+  style?: React.CSSProperties
+}
+
+export default function WhatsAppIcon({ size = 24, className, style }: WhatsAppIconProps) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? 24}
-      height={props.size ?? 24}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="none"
-      aria-hidden={props['aria-hidden'] ?? true}
-      className={props.className}
-      style={props.style}
-    >
-      <path
-        fill="currentColor"
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M12 0C5.373 0 0 5.373 0 12c0 2.12.55 4.108 1.514 5.838L.052 24l6.376-1.658A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm6.18 16.71c-.348.98-1.326 1.746-2.27 1.986-.602.153-1.39.275-4.02-1.002-3.36-1.633-5.526-5.64-5.694-5.9-.172-.26-1.356-1.804-1.356-3.44 0-1.637.86-2.442 1.164-2.774.274-.3.702-.46 1.124-.46.208 0 .396.01.564.018.278.014.417.028.6.468.228.55.78 1.888.85 2.026.07.138.116.298.034.48-.082.182-.136.264-.262.414-.126.15-.232.26-.348.416-.116.156-.232.324-.1.636.132.312.588.97 1.262 1.57.866.772 1.596 1.012 1.822 1.126.226.114.358.094.49-.058.132-.152.566-.66.718-.886.152-.226.304-.188.51-.112.206.076 1.306.644 1.53.762.224.118.374.176.43.274.056.098.056.566-.132 1.112-.188.546-1.098 1.044-1.098 1.044s-.314.19-.144.512c.17.322.882 1.414 1.272 1.886.39.472.78.444 1.05.452.27.008.514-.028.78-.158.266-.13 1.478-.604 1.688-1.186z"
-      />
-    </svg>
+    <Image
+      src="/whatsapp_icon.png"
+      alt="WhatsApp"
+      width={size}
+      height={size}
+      className={className}
+      style={style}
+    />
   )
 }
