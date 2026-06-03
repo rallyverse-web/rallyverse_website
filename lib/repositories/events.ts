@@ -250,6 +250,17 @@ export async function getAllPublishedEventsWithPaymentConfig(): Promise<EventWit
   })
 }
 
+export async function getEventById(id: string): Promise<EventWithFormats | null> {
+  const supabase = await getSupabaseServerClient()
+  const { data, error } = await supabase
+    .from('events')
+    .select('*, formats:event_formats(*)')
+    .eq('id', id)
+    .single()
+  if (error && error.code !== 'PGRST116') throw error
+  return data ? attachFormats(data) : null
+}
+
 // ─── Helpers ──────────────────────────────────────────────────
 
 function attachFormats(row: Record<string, unknown>): EventWithFormats {

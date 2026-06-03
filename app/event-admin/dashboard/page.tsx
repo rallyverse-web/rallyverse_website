@@ -47,6 +47,7 @@ export default function EventAdminDashboard() {
   const [selectedReg, setSelectedReg] = useState<Registration | null>(null)
   const [approvalNotes, setApprovalNotes] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
+  const [sendEmailCheck, setSendEmailCheck] = useState(true)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   const notify = (type: 'success' | 'error', message: string) => {
@@ -94,15 +95,17 @@ export default function EventAdminDashboard() {
     return list
   }, [registrations, search, filterStatus])
 
-  const handleApprove = async (reg: Registration) => {
+  const handleApprove = async (reg: Registration, sendEmail = false) => {
     setActionLoading(true)
     try {
       const res = await fetch('/api/event-admin/approve', {
         method: 'POST',
-        body: JSON.stringify({ registration_id: reg.id, status: 'Approved', notes: approvalNotes }),
+        body: JSON.stringify({ registration_id: reg.id, status: 'Approved', notes: approvalNotes, send_email: sendEmail }),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed'); return }
-      notify('success', 'Registration approved')
+      const data = await res.json()
+      const msg = sendEmail ? (data.email_sent?.success ? 'Registration approved & email sent' : 'Registration approved (email failed)') : 'Registration approved'
+      notify('success', msg)
       setSelectedReg(null)
       setApprovalNotes('')
       fetchData()
@@ -110,15 +113,17 @@ export default function EventAdminDashboard() {
     finally { setActionLoading(false) }
   }
 
-  const handleReject = async (reg: Registration) => {
+  const handleReject = async (reg: Registration, sendEmail = false) => {
     setActionLoading(true)
     try {
       const res = await fetch('/api/event-admin/approve', {
         method: 'POST',
-        body: JSON.stringify({ registration_id: reg.id, status: 'Rejected', notes: approvalNotes }),
+        body: JSON.stringify({ registration_id: reg.id, status: 'Rejected', notes: approvalNotes, send_email: sendEmail }),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed'); return }
-      notify('success', 'Registration rejected')
+      const data = await res.json()
+      const msg = sendEmail ? (data.email_sent?.success ? 'Registration rejected & email sent' : 'Registration rejected (email failed)') : 'Registration rejected'
+      notify('success', msg)
       setSelectedReg(null)
       setApprovalNotes('')
       fetchData()
@@ -247,8 +252,10 @@ export default function EventAdminDashboard() {
                         <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => { setSelectedReg(reg); setApprovalNotes(reg.notes || '') }}>View</button>
                         {reg.status === 'Pending' && (
                           <>
-                            <button style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80' }} onClick={() => handleApprove(reg)}>Approve</button>
-                            <button style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444' }} onClick={() => handleReject(reg)}>Reject</button>
+                            <button style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleApprove(reg, true)} disabled={actionLoading} title="Approve & Send Email">Approve + Send</button>
+                            <button style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleApprove(reg)} disabled={actionLoading}>Approve</button>
+                            <button style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700, ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleReject(reg, true)} disabled={actionLoading} title="Reject & Send Email">Reject + Send</button>
+                            <button style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444', ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleReject(reg)} disabled={actionLoading}>Reject</button>
                           </>
                         )}
                         <button style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }} onClick={() => setConfirmDeleteId(reg.id)} title="Delete">
@@ -309,13 +316,18 @@ export default function EventAdminDashboard() {
                 />
               </div>
 
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+                <input type="checkbox" id="sendEmailChk" checked={sendEmailCheck} onChange={(e) => setSendEmailCheck(e.target.checked)} />
+                <label htmlFor="sendEmailChk" style={{ color: '#888', fontSize: 12, cursor: 'pointer' }}>Send email notification</label>
+              </div>
+
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 12 }}>
                 {selectedReg.status === 'Pending' && (
                   <>
-                    <button onClick={() => { handleReject(selectedReg); setApprovalNotes(approvalNotes) }} disabled={actionLoading} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700, ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                    <button onClick={() => { handleReject(selectedReg, sendEmailCheck); setApprovalNotes(approvalNotes) }} disabled={actionLoading} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700, ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
                       {actionLoading ? <Loader2 size={12} className="animate-spin" /> : 'Reject'}
                     </button>
-                    <button onClick={() => { handleApprove(selectedReg); setApprovalNotes(approvalNotes) }} disabled={actionLoading} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                    <button onClick={() => { handleApprove(selectedReg, sendEmailCheck); setApprovalNotes(approvalNotes) }} disabled={actionLoading} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
                       {actionLoading ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
                     </button>
                   </>

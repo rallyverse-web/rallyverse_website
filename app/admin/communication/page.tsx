@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Mail, Plus, Edit, Trash2, Copy, Eye, Send, Loader2, RefreshCw, FileText, MessageSquare, History, CheckCircle, XCircle, ShieldAlert } from 'lucide-react'
+import { Mail, Plus, Edit, Trash2, Copy, Eye, Send, Loader2, RefreshCw, FileText, History, CheckCircle, XCircle, ShieldAlert, Users } from 'lucide-react'
 import type { EmailTemplate, EmailTemplateType, EventEmailSettings, EmailLog } from '@/lib/types/supabase'
 import { getTemplateVariableDefinitions } from '@/lib/template-renderer'
 
@@ -28,7 +28,7 @@ const s = {
   modal: { background: '#1a1a1a', borderRadius: 8, border: '1px solid #333', maxWidth: 700, width: '100%', maxHeight: '90vh', overflowY: 'auto' as const, padding: 24 },
 }
 
-type Tab = 'templates' | 'test-email' | 'logs'
+type Tab = 'templates' | 'test-email' | 'send-email' | 'logs'
 
 export default function AdminCommunicationPage() {
   const router = useRouter()
@@ -199,20 +199,74 @@ export default function AdminCommunicationPage() {
     finally { setSendingTest(false) }
   }
 
+  // ─── Send Email ───
+  const [sendEmailEventId, setSendEmailEventId] = useState('')
+  const [sendTemplateType, setSendTemplateType] = useState<EmailTemplateType>('broadcast')
+  const [sendAudience, setSendAudience] = useState('all')
+  const [sendFormat, setSendFormat] = useState('')
+  const [sendIncludeWhatsapp, setSendIncludeWhatsapp] = useState(true)
+  const [sendCount, setSendCount] = useState(0)
+  const [loadingCount, setLoadingCount] = useState(false)
+  const [showSendConfirm, setShowSendConfirm] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [sendResult, setSendResult] = useState<{ total: number; sent: number; failed: number } | null>(null)
+
+  const handleEstimateCount = async () => {
+    setLoadingCount(true)
+    try {
+      const params = new URLSearchParams({ eventId: sendEmailEventId, audience: sendAudience })
+      if (sendFormat) params.set('format', sendFormat)
+      const res = await fetch(`/api/admin/send-email?${params}`, { headers: authHeaders() })
+      if (res.ok) { const d = await res.json(); setSendCount(d.count) }
+    } catch {}
+    finally { setLoadingCount(false) }
+  }
+
+  const handleSendEmails = async () => {
+    if (sendResult) { setShowSendConfirm(false); setSendResult(null); setSendCount(0); return }
+    setSending(true)
+    try {
+      const res = await fetch('/api/admin/send-email', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          event_id: sendEmailEventId,
+          template_type: sendTemplateType,
+          audience: sendAudience,
+          format: sendFormat || undefined,
+          include_whatsapp: sendIncludeWhatsapp,
+        }),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed'); setSending(false); return }
+      const d = await res.json()
+      setSendResult({ total: d.total, sent: d.sent, failed: d.failed })
+      notify('success', `Sent ${d.sent} of ${d.total} emails`)
+    } catch { notify('error', 'Failed to send emails') }
+    finally { setSending(false) }
+  }
+
   // ─── Logs ───
   const [logs, setLogs] = useState<EmailLog[]>([])
   const [logsEventId, setLogsEventId] = useState('')
   const [loadingLogs, setLoadingLogs] = useState(false)
+  const [logFilterTemplateType, setLogFilterTemplateType] = useState('')
+  const [logFilterStatus, setLogFilterStatus] = useState('')
+  const [logFilterDateFrom, setLogFilterDateFrom] = useState('')
+  const [logFilterDateTo, setLogFilterDateTo] = useState('')
 
   const fetchLogs = useCallback(async () => {
     setLoadingLogs(true)
     try {
-      const url = logsEventId ? `/api/admin/email-logs?eventId=${logsEventId}` : '/api/admin/email-logs'
-      const res = await fetch(url, { headers: authHeaders() })
+      const params = new URLSearchParams()
+      if (logsEventId) params.set('eventId', logsEventId)
+      if (logFilterTemplateType) params.set('templateType', logFilterTemplateType)
+      if (logFilterStatus) params.set('status', logFilterStatus)
+      if (logFilterDateFrom) params.set('dateFrom', logFilterDateFrom)
+      if (logFilterDateTo) params.set('dateTo', logFilterDateTo)
+      const res = await fetch(`/api/admin/email-logs?${params}`, { headers: authHeaders() })
       if (res.ok) { const d = await res.json(); setLogs(d.logs || []) }
     } catch {}
     finally { setLoadingLogs(false) }
-  }, [logsEventId, authHeaders])
+  }, [logsEventId, logFilterTemplateType, logFilterStatus, logFilterDateFrom, logFilterDateTo, authHeaders])
 
   useEffect(() => { if (token) fetchLogs() }, [fetchLogs, token])
 
@@ -246,6 +300,7 @@ export default function AdminCommunicationPage() {
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: 'templates', label: 'Templates', icon: <FileText size={14} /> },
     { key: 'test-email', label: 'Test Emails', icon: <Send size={14} /> },
+    { key: 'send-email', label: 'Send Email', icon: <Users size={14} /> },
     { key: 'logs', label: 'Logs', icon: <History size={14} /> },
   ]
 
@@ -442,16 +497,140 @@ export default function AdminCommunicationPage() {
           </div>
         )}
 
+        {/* ─── SEND EMAIL TAB ─── */}
+        {activeTab === 'send-email' && (
+          <div>
+            <div style={{ maxWidth: 600, ...s.card }}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Send size={16} color="#888" /> Send Email to Participants
+              </h3>
+              <div style={{ display: 'grid', gap: 14 }}>
+                <div>
+                  <label style={s.label}>Event</label>
+                  <select value={sendEmailEventId} onChange={(e) => { setSendEmailEventId(e.target.value); setSendCount(0) }} style={s.select}>
+                    <option value="">Select an event</option>
+                    {events.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={s.label}>Template Type</label>
+                  <select value={sendTemplateType} onChange={(e) => setSendTemplateType(e.target.value as EmailTemplateType)} style={s.select}>
+                    {TEMPLATE_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={s.label}>Audience</label>
+                  <select value={sendAudience} onChange={(e) => { setSendAudience(e.target.value); setSendCount(0); setSendFormat('') }} style={s.select}>
+                    <option value="all">All Registrations</option>
+                    <option value="approved">Approved Participants</option>
+                    <option value="pending">Pending Participants</option>
+                    <option value="rejected">Rejected Participants</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={s.label}>Format (optional)</label>
+                  <select value={sendFormat} onChange={(e) => { setSendFormat(e.target.value); setSendCount(0) }} style={s.select}>
+                    <option value="">All Formats</option>
+                    <option value="Men's Singles">Men's Singles</option>
+                    <option value="Women's Singles">Women's Singles</option>
+                    <option value="Men's Doubles">Men's Doubles</option>
+                    <option value="Women's Doubles">Women's Doubles</option>
+                    <option value="Mixed Doubles">Mixed Doubles</option>
+                  </select>
+                </div>
+                {sendTemplateType === 'reminder' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input type="checkbox" id="adminIncludeWhatsapp" checked={sendIncludeWhatsapp} onChange={(e) => setSendIncludeWhatsapp(e.target.checked)} />
+                    <label htmlFor="adminIncludeWhatsapp" style={{ color: '#ccc', fontSize: 13, cursor: 'pointer' }}>Include WhatsApp Group Link</label>
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button onClick={handleEstimateCount} disabled={loadingCount || !sendEmailEventId} style={{ ...s.btnSm, background: '#88888820', color: '#ccc', ...((loadingCount || !sendEmailEventId) ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                    {loadingCount ? <Loader2 size={12} className="animate-spin" /> : 'Estimate Recipients'}
+                  </button>
+                  {sendCount > 0 && (
+                    <span style={{ color: '#facc15', fontSize: 13, fontWeight: 600 }}>
+                      Estimated: {sendCount} recipient{sendCount !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </div>
+                <button onClick={() => setShowSendConfirm(true)} disabled={sendCount === 0 || sending || !sendEmailEventId} style={{ ...s.btn, ...((sendCount === 0 || sending || !sendEmailEventId) ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                  {sending ? <><Loader2 size={14} className="animate-spin" style={{ marginRight: 6 }} />Sending...</> : 'Send Email'}
+                </button>
+              </div>
+            </div>
+
+            {/* Send Confirmation Modal */}
+            {showSendConfirm && (
+              <div style={s.overlay} onClick={() => !sending && setShowSendConfirm(false)}>
+                <div style={{ ...s.modal, maxWidth: 450 }} onClick={(e) => e.stopPropagation()}>
+                  <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Confirm Send</h3>
+                  <div style={{ padding: 16, borderRadius: 6, background: '#222', marginBottom: 16 }}>
+                    <p style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>You are about to send:</p>
+                    <p style={{ color: '#facc15', fontSize: 15, fontWeight: 600, marginBottom: 4 }}>
+                      {TEMPLATE_TYPES.find(t => t.value === sendTemplateType)?.label} Email
+                    </p>
+                    <p style={{ color: '#ccc', fontSize: 13 }}>
+                      Recipients: <strong style={{ color: '#fff' }}>{sendCount}</strong>
+                    </p>
+                    <p style={{ color: '#ccc', fontSize: 13 }}>
+                      Event: <strong style={{ color: '#fff' }}>{events.find(e => e.id === sendEmailEventId)?.name}</strong>
+                    </p>
+                    {sendFormat && <p style={{ color: '#ccc', fontSize: 13 }}>Format: <strong style={{ color: '#fff' }}>{sendFormat}</strong></p>}
+                  </div>
+                  {sendResult && (
+                    <div style={{ padding: 12, borderRadius: 6, marginBottom: 16, background: sendResult.failed > 0 ? 'rgba(255,68,68,0.1)' : 'rgba(74,222,128,0.1)', border: `1px solid ${sendResult.failed > 0 ? 'rgba(255,68,68,0.3)' : 'rgba(74,222,128,0.3)'}` }}>
+                      <p style={{ color: sendResult.failed > 0 ? '#ff4444' : '#4ade80', fontSize: 13, fontWeight: 600, margin: 0 }}>
+                        Sent: {sendResult.sent} / {sendResult.total} &middot; Failed: {sendResult.failed}
+                      </p>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                    <button onClick={() => { setShowSendConfirm(false); setSendResult(null) }} disabled={sending} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+                    <button onClick={handleSendEmails} disabled={sending} style={{ ...s.btnSm, background: sendResult ? '#4ade80' : 'var(--rallyverse-gradient)', color: sendResult ? '#000' : '#fff', fontWeight: 700, ...(sending ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                      {sending ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Sending...</> : (sendResult ? 'Close' : 'Continue')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ─── LOGS TAB ─── */}
         {activeTab === 'logs' && (
           <div>
-            <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-              <select value={logsEventId} onChange={(e) => setLogsEventId(e.target.value)} style={{ ...s.select, width: 300 }}>
+            {/* Filters */}
+            <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+              <select value={logsEventId} onChange={(e) => setLogsEventId(e.target.value)} style={{ ...s.select, width: 200 }}>
                 <option value="">All Events</option>
                 {events.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
               </select>
-              <button onClick={fetchLogs} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }}>
-                <RefreshCw size={16} className={loadingLogs ? 'animate-spin' : ''} />
+              <div>
+                <label style={{ ...s.label, marginBottom: 2 }}>Template Type</label>
+                <select value={logFilterTemplateType} onChange={(e) => setLogFilterTemplateType(e.target.value)} style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', cursor: 'pointer' }}>
+                  <option value="">All Types</option>
+                  {TEMPLATE_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ ...s.label, marginBottom: 2 }}>Status</label>
+                <select value={logFilterStatus} onChange={(e) => setLogFilterStatus(e.target.value)} style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', cursor: 'pointer' }}>
+                  <option value="">All Status</option>
+                  <option value="sent">Sent</option>
+                  <option value="failed">Failed</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ ...s.label, marginBottom: 2 }}>From</label>
+                <input type="date" value={logFilterDateFrom} onChange={(e) => setLogFilterDateFrom(e.target.value)} style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none' }} />
+              </div>
+              <div>
+                <label style={{ ...s.label, marginBottom: 2 }}>To</label>
+                <input type="date" value={logFilterDateTo} onChange={(e) => setLogFilterDateTo(e.target.value)} style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none' }} />
+              </div>
+              <button onClick={fetchLogs} style={{ ...s.btnSm, background: '#88888820', color: '#ccc', display: 'flex', alignItems: 'center', gap: 4 }}>
+                <RefreshCw size={12} className={loadingLogs ? 'animate-spin' : ''} /> Apply
               </button>
               <button onClick={downloadLogsCSV} disabled={logs.length === 0} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#ccc', ...(logs.length === 0 ? { opacity: 0.4, cursor: 'not-allowed' } : {}) }}>
                 CSV
@@ -466,11 +645,13 @@ export default function AdminCommunicationPage() {
               <div style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No email logs found</div>
             ) : (
               <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid #222', background: '#111' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
                   <thead>
                     <tr>
                       <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#888', borderBottom: '1px solid #222' }}>Recipient</th>
                       <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#888', borderBottom: '1px solid #222' }}>Subject</th>
+                      <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#888', borderBottom: '1px solid #222' }}>Template</th>
+                      <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#888', borderBottom: '1px solid #222' }}>Event</th>
                       <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#888', borderBottom: '1px solid #222' }}>Status</th>
                       <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#888', borderBottom: '1px solid #222' }}>Sent At</th>
                     </tr>
@@ -479,7 +660,9 @@ export default function AdminCommunicationPage() {
                     {logs.map(log => (
                       <tr key={log.id} style={{ transition: 'background 0.15s' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#1a1a1a')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
                         <td style={{ padding: '8px 10px', fontSize: 13, color: '#ccc', borderBottom: '1px solid #1a1a1a' }}>{log.recipient_email}</td>
-                        <td style={{ padding: '8px 10px', fontSize: 13, color: '#ccc', borderBottom: '1px solid #1a1a1a' }}>{log.subject}</td>
+                        <td style={{ padding: '8px 10px', fontSize: 13, color: '#ccc', borderBottom: '1px solid #1a1a1a', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{log.subject}</td>
+                        <td style={{ padding: '8px 10px', fontSize: 12, color: '#888', borderBottom: '1px solid #1a1a1a' }}>{(log as { template_type?: string }).template_type || '—'}</td>
+                        <td style={{ padding: '8px 10px', fontSize: 12, color: '#888', borderBottom: '1px solid #1a1a1a' }}>{(log as { event_name?: string }).event_name || '—'}</td>
                         <td style={{ padding: '8px 10px', fontSize: 13, color: '#ccc', borderBottom: '1px solid #1a1a1a' }}>
                           {log.status === 'sent' ? <CheckCircle size={14} color="#4ade80" /> : <XCircle size={14} color="#ff4444" />}
                           <span style={{ marginLeft: 6, color: log.status === 'sent' ? '#4ade80' : '#ff4444' }}>{log.status}</span>
