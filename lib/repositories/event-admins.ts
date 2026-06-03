@@ -30,6 +30,28 @@ export async function createEventAdmin(eventId: string, formData: EventAdminForm
   return { admin: data as EventAdmin, access_token: token }
 }
 
+export async function getEventAdminById(adminId: string): Promise<(EventAdmin & { access_token: string; event_id: string }) | null> {
+  const supabase = await getSupabaseServerClient()
+  const { data, error } = await supabase
+    .from('event_admins')
+    .select('*')
+    .eq('id', adminId)
+    .maybeSingle()
+  if (error) throw error
+  return data as (EventAdmin & { access_token: string; event_id: string }) | null
+}
+
+export async function regenerateEventAdminToken(adminId: string): Promise<string> {
+  const supabase = await getSupabaseServerClient()
+  const token = uuidv4()
+  const { error } = await supabase
+    .from('event_admins')
+    .update({ access_token: token })
+    .eq('id', adminId)
+  if (error) throw error
+  return token
+}
+
 export async function removeEventAdmin(adminId: string): Promise<void> {
   const supabase = await getSupabaseServerClient()
   const { error } = await supabase

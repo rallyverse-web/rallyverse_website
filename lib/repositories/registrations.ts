@@ -107,6 +107,15 @@ export async function updateRegistrationStatus(
   return data
 }
 
+export async function deleteRegistration(id: string): Promise<void> {
+  const supabase = await getSupabaseServerClient()
+  const { error } = await supabase
+    .from('registrations')
+    .delete()
+    .eq('id', id)
+  if (error) throw error
+}
+
 export async function getRegistrationsMetrics(eventId: string): Promise<{
   total: number
   pending: number

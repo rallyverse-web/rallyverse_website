@@ -86,6 +86,9 @@ export default function AdminEventsPage() {
   const [newAdminEmail, setNewAdminEmail] = useState('')
   const [savingAdmin, setSavingAdmin] = useState(false)
   const [copiedToken, setCopiedToken] = useState<string | null>(null)
+  const [visibleToken, setVisibleToken] = useState<Record<string, string | null>>({})
+  const [tokenLoading, setTokenLoading] = useState<Record<string, boolean>>({})
+  const [confirmRegen, setConfirmRegen] = useState<string | null>(null)
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
@@ -214,8 +217,30 @@ export default function AdminEventsPage() {
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to remove'); return }
       setEventAdmins(prev => prev.filter(a => a.id !== adminId))
+      setVisibleToken(prev => { const n = { ...prev }; delete n[adminId]; return n })
       notify('success', 'Admin removed')
     } catch { notify('error', 'Failed to remove admin') }
+  }
+
+  const handleShowToken = async (adminId: string) => {
+    if (visibleToken[adminId]) { setVisibleToken(prev => ({ ...prev, [adminId]: null })); return }
+    setTokenLoading(prev => ({ ...prev, [adminId]: true }))
+    try {
+      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}`, { headers: authHeaders() })
+      if (res.ok) { const data = await res.json(); setVisibleToken(prev => ({ ...prev, [adminId]: data.admin.access_token })) }
+      else { notify('error', 'Failed to fetch token') }
+    } catch { notify('error', 'Failed to fetch token') }
+    finally { setTokenLoading(prev => ({ ...prev, [adminId]: false })) }
+  }
+
+  const handleRegenToken = async (adminId: string) => {
+    try {
+      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}/regenerate`, {
+        method: 'POST', headers: authHeaders(),
+      })
+      if (res.ok) { const data = await res.json(); setVisibleToken(prev => ({ ...prev, [adminId]: data.access_token })); setConfirmRegen(null); notify('success', 'Token regenerated') }
+      else { const d = await res.json(); notify('error', d.error || 'Failed to regenerate') }
+    } catch { notify('error', 'Failed to regenerate') }
   }
 
   const copyToClipboard = async (text: string) => {
@@ -640,21 +665,49 @@ export default function AdminEventsPage() {
                 <div style={{ color: '#666', fontSize: 13, padding: 20, textAlign: 'center' }}>No admins assigned yet</div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {eventAdmins.map((admin) => (
+                    {eventAdmins.map((admin) => (
                     <div key={admin.id} style={{ padding: 12, borderRadius: 6, border: '1px solid #333', background: '#111' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div>
                           <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, margin: 0 }}>{admin.name}</p>
                           <p style={{ color: '#888', fontSize: 12, margin: '2px 0 0 0' }}>{admin.email}</p>
                         </div>
-                        <button onClick={() => handleRemoveAdmin(admin.id)} style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }}>
-                          <Trash2 size={12} />
-                        </button>
+                        <div style={{ display: 'flex', gap: 4 }}>
+                          <button onClick={() => handleShowToken(admin.id)} style={{ ...s.btnSm, background: '#88888820', color: '#ccc', fontSize: 11 }}>
+                            {tokenLoading[admin.id] ? <Loader2 size={11} className="animate-spin" /> : (visibleToken[admin.id] ? 'Hide' : 'Token')}
+                          </button>
+                          <button onClick={() => setConfirmRegen(admin.id)} style={{ ...s.btnSm, background: '#facc1520', color: '#facc15', fontSize: 11 }}>Regen</button>
+                          <button onClick={() => handleRemoveAdmin(admin.id)} style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }}>
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
                       </div>
+                      {visibleToken[admin.id] && (
+                        <div style={{ marginTop: 8, padding: '8px 10px', borderRadius: 4, background: '#222', display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <code style={{ flex: 1, fontSize: 11, color: '#4ade80', overflow: 'hidden', textOverflow: 'ellipsis' }}>{visibleToken[admin.id]}</code>
+                          <button onClick={() => copyToClipboard(visibleToken[admin.id]!)} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontSize: 11, fontWeight: 700 }}>
+                            {copiedToken === visibleToken[admin.id] ? <CheckCircle size={11} /> : <Copy size={11} />}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Regenerate Token Confirmation */}
+        {confirmRegen && (
+          <div style={s.overlay} onClick={() => setConfirmRegen(null)}>
+            <div style={{ ...s.modal, maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Regenerate Token</h3>
+              <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>This will invalidate the current token. The admin will need to log in again with the new token. Continue?</p>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                <button onClick={() => setConfirmRegen(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+                <button onClick={() => handleRegenToken(confirmRegen)} style={{ ...s.btnSm, background: '#facc15', color: '#000', fontWeight: 700 }}>Regenerate</button>
+              </div>
             </div>
           </div>
         )}
@@ -664,7 +717,7 @@ export default function AdminEventsPage() {
           <div style={s.overlay} onClick={() => setConfirmDelete(null)}>
             <div style={{ ...s.modal, maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
               <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Delete Event</h3>
-              <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>Are you sure? This will permanently delete this event and its formats. This action cannot be undone.</p>
+              <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>Are you sure? This will permanently delete this event, all registrations, payment config, admins, and formats. This action cannot be undone.</p>
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                 <button onClick={() => setConfirmDelete(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
                 <button onClick={() => handleDelete(confirmDelete)} style={s.btnDanger}>Delete</button>

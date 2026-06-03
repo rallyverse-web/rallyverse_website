@@ -152,7 +152,24 @@ export async function updateEvent(id: string, formData: Partial<EventFormData>):
 export async function deleteEvent(id: string): Promise<void> {
   const supabase = await getSupabaseServerClient()
 
-  // Delete formats first (FK constraint)
+  const { error: regError } = await supabase
+    .from('registrations')
+    .delete()
+    .eq('event_id', id)
+  if (regError) throw regError
+
+  const { error: pcError } = await supabase
+    .from('event_payment_config')
+    .delete()
+    .eq('event_id', id)
+  if (pcError) throw pcError
+
+  const { error: admError } = await supabase
+    .from('event_admins')
+    .delete()
+    .eq('event_id', id)
+  if (admError) throw admError
+
   const { error: fmtError } = await supabase
     .from('event_formats')
     .delete()

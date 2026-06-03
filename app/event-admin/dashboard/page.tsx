@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Users, CheckCircle, XCircle, Clock, Search, Download, RefreshCw, ArrowLeft, ExternalLink } from 'lucide-react'
+import { Loader2, Users, CheckCircle, XCircle, Clock, Search, Download, RefreshCw, ArrowLeft, ExternalLink, Trash2 } from 'lucide-react'
 import type { Registration } from '@/lib/types/supabase'
 
 const s = {
@@ -47,6 +47,7 @@ export default function EventAdminDashboard() {
   const [selectedReg, setSelectedReg] = useState<Registration | null>(null)
   const [approvalNotes, setApprovalNotes] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
@@ -123,6 +124,16 @@ export default function EventAdminDashboard() {
       fetchData()
     } catch { notify('error', 'Rejection failed') }
     finally { setActionLoading(false) }
+  }
+
+  const handleDeleteRegistration = async (regId: string) => {
+    try {
+      const res = await fetch(`/api/event-admin/registrations/${eventId}?registrationId=${regId}`, { method: 'DELETE' })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to delete'); return }
+      notify('success', 'Registration deleted')
+      setConfirmDeleteId(null)
+      fetchData()
+    } catch { notify('error', 'Failed to delete registration') }
   }
 
   const handleSignOut = async () => {
@@ -228,17 +239,20 @@ export default function EventAdminDashboard() {
                   <td style={s.td}>{reg.format}</td>
                   <td style={s.td}>{statusBadge(reg.status)}</td>
                   <td style={{ ...s.td, fontSize: 12 }}>{new Date(reg.created_at).toLocaleDateString('en-IN')}</td>
-                  <td style={{ ...s.td, textAlign: 'center' }}>
-                    <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
-                      <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => { setSelectedReg(reg); setApprovalNotes(reg.notes || '') }}>View</button>
-                      {reg.status === 'Pending' && (
-                        <>
-                          <button style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80' }} onClick={() => handleApprove(reg)}>Approve</button>
-                          <button style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444' }} onClick={() => handleReject(reg)}>Reject</button>
-                        </>
-                      )}
-                    </div>
-                  </td>
+                    <td style={{ ...s.td, textAlign: 'center' }}>
+                      <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
+                        <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => { setSelectedReg(reg); setApprovalNotes(reg.notes || '') }}>View</button>
+                        {reg.status === 'Pending' && (
+                          <>
+                            <button style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80' }} onClick={() => handleApprove(reg)}>Approve</button>
+                            <button style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444' }} onClick={() => handleReject(reg)}>Reject</button>
+                          </>
+                        )}
+                        <button style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }} onClick={() => setConfirmDeleteId(reg.id)} title="Delete">
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </td>
                 </tr>
               ))}
             </tbody>
@@ -304,6 +318,20 @@ export default function EventAdminDashboard() {
                   </>
                 )}
                 <button onClick={() => setSelectedReg(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Close</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation */}
+        {confirmDeleteId && (
+          <div style={s.overlay} onClick={() => setConfirmDeleteId(null)}>
+            <div style={{ ...s.modal, maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Delete Registration</h3>
+              <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>Are you sure? This will permanently delete this registration. This action cannot be undone.</p>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                <button onClick={() => setConfirmDeleteId(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+                <button onClick={() => handleDeleteRegistration(confirmDeleteId)} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700 }}>Delete</button>
               </div>
             </div>
           </div>
