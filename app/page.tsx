@@ -10,8 +10,11 @@ import BelieversSection from '@/components/BelieversSection'
 import ManifestoStrip from '@/components/ManifestoStrip'
 import { faqs } from '@/lib/faqs'
 import { SITE } from '@/lib/config'
+import { getFirstPublishedEvent } from '@/lib/repositories/events'
 
-export default function Page() {
+export default async function Page() {
+  const firstEvent = await getFirstPublishedEvent()
+
   return (
     <>
       <script
@@ -38,7 +41,7 @@ export default function Page() {
       <EventCategories />
       <WhoThisIsFor />
       <CommunityProof />
-      <FirstEvent />
+      <FirstEvent event={firstEvent} />
       <BelieversSection />
       <FAQ />
       <ManifestoStrip />

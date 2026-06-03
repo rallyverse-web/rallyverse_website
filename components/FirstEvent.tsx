@@ -5,17 +5,19 @@ import { MapPin, Calendar, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import ShinyText from '@/components/ShinyText'
 import EventPoster from '@/components/EventPoster'
-import { CURRENT_EVENT } from '@/lib/config'
+import type { EventWithFormats } from '@/lib/types/supabase'
 
-export default function FirstEvent() {
+export default function FirstEvent({ event }: { event: EventWithFormats | null }) {
   const router = useRouter()
+
+  if (!event) return null
 
   return (
     <section id="events" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-10 px-6 md:grid-cols-2 md:gap-16 md:items-start">
         <AnimatedSection>
           <p className="mb-5 font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-            UPCOMING EVENTS · BENGALURU
+            UPCOMING EVENTS · {event.venue?.split(',').pop()?.trim() || 'BENGALURU'}
           </p>
 
           <div className="font-display text-[36px] leading-none uppercase sm:text-[48px] md:text-[88px]" style={{ color: 'var(--text-primary)' }}>
@@ -32,10 +34,14 @@ export default function FirstEvent() {
               RallyVerse is a universe of experiences — from competitive badminton tournaments to community treks, marathons, and cycling events. The first chapter begins now.
             </p>
             <p>
-              {CURRENT_EVENT.name} is currently open for registration featuring {CURRENT_EVENT.categories.join(' and ')} categories. Whether you are a seasoned competitor or a first-time player, there is a place for you on the court.
+              {event.name} is currently open for registration
+              {event.formats && event.formats.length > 0
+                ? ` featuring ${event.formats.map(f => f.format_name).join(' and ')} categories.`
+                : '.'}
+              {' '}Whether you are a seasoned competitor or a first-time participant, there is a place for you.
             </p>
             <p>
-              Spots are deliberately limited because every player deserves a well-run experience.
+              Spots are deliberately limited because every participant deserves a well-run experience.
             </p>
           </div>
 
@@ -77,16 +83,16 @@ export default function FirstEvent() {
 
         <AnimatedSection delay={0.15}>
           <div className="group">
-            <EventPoster variant="card" />
+            <EventPoster event={event} variant="card" />
 
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <MapPin size={14} style={{ color: 'var(--icon-color)' }} />
-                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{CURRENT_EVENT.venue}</span>
+                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{event.venue}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar size={14} style={{ color: 'var(--icon-color)' }} />
-                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{CURRENT_EVENT.date}</span>
+                <span className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{event.date_label || (event.event_date ? new Date(event.event_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '')}</span>
               </div>
             </div>
           </div>

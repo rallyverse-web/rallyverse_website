@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useTheme } from '@/lib/theme'
-import { CURRENT_EVENT_POSTERS } from '@/lib/config'
+import type { EventWithFormats } from '@/lib/types/supabase'
 
 type PosterVariant = 'card' | 'full' | 'sidebar'
 
@@ -12,15 +12,21 @@ const variantStyles: Record<PosterVariant, string> = {
   sidebar: 'aspect-[3/4] w-full max-w-[320px] rounded-xl overflow-hidden',
 }
 
-export default function EventPoster({ variant = 'card', priority = false }: { variant?: PosterVariant; priority?: boolean }) {
+export default function EventPoster({ event, variant = 'card', priority = false }: { event?: EventWithFormats; variant?: PosterVariant; priority?: boolean }) {
   const { isColorTheme } = useTheme()
-  const src = isColorTheme ? CURRENT_EVENT_POSTERS.color : CURRENT_EVENT_POSTERS.bw
+  const src = event?.poster_url
+    ? isColorTheme
+      ? event.poster_url
+      : event.poster_url.replace('color_poster', 'bw_poster')
+    : isColorTheme
+      ? '/posters/color_poster.png'
+      : '/posters/bw_poster.png'
 
   return (
     <div className={`relative ${variantStyles[variant]} bg-[var(--bg-surface)]`} style={{ border: '1px solid var(--border-subtle)' }}>
       <Image
         src={src}
-        alt="Rally Series 01 — Bengaluru Badminton Tournament"
+        alt={event?.name || 'RallyVerse Event'}
         fill
         className="object-contain"
         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -65,10 +65,11 @@ export const ADDRESS = {
 
 export const ADDRESS_FULL = `${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state} ${ADDRESS.postalCode}, ${ADDRESS.country}`
 
-// ─── Current Event (single source of truth for Rally Series 01) ──
-// When adding future events: copy this block, update all fields, and
-// change the export name. The slug must match the URL fragment used in
-// event detail pages. Set isDateConfirmed to false for TBA events.
+// ─── Current Event (legacy fallback — Supabase-backed in Phase 1+) ──
+// Kept for backward compatibility with registration form, email, and
+// FAQ code until Phase 2 migration is complete. New events should be
+// created through the admin dashboard (/admin/events) which writes to
+// the Supabase `events` table directly.
 export const CURRENT_EVENT = {
   name: 'Rally Series 01 — Bengaluru Badminton',
   slug: 'rally-series-01',
