@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CheckCircle, ArrowRight, Loader2, ExternalLink, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
+import { trackPageView, trackEvent, trackWhatsappClick } from '@/lib/analytics'
 import type { EventWithPaymentConfig, EventPaymentConfig } from '@/lib/types/supabase'
 
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
@@ -27,6 +28,8 @@ export default function EventRegistrationClient({
   event: EventWithPaymentConfig
   paymentConfig: EventPaymentConfig | null
 }) {
+  useEffect(() => { trackPageView('registration', event.id, event.slug) }, [event.id, event.slug])
+
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     full_name: '', phone_number: '', email: '', city: '', gender: '', format: '',
@@ -83,6 +86,8 @@ export default function EventRegistrationClient({
       if (!res.ok) throw new Error(data.error || 'Registration failed')
       setRegistrationId(data.registration_id)
       setRegId(data.id)
+      trackEvent('registration_submitted', { event_id: event.id, event_slug: event.slug, registration_id: data.registration_id })
+      trackPageView('registration_success', event.id, event.slug)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
@@ -120,6 +125,7 @@ export default function EventRegistrationClient({
                   href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackWhatsappClick(event.id, 'contact')}
                   style={{ ...s.btn, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 12, textDecoration: 'none' }}
                 >
                   <ExternalLink size={16} /> Open WhatsApp

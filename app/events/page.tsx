@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { MapPin, Calendar, Clock, Swords, Mountain, Timer, Bike, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import EventPoster from '@/components/EventPoster'
+import TrackPageView from '@/components/TrackPageView'
 import { SITE, ADDRESS } from '@/lib/config'
 import { getAllPublishedEvents } from '@/lib/repositories/events'
 import type { EventWithFormats } from '@/lib/types/supabase'
@@ -94,6 +95,7 @@ export default async function EventsPage() {
 
   return (
     <div className="min-h-screen pt-28 pb-20" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <TrackPageView pageType="event_listing" />
       <div className="mx-auto max-w-[1100px] px-6">
 
         {/* ── Header ───────────────────────────────────────── */}

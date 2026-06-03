@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { MapPin, Calendar, Clock, ArrowRight, Users, Trophy, IndianRupee, BadgeCheck, MessageCircle, ExternalLink } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import EventPoster from '@/components/EventPoster'
+import TrackPageView from '@/components/TrackPageView'
+import { WhatsAppContactLink, WhatsAppGroupLink } from '@/components/WhatsAppLink'
 import { SITE, ADDRESS } from '@/lib/config'
 import { getEventBySlug } from '@/lib/repositories/events'
 import { getEventPosterPath, PLACEHOLDER_POSTER } from '@/lib/assets'
@@ -62,6 +64,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
 
   return (
     <>
+      <TrackPageView pageType="event_detail" eventId={event.id} slug={event.slug} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -296,15 +299,9 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
                       <div>
                         <p className="font-body text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Event WhatsApp</p>
                         <p className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{event.whatsapp_number}</p>
-                        <a
-                          href={`https://wa.me/${event.whatsapp_number.replace(/[^0-9]/g, '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 mt-2 font-body text-sm font-semibold transition-colors duration-200"
-                          style={{ color: 'var(--accent-primary)' }}
-                        >
+                        <WhatsAppContactLink eventId={event.id} href={`https://wa.me/${event.whatsapp_number.replace(/[^0-9]/g, '')}`}>
                           <ExternalLink size={14} /> Chat on WhatsApp
-                        </a>
+                        </WhatsAppContactLink>
                       </div>
                     </div>
 
@@ -314,15 +311,9 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
                         <div>
                           <p className="font-body text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>WhatsApp Group</p>
                           <p className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>Join the event group for live updates and coordination.</p>
-                          <a
-                            href={event.whatsapp_group_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 mt-2 font-body text-sm font-semibold transition-colors duration-200"
-                            style={{ color: 'var(--accent-primary)' }}
-                          >
+                          <WhatsAppGroupLink eventId={event.id} href={event.whatsapp_group_link}>
                             <ExternalLink size={14} /> Join Group
-                          </a>
+                          </WhatsAppGroupLink>
                         </div>
                       </div>
                     )}

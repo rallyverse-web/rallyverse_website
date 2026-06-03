@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  BarChart3,
   CheckCircle,
   Clock,
   Download,
@@ -343,6 +344,9 @@ export default function AdminPage() {
             <a href="/admin/registrations" style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>Phase 2 Registrations</a>
             <a href="/admin/communication" style={{ ...s.btnSm, background: '#88888820', color: '#4ade80', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
               <Mail size={12} /> Communication
+            </a>
+            <a href="/admin/analytics" style={{ ...s.btnSm, background: '#88888820', color: '#facc15', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <BarChart3 size={12} /> Analytics
             </a>
             <button onClick={fetchData} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh">
               <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />

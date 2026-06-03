@@ -8,6 +8,7 @@ import FirstEvent from '@/components/FirstEvent'
 import FAQ from '@/components/FAQ'
 import BelieversSection from '@/components/BelieversSection'
 import ManifestoStrip from '@/components/ManifestoStrip'
+import TrackPageView from '@/components/TrackPageView'
 import { faqs } from '@/lib/faqs'
 import { SITE } from '@/lib/config'
 import { getFirstPublishedEvent } from '@/lib/repositories/events'
@@ -35,6 +36,7 @@ export default async function Page() {
           }),
         }}
       />
+      <TrackPageView pageType="homepage" />
       <Hero />
       <HeroIntro />
       <WhatWeDo />

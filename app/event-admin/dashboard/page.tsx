@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Users, CheckCircle, XCircle, Clock, Search, Download, RefreshCw, ArrowLeft, ExternalLink, Trash2, Mail } from 'lucide-react'
+import { BarChart3, Loader2, Users, CheckCircle, XCircle, Clock, Search, Download, RefreshCw, ArrowLeft, ExternalLink, Trash2, Mail } from 'lucide-react'
 import type { Registration } from '@/lib/types/supabase'
 
 const s = {
@@ -185,6 +185,9 @@ export default function EventAdminDashboard() {
           </div>
           <a href="/event-admin/communication" style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
             <Mail size={12} /> Communication
+          </a>
+          <a href="/event-admin/analytics" style={{ ...s.btnSm, background: '#facc1520', color: '#facc15', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <BarChart3 size={12} /> Analytics
           </a>
           <button onClick={handleSignOut} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
         </div>
