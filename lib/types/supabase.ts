@@ -41,7 +41,9 @@ export interface EventAdmin {
   event_id: string | null
   name: string
   email: string
+  created_by: string | null
   created_at: string
+  updated_at: string | null
 }
 
 // ── Composite: Event with its formats ──
@@ -75,4 +77,89 @@ export interface AdminEventMetrics {
   draft: number
   cancelled: number
   completed: number
+}
+
+// ══════════════════════════════════════════════════════════════
+// PHASE 2: Registration, Payment & Event Admin
+// ══════════════════════════════════════════════════════════════
+
+// ── Registration Status ──
+export type RegistrationStatus = 'Pending' | 'Approved' | 'Rejected'
+
+// ── Registration ──
+export interface Registration {
+  id: string
+  event_id: string
+  registration_id: string
+  full_name: string
+  phone_number: string
+  email: string
+  city: string
+  gender: string
+  format: string
+  partner_name: string | null
+  partner_phone: string | null
+  status: RegistrationStatus
+  notes: string | null
+  approved_by: string | null
+  approved_at: string | null
+  created_at: string
+  updated_at: string | null
+}
+
+// ── Registration form data ──
+export interface RegistrationFormData {
+  event_id: string
+  full_name: string
+  phone_number: string
+  email: string
+  city: string
+  gender: string
+  format: string
+  partner_name: string
+  partner_phone: string
+}
+
+// ── Event Payment Config ──
+export interface EventPaymentConfig {
+  id: string
+  event_id: string
+  upi_id: string
+  account_holder_name: string
+  mobile_number: string
+  whatsapp_number: string
+  created_at: string
+  updated_at: string | null
+}
+
+// ── Event Payment Config form ──
+export interface EventPaymentConfigFormData {
+  upi_id: string
+  account_holder_name: string
+  mobile_number: string
+  whatsapp_number: string
+}
+
+// ── Event Admin (enhanced) ──
+export interface EventAdminWithToken extends EventAdmin {
+  access_token: string | null
+  created_by: string | null
+}
+
+// ── Event Admin form ──
+export interface EventAdminFormData {
+  name: string
+  email: string
+}
+
+// ── Admin approval action ──
+export interface ApprovalAction {
+  registration_id?: string
+  status: 'Approved' | 'Rejected'
+  notes?: string
+}
+
+// ── Event with payment config ──
+export interface EventWithPaymentConfig extends EventWithFormats {
+  payment_config: EventPaymentConfig | null
 }

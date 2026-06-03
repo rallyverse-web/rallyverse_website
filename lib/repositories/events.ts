@@ -1,5 +1,5 @@
 import { getSupabaseServerClient } from '@/lib/supabase/server'
-import type { Event, EventFormat, EventWithFormats, EventFormData, AdminEventMetrics } from '@/lib/types/supabase'
+import type { Event, EventFormat, EventWithFormats, EventFormData, AdminEventMetrics, EventWithPaymentConfig, EventPaymentConfig } from '@/lib/types/supabase'
 
 // ─── Public (read) ─────────────────────────────────────────────
 
@@ -184,6 +184,45 @@ export async function getAdminEventMetrics(): Promise<AdminEventMetrics> {
     cancelled: events.filter((e) => e.status === 'cancelled').length,
     completed: events.filter((e) => e.status === 'completed').length,
   }
+}
+
+// ─── Phase 2: Events with payment config ─────────────────────
+
+export async function getEventWithPaymentConfig(slug: string): Promise<EventWithPaymentConfig | null> {
+  const supabase = await getSupabaseServerClient()
+  const { data, error } = await supabase
+    .from('events')
+    .select('*, formats:event_formats(*), payment_config:event_payment_config(*)')
+    .eq('slug', slug)
+    .single()
+  if (error && error.code !== 'PGRST116') throw error
+  if (!data) return null
+  const rec = data as Record<string, unknown>
+  const pcArray = rec.payment_config as Array<Record<string, unknown>> | undefined
+  return {
+    ...(rec as unknown as Event),
+    formats: (rec.formats as EventFormat[]) ?? [],
+    payment_config: (pcArray?.[0] as unknown as EventPaymentConfig) || null,
+  } as EventWithPaymentConfig
+}
+
+export async function getAllPublishedEventsWithPaymentConfig(): Promise<EventWithPaymentConfig[]> {
+  const supabase = await getSupabaseServerClient()
+  const { data, error } = await supabase
+    .from('events')
+    .select('*, formats:event_formats(*), payment_config:event_payment_config(*)')
+    .eq('status', 'published')
+    .order('event_date', { ascending: true })
+  if (error) throw error
+  return (data ?? []).map((row) => {
+    const rec = row as Record<string, unknown>
+    const pcArray = rec.payment_config as Array<Record<string, unknown>> | undefined
+    return {
+      ...(rec as unknown as Event),
+      formats: (rec.formats as EventFormat[]) ?? [],
+      payment_config: (pcArray?.[0] as unknown as EventPaymentConfig) || null,
+    } as EventWithPaymentConfig
+  })
 }
 
 // ─── Helpers ──────────────────────────────────────────────────

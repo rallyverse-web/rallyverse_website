@@ -153,7 +153,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
 
                 <div className="mt-8 flex gap-3">
                   <Link
-                    href="/register"
+                    href={`/events/${event.slug}/register`}
                     className="inline-flex items-center gap-2 rounded-md px-8 py-3.5 font-body text-sm font-bold transition-all duration-200 active:scale-95"
                     style={{
                       background: 'var(--rallyverse-gradient)',
@@ -365,7 +365,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
                   </div>
 
                   <Link
-                    href="/register"
+                    href={`/events/${event.slug}/register`}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-md px-8 py-3.5 font-body text-sm font-bold transition-all duration-200 active:scale-95"
                     style={{
                       background: 'var(--rallyverse-gradient)',
@@ -394,7 +394,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <Link
-                  href="/register"
+                  href={`/events/${event.slug}/register`}
                   className="inline-flex items-center gap-2 rounded-md px-8 py-3.5 font-body text-sm font-bold transition-all duration-200 active:scale-95"
                   style={{
                     background: 'var(--rallyverse-gradient)',

@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Plus, Edit, Trash2, Eye, Loader2, RefreshCw, Calendar, Users, CheckCircle, XCircle } from 'lucide-react'
-import type { EventWithFormats, EventFormData, AdminEventMetrics, EventStatus } from '@/lib/types/supabase'
+import { Plus, Edit, Trash2, Eye, Loader2, RefreshCw, Calendar, Users, CheckCircle, XCircle, Wallet, Shield, Copy } from 'lucide-react'
+import type { EventWithFormats, EventFormData, AdminEventMetrics, EventStatus, EventPaymentConfigFormData, EventAdmin } from '@/lib/types/supabase'
 
 const FORMAT_OPTIONS = [
   "Men's Singles", "Women's Singles", "Men's Doubles", "Women's Doubles", "Mixed Doubles",
@@ -70,6 +70,23 @@ export default function AdminEventsPage() {
 
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
+  /* Payment Config */
+  const [paymentConfigTarget, setPaymentConfigTarget] = useState<string | null>(null)
+  const [paymentConfig, setPaymentConfig] = useState<EventPaymentConfigFormData>({
+    upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '',
+  })
+  const [savingPayment, setSavingPayment] = useState(false)
+
+  /* Event Admins */
+  const [adminTarget, setAdminTarget] = useState<string | null>(null)
+  const [eventAdmins, setEventAdmins] = useState<EventAdmin[]>([])
+  const [createdAdminToken, setCreatedAdminToken] = useState<string | null>(null)
+  const [loadingAdmins, setLoadingAdmins] = useState(false)
+  const [newAdminName, setNewAdminName] = useState('')
+  const [newAdminEmail, setNewAdminEmail] = useState('')
+  const [savingAdmin, setSavingAdmin] = useState(false)
+  const [copiedToken, setCopiedToken] = useState<string | null>(null)
+
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
     setTimeout(() => setNotification(null), 5000)
@@ -119,6 +136,94 @@ export default function AdminEventsPage() {
       formats: event.formats?.map(f => f.format_name) || [],
     })
     setShowForm(true)
+  }
+
+  const fetchPaymentConfig = async (eventId: string) => {
+    try {
+      const res = await fetch(`/api/admin/payment-config/${eventId}`, { headers: authHeaders() })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.config) {
+          setPaymentConfig({
+            upi_id: data.config.upi_id || '',
+            account_holder_name: data.config.account_holder_name || '',
+            mobile_number: data.config.mobile_number || '',
+            whatsapp_number: data.config.whatsapp_number || '',
+          })
+          return
+        }
+      }
+    } catch {}
+    setPaymentConfig({ upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '' })
+  }
+
+  const handleSavePaymentConfig = async () => {
+    if (!paymentConfigTarget) return
+    setSavingPayment(true)
+    try {
+      const res = await fetch(`/api/admin/payment-config/${paymentConfigTarget}`, {
+        method: 'PUT',
+        headers: authHeaders(),
+        body: JSON.stringify(paymentConfig),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to save'); return }
+      notify('success', 'Payment config saved')
+      setPaymentConfigTarget(null)
+    } catch { notify('error', 'Failed to save payment config') }
+    finally { setSavingPayment(false) }
+  }
+
+  const fetchAdmins = async (eventId: string) => {
+    setLoadingAdmins(true)
+    try {
+      const res = await fetch(`/api/admin/event-admins/${eventId}`, { headers: authHeaders() })
+      if (res.ok) {
+        const data = await res.json()
+        setEventAdmins(data.admins || [])
+      }
+    } catch {}
+    finally { setLoadingAdmins(false) }
+  }
+
+  const handleAddAdmin = async () => {
+    if (!adminTarget || !newAdminName || !newAdminEmail) return
+    setSavingAdmin(true)
+    try {
+      const res = await fetch(`/api/admin/event-admins/${adminTarget}`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ name: newAdminName, email: newAdminEmail }),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to add admin'); return }
+      const data = await res.json()
+      setEventAdmins(prev => [data.admin, ...prev])
+      setNewAdminName('')
+      setNewAdminEmail('')
+      setCreatedAdminToken(data.access_token)
+      notify('success', 'Admin added. Copy the token now — it will not be shown again.')
+      setTimeout(() => setCreatedAdminToken(null), 15000)
+    } catch { notify('error', 'Failed to add admin') }
+    finally { setSavingAdmin(false) }
+  }
+
+  const handleRemoveAdmin = async (adminId: string) => {
+    try {
+      const res = await fetch(`/api/admin/event-admins/${adminTarget}?adminId=${adminId}`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to remove'); return }
+      setEventAdmins(prev => prev.filter(a => a.id !== adminId))
+      notify('success', 'Admin removed')
+    } catch { notify('error', 'Failed to remove admin') }
+  }
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedToken(text)
+      setTimeout(() => setCopiedToken(null), 2000)
+    } catch {}
   }
 
   const handleSave = async () => {
@@ -216,6 +321,8 @@ export default function AdminEventsPage() {
             <a href="/admin" style={{ color: '#888', fontSize: 12, textDecoration: 'none' }}>&larr; Back to Registrations</a>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <a href="/admin" style={{ ...s.btnSm, background: '#88888820', color: '#ccc', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>Dashboard</a>
+            <a href="/admin/registrations" style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>Registrations</a>
             <button onClick={fetchEvents} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh">
               <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             </button>
@@ -299,6 +406,12 @@ export default function AdminEventsPage() {
                         )}
                         <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => handleEdit(event)}>
                           <Edit size={12} style={{ marginRight: 3, verticalAlign: 'middle' }} />Edit
+                        </button>
+                        <button style={{ ...s.btnSm, background: '#facc1520', color: '#facc15' }} onClick={() => { setPaymentConfigTarget(event.id); fetchPaymentConfig(event.id) }}>
+                          <Wallet size={12} style={{ marginRight: 3, verticalAlign: 'middle' }} />Payment
+                        </button>
+                        <button style={{ ...s.btnSm, background: '#88888820', color: '#4ade80' }} onClick={() => { setAdminTarget(event.id); fetchAdmins(event.id) }}>
+                          <Shield size={12} style={{ marginRight: 3, verticalAlign: 'middle' }} />Admins
                         </button>
                         <button style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }} onClick={() => setConfirmDelete(event.id)}>
                           <Trash2 size={12} />
@@ -449,6 +562,99 @@ export default function AdminEventsPage() {
                   {saving ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Saving...</> : (editingId ? 'Save Changes' : 'Create Event')}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Config Modal */}
+        {paymentConfigTarget && (
+          <div style={s.overlay} onClick={() => !savingPayment && setPaymentConfigTarget(null)}>
+            <div style={{ ...s.modal, maxWidth: 500 }} onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, margin: 0 }}>Payment Configuration</h3>
+                <button onClick={() => setPaymentConfigTarget(null)} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 20 }}>&times;</button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 14 }}>
+                <div>
+                  <label style={s.label}>UPI ID</label>
+                  <input value={paymentConfig.upi_id} onChange={(e) => setPaymentConfig(p => ({ ...p, upi_id: e.target.value }))} style={s.input} placeholder="e.g. rallyverse@upi" />
+                </div>
+                <div>
+                  <label style={s.label}>Account Holder Name</label>
+                  <input value={paymentConfig.account_holder_name} onChange={(e) => setPaymentConfig(p => ({ ...p, account_holder_name: e.target.value }))} style={s.input} placeholder="e.g. RallyVerse Sports" />
+                </div>
+                <div>
+                  <label style={s.label}>Mobile Number</label>
+                  <input value={paymentConfig.mobile_number} onChange={(e) => setPaymentConfig(p => ({ ...p, mobile_number: e.target.value }))} style={s.input} placeholder="e.g. 9876543210" />
+                </div>
+                <div>
+                  <label style={s.label}>WhatsApp Verification Number</label>
+                  <input value={paymentConfig.whatsapp_number} onChange={(e) => setPaymentConfig(p => ({ ...p, whatsapp_number: e.target.value }))} style={s.input} placeholder="e.g. 9876543210" />
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>
+                <button onClick={() => setPaymentConfigTarget(null)} disabled={savingPayment} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+                <button onClick={handleSavePaymentConfig} disabled={savingPayment} style={{ ...s.btnSm, background: 'var(--rallyverse-gradient)', color: '#000', fontWeight: 700, ...(savingPayment ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                  {savingPayment ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Saving...</> : 'Save Payment Config'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Event Admins Modal */}
+        {adminTarget && (
+          <div style={s.overlay} onClick={() => setAdminTarget(null)}>
+            <div style={{ ...s.modal, maxWidth: 500 }} onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, margin: 0 }}>Event Admins</h3>
+                <button onClick={() => { setAdminTarget(null); setEventAdmins([]) }} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 20 }}>&times;</button>
+              </div>
+
+              {createdAdminToken && (
+                <div style={{ marginBottom: 16, padding: 12, borderRadius: 6, background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)' }}>
+                  <p style={{ color: '#facc15', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Admin Created — Copy Access Token</p>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <code style={{ flex: 1, fontSize: 11, color: '#4ade80', background: '#222', padding: '6px 10px', borderRadius: 4, overflow: 'hidden', textOverflow: 'ellipsis' }}>{createdAdminToken}</code>
+                    <button onClick={() => copyToClipboard(createdAdminToken)} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontSize: 11, fontWeight: 700 }}>
+                      {copiedToken === createdAdminToken ? <CheckCircle size={12} /> : <Copy size={12} />}
+                    </button>
+                  </div>
+                  <p style={{ color: '#888', fontSize: 11, marginTop: 4 }}>This token will not be shown again. Share it securely with the admin.</p>
+                </div>
+              )}
+
+              {/* Add admin form */}
+              <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                <input value={newAdminName} onChange={(e) => setNewAdminName(e.target.value)} style={{ ...s.input, flex: 1 }} placeholder="Admin name" />
+                <input value={newAdminEmail} onChange={(e) => setNewAdminEmail(e.target.value)} style={{ ...s.input, flex: 1 }} placeholder="Admin email" />
+                <button onClick={handleAddAdmin} disabled={savingAdmin || !newAdminName || !newAdminEmail} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, whiteSpace: 'nowrap', ...((savingAdmin || !newAdminName || !newAdminEmail) ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                  {savingAdmin ? <Loader2 size={12} className="animate-spin" /> : 'Add'}
+                </button>
+              </div>
+
+              {/* Admin list */}
+              {loadingAdmins ? (
+                <div style={{ color: '#888', fontSize: 13, padding: 20, textAlign: 'center' }}><Loader2 size={14} className="animate-spin" /> Loading...</div>
+              ) : eventAdmins.length === 0 ? (
+                <div style={{ color: '#666', fontSize: 13, padding: 20, textAlign: 'center' }}>No admins assigned yet</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {eventAdmins.map((admin) => (
+                    <div key={admin.id} style={{ padding: 12, borderRadius: 6, border: '1px solid #333', background: '#111' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                          <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, margin: 0 }}>{admin.name}</p>
+                          <p style={{ color: '#888', fontSize: 12, margin: '2px 0 0 0' }}>{admin.email}</p>
+                        </div>
+                        <button onClick={() => handleRemoveAdmin(admin.id)} style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }}>
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
