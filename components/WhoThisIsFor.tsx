@@ -97,7 +97,7 @@ export default function WhoThisIsFor() {
         >
           <button
             type="button"
-            onClick={() => router.push('/register')}
+            onClick={() => router.push('/events')}
             className="font-body text-base font-semibold transition-all duration-200 hover:underline"
             style={{ color: 'var(--link-color)' }}
             onMouseEnter={(e) => e.currentTarget.style.color = 'var(--link-hover)'}

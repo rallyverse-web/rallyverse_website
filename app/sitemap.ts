@@ -4,7 +4,7 @@ const baseUrl = 'https://rallyverse.social'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
-    '', '/about', '/events', '/register', '/contact', '/believers',
+    '', '/about', '/events', '/contact', '/believers',
     '/privacy-policy', '/terms-and-conditions',
   ]
 

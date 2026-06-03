@@ -55,7 +55,7 @@ export default function Footer() {
             Join a community built around movement, adventure, and meaningful experiences.
           </motion.p>
           <Link
-            href="/register"
+            href="/events"
             className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
             style={{
               background: 'var(--rallyverse-gradient)',

@@ -164,7 +164,7 @@ export default function Navbar() {
             <ThemeToggle />
             <button
               type="button"
-              onClick={() => router.push('/register')}
+              onClick={() => router.push('/events')}
               className="whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95"
               style={{
                 background: 'var(--rallyverse-gradient)',
@@ -290,7 +290,7 @@ export default function Navbar() {
                   type="button"
                   onClick={() => {
                     setMenuOpen(false)
-                    router.push('/register')
+                    router.push('/events')
                   }}
                   className="w-full rounded-md py-4 text-base font-semibold transition-all duration-200 active:scale-95"
                   style={{

@@ -83,7 +83,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
               "@context": "https://schema.org",
               "@type": "SportsEvent",
               "@id": `${eventUrl}#event`,
-              "url": `${SITE.domain}/register`,
+              "url": `${SITE.domain}/events/${event.slug}/register`,
               "name": event.name,
               "description": event.description,
               "image": { "@type": "ImageObject", "url": `${SITE.domain}/og`, "width": 1200, "height": 630 },
@@ -107,7 +107,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
                 "@type": "Offer",
                 "price": String(event.registration_fee ?? 0),
                 "priceCurrency": "INR",
-                "url": `${SITE.domain}/register`,
+                "url": `${SITE.domain}/events/${event.slug}/register`,
                 "availability": "https://schema.org/LimitedAvailability",
               },
               "organizer": {

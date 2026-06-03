@@ -48,7 +48,7 @@ export default function FirstEvent({ event }: { event: EventWithFormats | null }
           <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
             <button
               type="button"
-              onClick={() => router.push('/register')}
+              onClick={() => router.push(`/events/${event.slug}/register`)}
               className="group relative overflow-hidden rounded-md px-10 py-4 font-body text-base font-bold transition-all duration-200 active:scale-95"
               style={{
                 backgroundColor: 'var(--btn-primary-bg)',

@@ -277,7 +277,7 @@ export default async function EventsPage() {
               {featuredEvent ? `Be part of the first chapter. Join ${featuredEvent.name} today.` : 'Join the RallyVerse community today.'}
             </p>
             <a
-              href={featuredEvent ? `/events/${featuredEvent.slug}` : '/register'}
+              href={featuredEvent ? `/events/${featuredEvent.slug}` : '/'}
               className="mt-8 inline-flex items-center gap-2 rounded-md px-8 py-3.5 font-body text-sm font-bold transition-all duration-200 active:scale-95"
               style={{
                 background: 'var(--rallyverse-gradient)',
