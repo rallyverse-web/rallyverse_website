@@ -19,8 +19,9 @@ export async function GET(req: NextRequest) {
     const metrics = await getAdminEventMetrics()
     return NextResponse.json({ events, metrics })
   } catch (error) {
-    console.error('Failed to fetch events:', error)
-    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 })
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Failed to fetch events:', message)
+    return NextResponse.json({ success: false, error: message }, { status: 500 })
   }
 }
 
@@ -33,8 +34,9 @@ export async function POST(req: NextRequest) {
     const event = await createEvent(body)
     return NextResponse.json({ success: true, event })
   } catch (error) {
-    console.error('Failed to create event:', error)
-    return NextResponse.json({ error: 'Failed to create event' }, { status: 500 })
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Failed to create event:', message)
+    return NextResponse.json({ success: false, error: message }, { status: 500 })
   }
 }
 
@@ -51,8 +53,9 @@ export async function PUT(req: NextRequest) {
     const event = await updateEvent(id, updates)
     return NextResponse.json({ success: true, event })
   } catch (error) {
-    console.error('Failed to update event:', error)
-    return NextResponse.json({ error: 'Failed to update event' }, { status: 500 })
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Failed to update event:', message)
+    return NextResponse.json({ success: false, error: message }, { status: 500 })
   }
 }
 
@@ -69,8 +72,9 @@ export async function DELETE(req: NextRequest) {
     await deleteEvent(id)
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Failed to delete event:', error)
-    return NextResponse.json({ error: 'Failed to delete event' }, { status: 500 })
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Failed to delete event:', message)
+    return NextResponse.json({ success: false, error: message }, { status: 500 })
   }
 }
 
@@ -89,7 +93,8 @@ export async function PATCH(req: NextRequest) {
     }
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
   } catch (error) {
-    console.error('Failed to perform action:', error)
-    return NextResponse.json({ error: 'Failed to perform action' }, { status: 500 })
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Failed to perform action:', message)
+    return NextResponse.json({ success: false, error: message }, { status: 500 })
   }
 }
