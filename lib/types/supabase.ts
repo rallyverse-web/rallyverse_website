@@ -64,8 +64,6 @@ export interface EventFormData {
   payment_info: string
   capacity: number
   rally_points: number
-  poster_url: string
-  image_url: string
   status: EventStatus
   formats: string[]
 }

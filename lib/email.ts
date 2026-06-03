@@ -3,10 +3,10 @@ import path from 'path'
 import { SITE, CONTACT, EMAIL, WHATSAPP, CURRENT_EVENT } from './config'
 
 const LOGO_URL = `${SITE.domain}/logo/logo_transparent.png`
-const POSTER_URL = `${SITE.domain}/posters/color_poster.png`
+const POSTER_URL = `${SITE.domain}/posters/rally-series-01-bengaluru-badminton-tournament-2026-poster.png`
 
 export function getColorPosterAttachment(): { filename: string; content: Buffer } {
-  const posterPath = path.join(process.cwd(), 'public', 'posters', 'color_poster.png')
+  const posterPath = path.join(process.cwd(), 'public', 'posters', 'rally-series-01-bengaluru-badminton-tournament-2026-poster.png')
   const content = fs.readFileSync(posterPath)
   return {
     filename: 'RallyVerse-Poster.png',

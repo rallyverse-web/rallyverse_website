@@ -70,8 +70,6 @@ export async function createEvent(formData: EventFormData): Promise<EventWithFor
       payment_info: eventData.payment_info || null,
       capacity: eventData.capacity || null,
       rally_points: eventData.rally_points || 0,
-      poster_url: eventData.poster_url || null,
-      image_url: eventData.image_url || null,
       status: eventData.status || 'draft',
     })
     .select()
@@ -113,8 +111,6 @@ export async function updateEvent(id: string, formData: Partial<EventFormData>):
   if (eventData.payment_info !== undefined) updatePayload.payment_info = eventData.payment_info
   if (eventData.capacity !== undefined) updatePayload.capacity = eventData.capacity
   if (eventData.rally_points !== undefined) updatePayload.rally_points = eventData.rally_points
-  if (eventData.poster_url !== undefined) updatePayload.poster_url = eventData.poster_url
-  if (eventData.image_url !== undefined) updatePayload.image_url = eventData.image_url
   if (eventData.status !== undefined) updatePayload.status = eventData.status
   updatePayload.updated_at = new Date().toISOString()
 

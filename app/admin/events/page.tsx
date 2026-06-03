@@ -12,7 +12,7 @@ const defaultForm: EventFormData = {
   name: '', slug: '', description: '', category: '', venue: '',
   event_date: '', date_label: '', time_label: '', is_date_confirmed: true,
   registration_fee: 0, payment_info: '', capacity: 0, rally_points: 0,
-  poster_url: '', image_url: '', status: 'draft', formats: [],
+  status: 'draft', formats: [],
 }
 
 function slugify(text: string): string {
@@ -115,8 +115,6 @@ export default function AdminEventsPage() {
       payment_info: event.payment_info || '',
       capacity: event.capacity ?? 0,
       rally_points: event.rally_points ?? 0,
-      poster_url: event.poster_url || '',
-      image_url: event.image_url || '',
       status: event.status,
       formats: event.formats?.map(f => f.format_name) || [],
     })
@@ -388,16 +386,6 @@ export default function AdminEventsPage() {
                 <div>
                   <label style={s.label}>Rally Points</label>
                   <input type="number" value={formData.rally_points} onChange={(e) => updateForm('rally_points', Number(e.target.value))} style={s.input} />
-                </div>
-
-                <div>
-                  <label style={s.label}>Poster URL</label>
-                  <input value={formData.poster_url} onChange={(e) => updateForm('poster_url', e.target.value)} style={s.input} placeholder="/posters/color_poster.png" />
-                </div>
-
-                <div>
-                  <label style={s.label}>Image URL</label>
-                  <input value={formData.image_url} onChange={(e) => updateForm('image_url', e.target.value)} style={s.input} placeholder="https://picsum.photos/..." />
                 </div>
 
                 <div>

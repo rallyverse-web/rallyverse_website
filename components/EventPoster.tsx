@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useTheme } from '@/lib/theme'
+import { getEventPosterPath, getEventPosterBwPath, PLACEHOLDER_POSTER } from '@/lib/assets'
 import type { EventWithFormats } from '@/lib/types/supabase'
 
 type PosterVariant = 'card' | 'full' | 'sidebar'
@@ -14,13 +15,19 @@ const variantStyles: Record<PosterVariant, string> = {
 
 export default function EventPoster({ event, variant = 'card', priority = false }: { event?: EventWithFormats; variant?: PosterVariant; priority?: boolean }) {
   const { isColorTheme } = useTheme()
-  const src = event?.poster_url
-    ? isColorTheme
-      ? event.poster_url
-      : event.poster_url.replace('color_poster', 'bw_poster')
-    : isColorTheme
-      ? '/posters/color_poster.png'
-      : '/posters/bw_poster.png'
+
+  const slug = event?.slug
+  const slugPoster = slug ? getEventPosterPath(slug) : null
+  const slugBwPoster = slug ? getEventPosterBwPath(slug) : null
+
+  let src: string
+  if (slugPoster) {
+    src = isColorTheme ? slugPoster : (slugBwPoster ?? slugPoster)
+  } else if (event?.poster_url) {
+    src = isColorTheme ? event.poster_url : event.poster_url.replace('color_poster', 'bw_poster')
+  } else {
+    src = PLACEHOLDER_POSTER
+  }
 
   return (
     <div className={`relative ${variantStyles[variant]} bg-[var(--bg-surface)]`} style={{ border: '1px solid var(--border-subtle)' }}>

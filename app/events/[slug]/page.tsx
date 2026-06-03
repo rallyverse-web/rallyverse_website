@@ -6,6 +6,7 @@ import AnimatedSection from '@/components/AnimatedSection'
 import EventPoster from '@/components/EventPoster'
 import { SITE, ADDRESS } from '@/lib/config'
 import { getEventBySlug } from '@/lib/repositories/events'
+import { getEventPosterPath, PLACEHOLDER_POSTER } from '@/lib/assets'
 import type { EventWithFormats } from '@/lib/types/supabase'
 
 export const revalidate = 60
@@ -26,13 +27,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       siteName: 'RallyVerse',
       locale: 'en_IN',
       type: 'website',
-      images: [{ url: event.poster_url ?? '/og', width: 1200, height: 630, alt: event.name }],
+      images: [{ url: getEventPosterPath(event.slug), width: 1200, height: 630, alt: event.name }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${event.name} | RallyVerse`,
       description: event.description ?? undefined,
-      images: [event.poster_url ?? '/og'],
+      images: [getEventPosterPath(event.slug)],
     },
     alternates: { canonical: `/events/${event.slug}` },
   }
