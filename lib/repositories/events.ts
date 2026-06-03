@@ -54,19 +54,24 @@ export async function createEvent(formData: EventFormData): Promise<EventWithFor
 
   const { formats, ...eventData } = formData
 
-  // TODO: After running migration.sql, re-add: category, capacity, rally_points,
-  //       image_url, date_label, time_label, is_date_confirmed, updated_at
   const { data: event, error: eventError } = await supabase
     .from('events')
     .insert({
       name: eventData.name,
       slug: eventData.slug,
       description: eventData.description || null,
+      category: eventData.category || 'badminton',
       venue: eventData.venue || null,
       event_date: eventData.event_date || null,
+      date_label: eventData.date_label || null,
+      time_label: eventData.time_label || null,
+      is_date_confirmed: eventData.is_date_confirmed ?? true,
       registration_fee: eventData.registration_fee || null,
       payment_info: eventData.payment_info || null,
+      capacity: eventData.capacity || null,
+      rally_points: eventData.rally_points || 0,
       poster_url: eventData.poster_url || null,
+      image_url: eventData.image_url || null,
       status: eventData.status || 'draft',
     })
     .select()
@@ -94,18 +99,24 @@ export async function updateEvent(id: string, formData: Partial<EventFormData>):
 
   const { formats, ...eventData } = formData
 
-  // TODO: After running migration.sql, re-add: category, capacity, rally_points,
-  //       image_url, date_label, time_label, is_date_confirmed, updated_at
   const updatePayload: Record<string, unknown> = {}
   if (eventData.name !== undefined) updatePayload.name = eventData.name
   if (eventData.slug !== undefined) updatePayload.slug = eventData.slug
   if (eventData.description !== undefined) updatePayload.description = eventData.description
+  if (eventData.category !== undefined) updatePayload.category = eventData.category || 'badminton'
   if (eventData.venue !== undefined) updatePayload.venue = eventData.venue
   if (eventData.event_date !== undefined) updatePayload.event_date = eventData.event_date
+  if (eventData.date_label !== undefined) updatePayload.date_label = eventData.date_label
+  if (eventData.time_label !== undefined) updatePayload.time_label = eventData.time_label
+  if (eventData.is_date_confirmed !== undefined) updatePayload.is_date_confirmed = eventData.is_date_confirmed
   if (eventData.registration_fee !== undefined) updatePayload.registration_fee = eventData.registration_fee
   if (eventData.payment_info !== undefined) updatePayload.payment_info = eventData.payment_info
+  if (eventData.capacity !== undefined) updatePayload.capacity = eventData.capacity
+  if (eventData.rally_points !== undefined) updatePayload.rally_points = eventData.rally_points
   if (eventData.poster_url !== undefined) updatePayload.poster_url = eventData.poster_url
+  if (eventData.image_url !== undefined) updatePayload.image_url = eventData.image_url
   if (eventData.status !== undefined) updatePayload.status = eventData.status
+  updatePayload.updated_at = new Date().toISOString()
 
   const { error: updateError } = await supabase
     .from('events')
@@ -161,10 +172,9 @@ export async function deleteEvent(id: string): Promise<void> {
 
 export async function publishEvent(id: string): Promise<void> {
   const supabase = await getSupabaseServerClient()
-  // TODO: Re-add updated_at after running migration.sql
   const { error } = await supabase
     .from('events')
-    .update({ status: 'published' })
+    .update({ status: 'published', updated_at: new Date().toISOString() })
     .eq('id', id)
   if (error) throw error
 }
