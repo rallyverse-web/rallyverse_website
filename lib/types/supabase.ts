@@ -22,6 +22,8 @@ export interface Event {
   rally_points: number | null
   poster_url: string | null
   image_url: string | null
+  whatsapp_number: string | null
+  whatsapp_group_link: string | null
   status: EventStatus
   created_at: string
   updated_at: string | null
@@ -66,6 +68,8 @@ export interface EventFormData {
   payment_info: string
   capacity: number
   rally_points: number
+  whatsapp_number: string
+  whatsapp_group_link: string
   status: EventStatus
   formats: string[]
 }
@@ -162,4 +166,76 @@ export interface ApprovalAction {
 // ── Event with payment config ──
 export interface EventWithPaymentConfig extends EventWithFormats {
   payment_config: EventPaymentConfig | null
+}
+
+// ══════════════════════════════════════════════════════════════
+// PHASE 3A: Communication Infrastructure
+// ══════════════════════════════════════════════════════════════
+
+// ── Email Template Types ──
+export type EmailTemplateType = 'approval' | 'rejection' | 'reminder' | 'results' | 'broadcast'
+
+// ── Event Email Settings ──
+export interface EventEmailSettings {
+  id: string
+  event_id: string
+  sender_name: string
+  reply_to_email: string
+  support_email: string
+  created_at: string
+  updated_at: string | null
+}
+
+// ── Event Email Settings form ──
+export interface EventEmailSettingsFormData {
+  sender_name: string
+  reply_to_email: string
+  support_email: string
+}
+
+// ── Email Template ──
+export interface EmailTemplate {
+  id: string
+  event_id: string
+  template_type: EmailTemplateType
+  subject: string
+  content: string
+  created_by: string | null
+  created_at: string
+  updated_at: string | null
+}
+
+// ── Email Template form ──
+export interface EmailTemplateFormData {
+  template_type: EmailTemplateType
+  subject: string
+  content: string
+}
+
+// ── Email Log ──
+export interface EmailLog {
+  id: string
+  event_id: string
+  template_id: string | null
+  recipient_email: string
+  subject: string
+  sent_by: string | null
+  status: 'sent' | 'failed'
+  provider_message_id: string
+  created_at: string
+}
+
+// ── Template Variables ──
+export interface TemplateVariables {
+  participant_name: string
+  event_name: string
+  event_date: string
+  event_venue: string
+  format: string
+  registration_status: string
+  support_email: string
+  whatsapp_number: string
+  event_whatsapp: string
+  event_whatsapp_group: string
+  [key: string]: string
 }

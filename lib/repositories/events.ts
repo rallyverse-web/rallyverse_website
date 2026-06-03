@@ -1,5 +1,6 @@
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { Event, EventFormat, EventWithFormats, EventFormData, AdminEventMetrics, EventWithPaymentConfig, EventPaymentConfig } from '@/lib/types/supabase'
+import { seedEventDefaults } from '@/lib/seed-defaults'
 
 // ─── Public (read) ─────────────────────────────────────────────
 
@@ -70,6 +71,8 @@ export async function createEvent(formData: EventFormData): Promise<EventWithFor
       payment_info: eventData.payment_info || null,
       capacity: eventData.capacity || null,
       rally_points: eventData.rally_points || 0,
+      whatsapp_number: eventData.whatsapp_number || null,
+      whatsapp_group_link: eventData.whatsapp_group_link || null,
       status: eventData.status || 'draft',
     })
     .select()
@@ -88,6 +91,9 @@ export async function createEvent(formData: EventFormData): Promise<EventWithFor
       .insert(formatRows)
     if (fmtError) throw fmtError
   }
+
+  // Seed default email settings and templates
+  await seedEventDefaults(event.id)
 
   return getEventBySlug(event.slug) as Promise<EventWithFormats>
 }
@@ -111,6 +117,8 @@ export async function updateEvent(id: string, formData: Partial<EventFormData>):
   if (eventData.payment_info !== undefined) updatePayload.payment_info = eventData.payment_info
   if (eventData.capacity !== undefined) updatePayload.capacity = eventData.capacity
   if (eventData.rally_points !== undefined) updatePayload.rally_points = eventData.rally_points
+  if (eventData.whatsapp_number !== undefined) updatePayload.whatsapp_number = eventData.whatsapp_number
+  if (eventData.whatsapp_group_link !== undefined) updatePayload.whatsapp_group_link = eventData.whatsapp_group_link
   if (eventData.status !== undefined) updatePayload.status = eventData.status
   updatePayload.updated_at = new Date().toISOString()
 

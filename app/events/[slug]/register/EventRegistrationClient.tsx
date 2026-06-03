@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, ArrowRight, Loader2, ExternalLink } from 'lucide-react'
+import { CheckCircle, ArrowRight, Loader2, ExternalLink, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import type { EventWithPaymentConfig, EventPaymentConfig } from '@/lib/types/supabase'
 
@@ -130,6 +130,43 @@ export default function EventRegistrationClient({
             {!paymentConfig && (
               <div style={{ ...s.card, textAlign: 'left', width: '100%', maxWidth: 440 }}>
                 <p style={{ color: '#888', fontSize: 13 }}>Payment details will be shared separately. You will receive a confirmation once your registration is processed.</p>
+              </div>
+            )}
+
+            {(event.whatsapp_number || event.whatsapp_group_link) && (
+              <div style={{ ...s.card, textAlign: 'left', width: '100%', maxWidth: 440 }}>
+                <h3 style={{ color: '#25d366', fontSize: 14, fontWeight: 600, marginBottom: 12 }}>
+                  <MessageCircle size={16} style={{ marginRight: 6, verticalAlign: 'middle' }} />Event Contact
+                </h3>
+                <div style={{ display: 'grid', gap: 8, fontSize: 13, color: '#ccc' }}>
+                  {event.whatsapp_number && (
+                    <p>
+                      <span style={{ color: '#888' }}>WhatsApp:</span>{' '}
+                      {event.whatsapp_number}{' '}
+                      <a
+                        href={`https://wa.me/${event.whatsapp_number.replace(/[^0-9]/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#25d366', textDecoration: 'none', fontWeight: 600 }}
+                      >
+                        <ExternalLink size={12} style={{ verticalAlign: 'middle' }} /> Chat
+                      </a>
+                    </p>
+                  )}
+                  {event.whatsapp_group_link && (
+                    <p>
+                      <span style={{ color: '#888' }}>Group:</span>{' '}
+                      <a
+                        href={event.whatsapp_group_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#25d366', textDecoration: 'none', fontWeight: 600 }}
+                      >
+                        Join WhatsApp Group <ExternalLink size={12} style={{ verticalAlign: 'middle' }} />
+                      </a>
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 

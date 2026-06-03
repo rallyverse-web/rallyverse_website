@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Calendar, Clock, ArrowRight, Users, Trophy, IndianRupee, BadgeCheck } from 'lucide-react'
+import { MapPin, Calendar, Clock, ArrowRight, Users, Trophy, IndianRupee, BadgeCheck, MessageCircle, ExternalLink } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import EventPoster from '@/components/EventPoster'
 import { SITE, ADDRESS } from '@/lib/config'
@@ -256,6 +256,76 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
                         <ArrowRight size={14} />
                       </Link>
                     </div>
+                  </div>
+                </div>
+              </div>
+          </AnimatedSection>
+        )}
+
+          {/* ── WhatsApp ──────────────────────────────────── */}
+          {event.whatsapp_number && (
+            <AnimatedSection>
+              <div className="mt-20">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
+                  <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--section-label-color)' }}>
+                    CONTACT
+                  </span>
+                </div>
+
+                <h2 className="font-display text-[28px] leading-none uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
+                  STAY CONNECTED.
+                </h2>
+
+                <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-2">
+                  <div className="space-y-5 font-body text-base leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
+                    <p>
+                      Have questions or need assistance? Reach out to the event organizer directly on WhatsApp.
+                    </p>
+                  </div>
+
+                  <div
+                    className="rounded-xl p-6 space-y-4"
+                    style={{
+                      backgroundColor: 'var(--bg-surface)',
+                      border: '1px solid var(--border-subtle)',
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <MessageCircle size={18} className="mt-0.5 shrink-0" style={{ color: 'var(--accent-primary)' }} />
+                      <div>
+                        <p className="font-body text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Event WhatsApp</p>
+                        <p className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{event.whatsapp_number}</p>
+                        <a
+                          href={`https://wa.me/${event.whatsapp_number.replace(/[^0-9]/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 mt-2 font-body text-sm font-semibold transition-colors duration-200"
+                          style={{ color: 'var(--accent-primary)' }}
+                        >
+                          <ExternalLink size={14} /> Chat on WhatsApp
+                        </a>
+                      </div>
+                    </div>
+
+                    {event.whatsapp_group_link && (
+                      <div className="flex items-start gap-3 pt-3 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
+                        <MessageCircle size={18} className="mt-0.5 shrink-0" style={{ color: 'var(--accent-primary)' }} />
+                        <div>
+                          <p className="font-body text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>WhatsApp Group</p>
+                          <p className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>Join the event group for live updates and coordination.</p>
+                          <a
+                            href={event.whatsapp_group_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 mt-2 font-body text-sm font-semibold transition-colors duration-200"
+                            style={{ color: 'var(--accent-primary)' }}
+                          >
+                            <ExternalLink size={14} /> Join Group
+                          </a>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

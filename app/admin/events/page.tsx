@@ -12,6 +12,7 @@ const defaultForm: EventFormData = {
   name: '', slug: '', description: '', category: '', venue: '',
   event_date: '', date_label: '', time_label: '', is_date_confirmed: true,
   registration_fee: 0, payment_info: '', capacity: 0, rally_points: 0,
+  whatsapp_number: '', whatsapp_group_link: '',
   status: 'draft', formats: [],
 }
 
@@ -69,6 +70,8 @@ export default function AdminEventsPage() {
   const [saving, setSaving] = useState(false)
 
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [showBackfillConfirm, setShowBackfillConfirm] = useState(false)
+  const [backfilling, setBackfilling] = useState(false)
 
   /* Payment Config */
   const [paymentConfigTarget, setPaymentConfigTarget] = useState<string | null>(null)
@@ -135,6 +138,8 @@ export default function AdminEventsPage() {
       payment_info: event.payment_info || '',
       capacity: event.capacity ?? 0,
       rally_points: event.rally_points ?? 0,
+      whatsapp_number: event.whatsapp_number || '',
+      whatsapp_group_link: event.whatsapp_group_link || '',
       status: event.status,
       formats: event.formats?.map(f => f.format_name) || [],
     })
@@ -303,6 +308,20 @@ export default function AdminEventsPage() {
     } catch { notify('error', 'Failed to publish event') }
   }
 
+  const handleBackfill = async () => {
+    setBackfilling(true)
+    setShowBackfillConfirm(false)
+    try {
+      const res = await fetch('/api/admin/seed-defaults', {
+        method: 'POST', headers: authHeaders(),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Backfill failed'); return }
+      const data = await res.json()
+      notify('success', `Backfill complete — ${data.settingsCreated} settings, ${data.templatesCreated} templates across ${data.eventsProcessed} events`)
+    } catch { notify('error', 'Failed to backfill') }
+    finally { setBackfilling(false) }
+  }
+
   const updateForm = (field: keyof EventFormData, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (field === 'name' && !editingId) {
@@ -378,10 +397,13 @@ export default function AdminEventsPage() {
         )}
 
         {/* Actions */}
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <button onClick={handleCreate} style={s.btn}>
             <Plus size={14} style={{ marginRight: 6, verticalAlign: 'middle' }} />
             Create Event
+          </button>
+          <button onClick={() => setShowBackfillConfirm(true)} disabled={backfilling} style={{ ...s.btnSm, background: '#facc1520', color: '#facc15', ...(backfilling ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+            {backfilling ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Seeding...</> : 'Seed Defaults for All Events'}
           </button>
         </div>
 
@@ -524,6 +546,16 @@ export default function AdminEventsPage() {
                 <div>
                   <label style={s.label}>Rally Points</label>
                   <input type="number" value={formData.rally_points} onChange={(e) => updateForm('rally_points', Number(e.target.value))} style={s.input} />
+                </div>
+
+                <div>
+                  <label style={s.label}>WhatsApp Number</label>
+                  <input value={formData.whatsapp_number} onChange={(e) => updateForm('whatsapp_number', e.target.value)} style={s.input} placeholder="e.g. +919876543210" />
+                </div>
+
+                <div>
+                  <label style={s.label}>WhatsApp Group Link</label>
+                  <input value={formData.whatsapp_group_link} onChange={(e) => updateForm('whatsapp_group_link', e.target.value)} style={s.input} placeholder="e.g. https://chat.whatsapp.com/..." />
                 </div>
 
                 <div>
@@ -721,6 +753,24 @@ export default function AdminEventsPage() {
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                 <button onClick={() => setConfirmDelete(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
                 <button onClick={() => handleDelete(confirmDelete)} style={s.btnDanger}>Delete</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Backfill Confirmation */}
+        {showBackfillConfirm && (
+          <div style={s.overlay} onClick={() => setShowBackfillConfirm(false)}>
+            <div style={{ ...s.modal, maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Seed Defaults for All Events</h3>
+              <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>
+                This will create default email settings and templates for all existing events that are missing them. Existing records will not be duplicated. Continue?
+              </p>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                <button onClick={() => setShowBackfillConfirm(false)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+                <button onClick={handleBackfill} disabled={backfilling} style={{ ...s.btnSm, background: '#facc15', color: '#000', fontWeight: 700, ...(backfilling ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                  {backfilling ? <Loader2 size={12} className="animate-spin" /> : 'Seed Defaults'}
+                </button>
               </div>
             </div>
           </div>
