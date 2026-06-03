@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useAdminAuth } from '../AdminAuthContext'
 import { BarChart3, ShieldAlert, Loader2, RefreshCw, ArrowLeft, Calendar, CheckCircle, XCircle, Clock, Users, Mail, MessageCircle } from 'lucide-react'
 
 const s = {
@@ -51,30 +52,35 @@ interface EventAnalyticsItem { event_id: string; event_name: string; event_slug:
 interface Trends { registrations_over_time: { date: string; count: number }[]; approvals_over_time: { date: string; count: number }[]; emails_over_time: { date: string; count: number }[]; views_over_time: { date: string; count: number }[] }
 
 export default function AdminAnalyticsPage() {
-  const [password, setPassword] = useState('')
-  const [token, setToken] = useState('')
-  const [authError, setAuthError] = useState('')
+  const { token, logout } = useAdminAuth()
   const [loading, setLoading] = useState(false)
   const [overview, setOverview] = useState<Overview | null>(null)
   const [events, setEvents] = useState<EventAnalyticsItem[]>([])
   const [trends, setTrends] = useState<Trends | null>(null)
   const [sortBy, setSortBy] = useState<'registrations' | 'conversion_rate' | 'views'>('registrations')
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+
+  const notify = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message })
+    setTimeout(() => setNotification(null), 5000)
+  }
 
   const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
 
   const fetchData = useCallback(async () => {
+    if (!token) return
     setLoading(true)
     try {
       const res = await fetch('/api/admin/analytics', { headers: authHeaders() })
-      if (res.status === 401) { setToken(''); setAuthError('Invalid password'); return }
-      if (!res.ok) { setAuthError('Failed to load'); return }
+      if (res.status === 401) { logout(); return }
+      if (!res.ok) { notify('error', 'Failed to load'); return }
       const d = await res.json()
       setOverview(d.overview)
       setEvents(d.events || [])
       setTrends(d.trends)
-    } catch { setAuthError('Failed to load analytics') }
+    } catch { notify('error', 'Failed to load analytics') }
     finally { setLoading(false) }
-  }, [authHeaders])
+  }, [authHeaders, logout, token])
 
   useEffect(() => { if (token) fetchData() }, [token, fetchData])
 
@@ -84,37 +90,30 @@ export default function AdminAnalyticsPage() {
     return b.registrations - a.registrations
   })
 
-  if (!token) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', padding: 24 }}>
-        <form onSubmit={(e) => { e.preventDefault(); setAuthError(''); setToken(password) }} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <ShieldAlert size={40} style={{ color: '#e5e5e5', margin: '0 auto 12px' }} />
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Analytics</h1>
-          </div>
-          <input type="password" placeholder="Enter admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={s.input} autoFocus />
-          {authError && <p style={{ color: '#ff4444', fontSize: 13 }}>{authError}</p>}
-          <button type="submit" style={password ? s.btn : { ...s.btn, opacity: 0.6, cursor: 'not-allowed' }} disabled={!password}>Sign In</button>
-        </form>
-      </div>
-    )
-  }
-
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Analytics</h1>
-            <a href="/admin" style={{ color: '#888', fontSize: 12, textDecoration: 'none' }}>&larr; Back to Dashboard</a>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={fetchData} style={{ ...s.btnSm, background: '#88888820', color: '#ccc', display: 'flex', alignItems: 'center', gap: 4 }}>
-              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
-            </button>
-            <button onClick={() => { setToken(''); setAuthError('') }} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Sign Out</button>
-          </div>
+    <div>
+      {notification && (
+        <div style={{
+          padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16,
+          background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)',
+          border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`,
+          color: notification.type === 'success' ? '#4ade80' : '#ff4444',
+        }}>
+          {notification.message}
         </div>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Analytics</h1>
+          <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Platform traffic, registrations and email logs metrics</p>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={fetchData} style={{ ...s.btnSm, background: '#88888820', color: '#ccc', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
+          </button>
+        </div>
+      </div>
 
         {loading && !overview ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#888', fontSize: 14, padding: 40, justifyContent: 'center' }}>
@@ -210,6 +209,5 @@ export default function AdminAnalyticsPage() {
           </>
         )}
       </div>
-    </div>
   )
 }

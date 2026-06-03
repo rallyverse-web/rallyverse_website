@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAdminAuth } from '../AdminAuthContext'
 import { Loader2, Search, Download, RefreshCw, Users, CheckCircle, XCircle, Clock, Calendar, Eye, Trash2 } from 'lucide-react'
 import type { Registration } from '@/lib/types/supabase'
 
@@ -33,9 +34,7 @@ function statusBadge(status: string) {
 }
 
 export default function AdminRegistrationsPage() {
-  const [password, setPassword] = useState('')
-  const [token, setToken] = useState('')
-  const [authError, setAuthError] = useState('')
+  const { token, logout } = useAdminAuth()
   const [loading, setLoading] = useState(false)
   const [eventData, setEventData] = useState<Array<{ event: { id: string; name: string; slug: string; status: string }; registrations: Registration[]; metrics: { total: number; pending: number; approved: number; rejected: number } }>>([])
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null)
@@ -52,19 +51,30 @@ export default function AdminRegistrationsPage() {
   const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
 
   const fetchData = useCallback(async () => {
+    if (!token) return
     setLoading(true)
-    setAuthError('')
     try {
       const res = await fetch('/api/admin/all-registrations', { headers: authHeaders() })
-      if (res.status === 401) { setToken(''); setAuthError('Invalid password'); return }
-      if (!res.ok) { setAuthError('Failed to load data'); return }
+      if (res.status === 401) { logout(); return }
+      if (!res.ok) { notify('error', 'Failed to load data'); return }
       const data = await res.json()
       setEventData(data.events || [])
-    } catch { setAuthError('Failed to connect') }
+    } catch { notify('error', 'Failed to connect') }
     finally { setLoading(false) }
-  }, [authHeaders])
+  }, [authHeaders, logout, token])
 
   useEffect(() => { if (token) fetchData() }, [token, fetchData])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedReg(null)
+        setConfirmDeleteId(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const totalMetrics = useMemo(() => {
     let total = 0, pending = 0, approved = 0, rejected = 0
@@ -130,33 +140,15 @@ export default function AdminRegistrationsPage() {
     URL.revokeObjectURL(url)
   }
 
-  if (!token) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', padding: 24 }}>
-        <form onSubmit={(e) => { e.preventDefault(); setAuthError(''); setToken(password) }} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <Users size={40} style={{ color: '#e5e5e5', margin: '0 auto 12px' }} />
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Registrations</h1>
-          </div>
-          <input type="password" placeholder="Enter admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={s.input} autoFocus />
-          {authError && <p style={{ color: '#ff4444', fontSize: 13 }}>{authError}</p>}
-          <button type="submit" style={password ? s.btn : { ...s.btn, opacity: 0.6, cursor: 'not-allowed' }} disabled={!password}>Sign In</button>
-        </form>
-      </div>
-    )
-  }
-
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Registrations</h1>
-            <a href="/admin" style={{ color: '#888', fontSize: 12, textDecoration: 'none' }}>&larr; Back to Dashboard</a>
-          </div>
-          <button onClick={() => { setToken(''); setEventData([]) }} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
+    <div>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Registrations</h1>
+          <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Monitor and manage player event registrations</p>
         </div>
+      </div>
 
         {notification && (
           <div style={{ padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16, background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)', border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`, color: notification.type === 'success' ? '#4ade80' : '#ff4444' }}>
@@ -322,7 +314,6 @@ export default function AdminRegistrationsPage() {
           </div>
         )}
       </div>
-    </div>
   )
 }
 

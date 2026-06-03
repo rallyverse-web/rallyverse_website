@@ -8,10 +8,10 @@ function authorize(req: NextRequest) {
   return token === process.env.ADMIN_PASSWORD
 }
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ templateId: string }> }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
   if (!authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
-    const { templateId } = await params
+    const { eventId: templateId } = await params
     const template = await getTemplateById(templateId)
     if (!template) {
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })

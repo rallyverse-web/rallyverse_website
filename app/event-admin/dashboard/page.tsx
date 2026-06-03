@@ -79,6 +79,17 @@ export default function EventAdminDashboard() {
 
   useEffect(() => { fetchData() }, [fetchData])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedReg(null)
+        setConfirmDeleteId(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   const filtered = useMemo(() => {
     let list = [...registrations]
     if (search) {
@@ -168,29 +179,21 @@ export default function EventAdminDashboard() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
         <Loader2 size={24} className="animate-spin" style={{ color: '#888' }} />
       </div>
     )
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Event Dashboard</h1>
-            {adminName && <p style={{ color: '#4ade80', fontSize: 13, margin: '4px 0 0' }}>{adminName}</p>}
-          </div>
-          <a href="/event-admin/communication" style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-            <Mail size={12} /> Communication
-          </a>
-          <a href="/event-admin/analytics" style={{ ...s.btnSm, background: '#facc1520', color: '#facc15', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-            <BarChart3 size={12} /> Analytics
-          </a>
-          <button onClick={handleSignOut} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
+    <div>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Event Dashboard</h1>
+          <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Manage registrations and verify payments</p>
         </div>
+      </div>
 
         {notification && (
           <div style={{ padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16, background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)', border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`, color: notification.type === 'success' ? '#4ade80' : '#ff4444' }}>
@@ -355,6 +358,5 @@ export default function EventAdminDashboard() {
           </div>
         )}
       </div>
-    </div>
   )
 }

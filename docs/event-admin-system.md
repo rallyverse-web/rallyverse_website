@@ -24,8 +24,12 @@ Sub-admins authenticate without passwords using a secure, unique `access_token` 
 ```
 
 1. **Assigned Scope**: Event admins can only fetch data or trigger templates related to their assigned `event_id`.
-2. **Access Validation**: Every administrative API endpoint verifies permissions:
+2. **Session & Cookie Authorization**: 
+   - Authenticaton begins at the `/event-admin` login page, which POSTs the access token to `/api/event-admin/login`.
+   - Upon successful database verification of the token, a secure `HttpOnly`, `SameSite=Strict` cookie named `event_admin_token` is written to the client's browser.
+   - The global layout wrapper `/event-admin/layout.tsx` polls `/api/event-admin/me` on mount/page transitions to verify session validity and extract the administrator name and assigned `event_id` context.
+3. **Access Validation**: Every scoped administrative API endpoint extracts the token from the request cookie using `getAdminFromRequest` and verifies permissions:
    - Queries `event_admins` where `access_token = token`.
    - Extracts the associated `event_id`.
    - Rejects queries referencing other event IDs with an HTTP `401 Unauthorized` response.
-3. **Disabled Panels**: Sub-admins have no access to the master `/admin` page or the global event creation and sub-admin assignment controls.
+4. **Disabled Panels**: Sub-admins have no access to the master `/admin` page or the global event creation and sub-admin assignment controls.

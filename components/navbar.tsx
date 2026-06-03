@@ -30,6 +30,11 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState('')
   const [isMobile, setIsMobile] = useState(false)
 
+  // Hide on admin routes
+  if (pathname && (pathname.startsWith('/admin') || pathname.startsWith('/event-admin'))) {
+    return null
+  }
+
   // Scroll background toggle
   useEffect(() => {
     const onScroll = () => {

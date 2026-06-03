@@ -20,6 +20,7 @@ Welcome to the RallyVerse v2.0 Documentation Portal. This system outlines the ar
 - **[Registration System](registration-system.md)**: Supabase-based registration flows, input validations, and duplicate checks.
 - **[Payment Verification Flow](payment-verification.md)**: Offline UPI payment details and sub-admin verification workflows.
 - **[Email & Templates System](email-system.md)**: Resend integration, custom templates, and transaction history logs.
+- **[Communication Subsystem](communication-system.md)**: Automated notification triggers, manual reminder broadcasts, and batch delay rate-limiting.
 - **[Event & Format System](event-system.md)**: Dynamic multi-event structure and event formats management.
 - **[Event Admin & Tokens](event-admin-system.md)**: Security tokens, permissions scope, and sub-admin logins.
 - **[WhatsApp Integrations](whatsapp-system.md)**: Business chats, invite links, and fallback configurations.

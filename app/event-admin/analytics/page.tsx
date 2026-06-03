@@ -107,32 +107,25 @@ export default function EventAdminAnalyticsPage() {
 
   if (loading && !analytics) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
         <Loader2 size={24} className="animate-spin" style={{ color: '#888' }} />
       </div>
     )
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <a href="/event-admin/dashboard" style={{ color: '#888', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, textDecoration: 'none' }}>
-                <ArrowLeft size={14} /> Dashboard
-              </a>
-            </div>
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase', marginTop: 8 }}>Analytics</h1>
-            {adminName && <p style={{ color: '#4ade80', fontSize: 13, margin: '4px 0 0' }}>{adminName}</p>}
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={fetchData} style={{ ...s.btnSm, background: '#88888820', color: '#ccc', display: 'flex', alignItems: 'center', gap: 4 }}>
-              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
-            </button>
-            <button onClick={handleSignOut} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
-          </div>
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Analytics</h1>
+          <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Track traffic, conversion rates, and email performance</p>
         </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={fetchData} style={{ ...s.btnSm, background: '#88888820', color: '#ccc', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
+          </button>
+        </div>
+      </div>
 
         {!analytics ? (
           <div style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No analytics data available</div>
@@ -197,6 +190,5 @@ export default function EventAdminAnalyticsPage() {
           </>
         )}
       </div>
-    </div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useAdminAuth } from '../AdminAuthContext'
 import { Plus, Edit, Trash2, Eye, Loader2, RefreshCw, Calendar, Users, CheckCircle, XCircle, Wallet, Shield, Copy } from 'lucide-react'
 import type { EventWithFormats, EventFormData, AdminEventMetrics, EventStatus, EventPaymentConfigFormData, EventAdmin } from '@/lib/types/supabase'
 
@@ -55,9 +56,7 @@ function MetricCard({ icon, label, value, color }: { icon: React.ReactNode; labe
 }
 
 export default function AdminEventsPage() {
-  const [password, setPassword] = useState('')
-  const [token, setToken] = useState('')
-  const [authError, setAuthError] = useState('')
+  const { token, logout } = useAdminAuth()
 
   const [events, setEvents] = useState<EventWithFormats[]>([])
   const [metrics, setMetrics] = useState<AdminEventMetrics | null>(null)
@@ -101,20 +100,35 @@ export default function AdminEventsPage() {
   const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
 
   const fetchEvents = useCallback(async () => {
+    if (!token) return
     setLoading(true)
-    setAuthError('')
     try {
       const res = await fetch('/api/admin/events', { headers: authHeaders() })
-      if (res.status === 401) { setToken(''); setAuthError('Invalid password'); return }
-      if (!res.ok) { setAuthError('Failed to load events'); return }
+      if (res.status === 401) { logout(); return }
+      if (!res.ok) { notify('error', 'Failed to load events'); return }
       const data = await res.json()
       setEvents(data.events || [])
       setMetrics(data.metrics || null)
-    } catch { setAuthError('Failed to connect to server') }
+    } catch { notify('error', 'Failed to connect to server') }
     finally { setLoading(false) }
-  }, [authHeaders])
+  }, [authHeaders, logout, token])
 
   useEffect(() => { if (token) fetchEvents() }, [token, fetchEvents])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowForm(false)
+        setPaymentConfigTarget(null)
+        setAdminTarget(null)
+        setConfirmRegen(null)
+        setConfirmDelete(null)
+        setShowBackfillConfirm(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const handleCreate = () => {
     setEditingId(null)
@@ -338,22 +352,6 @@ export default function AdminEventsPage() {
     }))
   }
 
-  if (!token) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', padding: 24 }}>
-        <form onSubmit={(e) => { e.preventDefault(); setAuthError(''); setToken(password) }} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <Users size={40} style={{ color: '#e5e5e5', margin: '0 auto 12px' }} />
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Events Admin</h1>
-          </div>
-          <input type="password" placeholder="Enter admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={s.input} autoFocus />
-          {authError && <p style={{ color: '#ff4444', fontSize: 13 }}>{authError}</p>}
-          <button type="submit" style={password ? s.btn : { ...s.btn, opacity: 0.6, cursor: 'not-allowed' }} disabled={!password}>Sign In</button>
-        </form>
-      </div>
-    )
-  }
-
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
       <div style={{ maxWidth: 1400, margin: '0 auto' }}>
@@ -362,15 +360,12 @@ export default function AdminEventsPage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
           <div>
             <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Events</h1>
-            <a href="/admin" style={{ color: '#888', fontSize: 12, textDecoration: 'none' }}>&larr; Back to Registrations</a>
+            <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Create and manage event campaigns</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <a href="/admin" style={{ ...s.btnSm, background: '#88888820', color: '#ccc', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>Dashboard</a>
-            <a href="/admin/registrations" style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>Registrations</a>
             <button onClick={fetchEvents} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh">
               <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             </button>
-            <button onClick={() => { setToken(''); setEvents([]); setMetrics(null); setNotification(null); setAuthError('') }} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
           </div>
         </div>
 
@@ -780,3 +775,4 @@ export default function AdminEventsPage() {
     </div>
   )
 }
+

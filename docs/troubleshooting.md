@@ -37,3 +37,12 @@ This guide details diagnostics procedures and resolutions for common issues enco
 - **Resolution**:
   - Sign out of the control panel, clear browser cookies/localStorage, and log in again with the correct credentials.
   - For sub-admins, verify that the founder has not regenerated their access token (which invalidates the old token).
+
+### 5. Next.js Routing Dynamic Segment Conflicts
+- **Symptom**: Next.js compiler/dev server crashes during startup or build with `Error: You cannot use different slug names for the same dynamic path ('templateId' !== 'eventId')`.
+- **Diagnostics**:
+  - Next.js App Router requires that all dynamic route parameters defined at the same directory depth within a routing subtree share the exact same parameter folder name (e.g. `[eventId]`). Having sibling folders like `[eventId]` and `[templateId]` at the same level will break the routing compilation.
+- **Resolution**:
+  - Consolidate the dynamic folders by renaming them to the same parameter name (e.g., `[eventId]`).
+  - Nest subfolder endpoints (like `duplicate` and `preview`) directly inside this unified directory.
+  - Inside the route handlers, extract `eventId` from parameters and internally bind it to the template ID logic (e.g. `const { eventId: templateId } = await params`). This maintains the frontend API contract without changing frontend fetch paths.

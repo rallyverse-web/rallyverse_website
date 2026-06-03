@@ -49,3 +49,20 @@ const batchSize = options?.batchSize ?? 5
 const batchDelay = options?.batchDelay ?? 1000
 ```
 This matches Resend's free-tier rate limits and safeguards against transaction failures.
+
+---
+
+## 🔌 API Endpoints
+The communication system leverages serverless endpoints under a unified dynamic parameter structure (`[eventId]`) to prevent slug conflicts at the same route depth:
+
+- **Template Duplication**:
+  - **Founder endpoint**: `/api/admin/email-templates/[eventId]/duplicate`
+  - **Partner endpoint**: `/api/event-admin/email-templates/[eventId]/duplicate`
+  - **Method**: `POST`
+  - **Behavior**: Duplicates the template matching the ID passed as `[eventId]`.
+- **Template Live Preview**:
+  - **Founder endpoint**: `/api/admin/email-templates/[eventId]/preview`
+  - **Partner endpoint**: `/api/event-admin/email-templates/[eventId]/preview`
+  - **Method**: `POST`
+  - **Body**: `{ variables: Record<string, string> }`
+  - **Behavior**: Compiles the template matching the ID passed as `[eventId]` using the variable mappings provided.

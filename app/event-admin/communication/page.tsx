@@ -94,6 +94,18 @@ export default function EventAdminCommunicationPage() {
 
   useEffect(() => { if (authorized && eventId) { fetchTemplates(); fetchSettings() } }, [authorized, eventId, fetchTemplates, fetchSettings])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowTemplateForm(false)
+        setPreviewResult(null)
+        setShowSendConfirm(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   const handleSignOut = async () => {
     await fetch('/api/event-admin/logout', { method: 'POST' })
     router.push('/event-admin')
@@ -281,7 +293,7 @@ export default function EventAdminCommunicationPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
         <Loader2 size={24} className="animate-spin" style={{ color: '#888' }} />
       </div>
     )
@@ -296,30 +308,23 @@ export default function EventAdminCommunicationPage() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <a href="/event-admin/dashboard" style={{ color: '#888', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, textDecoration: 'none' }}>
-                <ArrowLeft size={14} /> Dashboard
-              </a>
-            </div>
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase', marginTop: 8 }}>Communication</h1>
-            {adminName && <p style={{ color: '#4ade80', fontSize: 13, margin: '4px 0 0' }}>{adminName}</p>}
-          </div>
-          <button onClick={handleSignOut} style={{ ...s.btn, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>Sign Out</button>
+    <div>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Communication</h1>
+          <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Manage email templates, send broadcasts and check log history</p>
         </div>
+      </div>
 
-        {notification && (
-          <div style={{ padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16, background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)', border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`, color: notification.type === 'success' ? '#4ade80' : '#ff4444' }}>
-            {notification.message}
-          </div>
-        )}
+      {notification && (
+        <div style={{ padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16, background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)', border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`, color: notification.type === 'success' ? '#4ade80' : '#ff4444' }}>
+          {notification.message}
+        </div>
+      )}
 
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #222' }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #222' }}>
           {tabs.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
               display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 16px', fontSize: 13, fontWeight: 600,
@@ -681,6 +686,5 @@ export default function EventAdminCommunicationPage() {
           </div>
         )}
       </div>
-    </div>
   )
 }

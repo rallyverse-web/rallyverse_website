@@ -14,15 +14,20 @@ rally-verse-landing-page/
 │   │   ├── communication/        # Email Broadcast Control Panel
 │   │   ├── events/               # Event CRUD Control Panel
 │   │   ├── registrations/        # Global Submissions Accordion
+│   │   ├── AdminAuthContext.tsx  # Shared Authentication State Provider
+│   │   ├── layout.tsx            # Sticky Header Navigation Layout Wrapper
 │   │   └── page.tsx              # Founder Dashboard Homepage (Overview)
 │   ├── api/                      # Next.js Serverless API Endpoints
 │   │   ├── admin/                # Founder APIs (events, all-registrations, etc.)
+│   │   │   └── email-templates/  # Email templates ([eventId], [eventId]/[templateId], [eventId]/duplicate, [eventId]/preview)
 │   │   ├── event-admin/          # Sub-admin APIs (approve, registrations, export)
+│   │   │   └── email-templates/  # Scoped email templates ([eventId], [eventId]/[templateId], [eventId]/duplicate, [eventId]/preview)
 │   │   └── track/                # Server-side Analytics APIs (views, clicks)
 │   ├── event-admin/              # Sub-Admin Dashboard Views
 │   │   ├── analytics/            # Event-specific analytics
 │   │   ├── communication/        # Event-specific comms broadcasts
 │   │   ├── dashboard/            # Event-specific registration management
+│   │   ├── layout.tsx            # Session Check & Navigation Header Layout Wrapper
 │   │   └── page.tsx              # Sub-admin authentication gate
 │   ├── events/                   # Public Tournament Details Pages
 │   │   ├── [slug]/               # Dynamic Event Information

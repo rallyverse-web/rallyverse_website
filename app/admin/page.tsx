@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAdminAuth } from './AdminAuthContext'
 import {
   BarChart3,
   Calendar,
@@ -120,9 +121,7 @@ const s = {
 }
 
 export default function AdminPage() {
-  const [password, setPassword] = useState('')
-  const [token, setToken] = useState('')
-  const [authError, setAuthError] = useState('')
+  const { token, logout } = useAdminAuth()
   const [eventsData, setEventsData] = useState<EventSummary[]>([])
   const [loading, setLoading] = useState(false)
   const [lastSync, setLastSync] = useState('')
@@ -130,35 +129,33 @@ export default function AdminPage() {
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
-    if (type === 'success') setAuthError('')
     setTimeout(() => setNotification(null), 5000)
   }
 
   const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
 
   const fetchData = useCallback(async () => {
+    if (!token) return
     setLoading(true)
-    setAuthError('')
     try {
       const res = await fetch('/api/admin/all-registrations', { headers: authHeaders() })
       if (res.status === 401) {
-        setToken('')
-        setAuthError('Invalid password')
+        logout()
         return
       }
       if (!res.ok) {
-        setAuthError('Failed to load portal data')
+        notify('error', 'Failed to load portal data')
         return
       }
       const data = await res.json()
       setEventsData(data.events || [])
       setLastSync(new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }))
     } catch {
-      setAuthError('Failed to connect to backend server')
+      notify('error', 'Failed to connect to backend server')
     } finally {
       setLoading(false)
     }
-  }, [authHeaders])
+  }, [authHeaders, logout, token])
 
   useEffect(() => {
     if (token) fetchData()
@@ -186,78 +183,31 @@ export default function AdminPage() {
     }
   }, [eventsData])
 
-  if (!token) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050505', padding: 24 }}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            setAuthError('')
-            setToken(password)
-          }}
-          style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 20 }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <ShieldAlert size={48} style={{ color: 'var(--accent-primary)', margin: '0 auto 16px' }} />
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Founder Control Panel
-            </h1>
-            <p style={{ color: '#666', fontSize: 13, marginTop: 6 }}>Authenticate using the system admin password</p>
-          </div>
-          <input
-            type="password"
-            placeholder="Enter admin password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={s.input}
-            autoFocus
-          />
-          {authError && <p style={{ color: '#ff4444', fontSize: 13, margin: 0 }}>{authError}</p>}
-          <button type="submit" style={password ? s.btn : s.btnDisabled(s.btn)} disabled={!password}>
-            Sign In
-          </button>
-        </form>
-      </div>
-    )
-  }
-
   return (
-    <div style={{ minHeight: '100vh', background: '#050505', color: '#fff', padding: '40px 24px' }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 40, flexWrap: 'wrap', gap: 16 }}>
-          <div>
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 32, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
-              Founder Dashboard
-            </h1>
-            <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Control centre for RallyVerse events, payments, and communication</p>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            {lastSync && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#444', fontSize: 12 }}>
-                <Clock size={12} /> Sync: {lastSync}
-              </span>
-            )}
-            <button
-              onClick={fetchData}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', padding: 4 }}
-              title="Sync metrics"
-            >
-              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-            </button>
-            <button
-              onClick={() => {
-                setToken('')
-                setEventsData([])
-                setAuthError('')
-              }}
-              style={{ ...s.btnSm, background: 'transparent', border: '1px solid #222', color: '#ccc' }}
-            >
-              Sign Out
-            </button>
-          </div>
+    <div>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 32, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
+            Founder Dashboard
+          </h1>
+          <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Control centre for RallyVerse events, payments, and communication</p>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          {lastSync && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#444', fontSize: 12 }}>
+              <Clock size={12} /> Sync: {lastSync}
+            </span>
+          )}
+          <button
+            onClick={fetchData}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', padding: 4 }}
+            title="Sync metrics"
+          >
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+          </button>
+        </div>
+      </div>
 
         {notification && (
           <div
@@ -468,7 +418,6 @@ export default function AdminPage() {
         )}
 
       </div>
-    </div>
   )
 }
 

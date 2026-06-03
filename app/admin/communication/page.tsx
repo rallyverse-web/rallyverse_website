@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useAdminAuth } from '../AdminAuthContext'
 import { useRouter } from 'next/navigation'
 import { Mail, Plus, Edit, Trash2, Copy, Eye, Send, Loader2, RefreshCw, FileText, History, CheckCircle, XCircle, ShieldAlert, Users } from 'lucide-react'
 import type { EmailTemplate, EmailTemplateType, EventEmailSettings, EmailLog } from '@/lib/types/supabase'
@@ -32,9 +33,7 @@ type Tab = 'templates' | 'test-email' | 'send-email' | 'logs'
 
 export default function AdminCommunicationPage() {
   const router = useRouter()
-  const [password, setPassword] = useState('')
-  const [token, setToken] = useState('')
-  const [authError, setAuthError] = useState('')
+  const { token, logout } = useAdminAuth()
   const [activeTab, setActiveTab] = useState<Tab>('templates')
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [events, setEvents] = useState<Array<{ id: string; name: string }>>([])
@@ -48,12 +47,13 @@ export default function AdminCommunicationPage() {
 
   // ─── Events ───
   const fetchEvents = useCallback(async () => {
+    if (!token) return
     try {
       const res = await fetch('/api/admin/events', { headers: authHeaders() })
-      if (res.status === 401) { setToken(''); setAuthError('Invalid password'); return }
+      if (res.status === 401) { logout(); return }
       if (res.ok) { const d = await res.json(); setEvents(d.events || []) }
     } catch {}
-  }, [authHeaders])
+  }, [authHeaders, logout, token])
 
   useEffect(() => { if (token) fetchEvents() }, [token, fetchEvents])
 
@@ -85,6 +85,18 @@ export default function AdminCommunicationPage() {
   }, [selectedEventId, authHeaders])
 
   useEffect(() => { fetchTemplates(); fetchSettings() }, [fetchTemplates, fetchSettings])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowTemplateForm(false)
+        setPreviewResult(null)
+        setShowSendConfirm(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const handleCreateTemplate = async () => {
     if (!selectedEventId) return
@@ -281,22 +293,6 @@ export default function AdminCommunicationPage() {
     URL.revokeObjectURL(url)
   }
 
-  if (!token) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', padding: 24 }}>
-        <form onSubmit={(e) => { e.preventDefault(); setAuthError(''); setToken(password) }} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <ShieldAlert size={40} style={{ color: '#e5e5e5', margin: '0 auto 12px' }} />
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Communication</h1>
-          </div>
-          <input type="password" placeholder="Enter admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={s.input} autoFocus />
-          {authError && <p style={{ color: '#ff4444', fontSize: 13 }}>{authError}</p>}
-          <button type="submit" style={password ? s.btn : { ...s.btn, opacity: 0.6, cursor: 'not-allowed' }} disabled={!password}>Sign In</button>
-        </form>
-      </div>
-    )
-  }
-
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: 'templates', label: 'Templates', icon: <FileText size={14} /> },
     { key: 'test-email', label: 'Test Emails', icon: <Send size={14} /> },
@@ -305,28 +301,23 @@ export default function AdminCommunicationPage() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Communication</h1>
-            <a href="/admin" style={{ color: '#888', fontSize: 12, textDecoration: 'none' }}>&larr; Back to Dashboard</a>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <a href="/admin" style={{ ...s.btnSm, background: '#88888820', color: '#ccc', textDecoration: 'none' }}>Dashboard</a>
-            <button onClick={() => { setToken(''); setAuthError('') }} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Sign Out</button>
-          </div>
+    <div>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase', margin: 0 }}>Communication</h1>
+          <p style={{ color: '#666', fontSize: 13, marginTop: 4 }}>Manage email templates, send notifications and check log files</p>
         </div>
+      </div>
 
-        {notification && (
-          <div style={{ padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16, background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)', border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`, color: notification.type === 'success' ? '#4ade80' : '#ff4444' }}>
-            {notification.message}
-          </div>
-        )}
+      {notification && (
+        <div style={{ padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16, background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)', border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`, color: notification.type === 'success' ? '#4ade80' : '#ff4444' }}>
+          {notification.message}
+        </div>
+      )}
 
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #222' }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #222' }}>
           {tabs.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
               display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 16px', fontSize: 13, fontWeight: 600,
@@ -677,6 +668,5 @@ export default function AdminCommunicationPage() {
           </div>
         )}
       </div>
-    </div>
   )
 }
