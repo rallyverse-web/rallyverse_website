@@ -118,11 +118,14 @@ export const SOCIAL_LINKS = [
 
 // ─── Quick Links ─────────────────────────────────────────────────
 export const QUICK_LINKS = [
+  { label: 'About', href: '/about' },
   { label: 'Services', href: '/services' },
   { label: 'Partners', href: '/partners' },
-  { label: 'Community', href: '/#community' },
+  { label: 'Community', href: '/community' },
+  { label: 'Case Studies', href: '/case-studies' },
+  { label: 'Insights', href: '/insights' },
+  { label: 'Believers', href: '/believers' },
   { label: 'Events', href: '/events' },
-  { label: 'Contact', href: '/contact' },
 ]
 
 // ─── Legal ────────────────────────────────────────────────────────

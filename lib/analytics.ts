@@ -20,6 +20,10 @@ const PAGE_VIEW_MAP: Record<string, string> = {
   services: 'services_page_view',
   partners: 'partners_page_view',
   partner_enquiry_success: 'partner_enquiry_success_view',
+  community: 'community_page_view',
+  case_studies: 'case_studies_page_view',
+  insights: 'insights_page_view',
+  believers: 'believers_page_view',
 }
 
 export function trackPageView(pageType: string, eventId?: string, slug?: string) {

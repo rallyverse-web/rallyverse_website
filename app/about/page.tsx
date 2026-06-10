@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import { Swords, Timer, Bike, Target, Heart, Globe } from 'lucide-react'
+import { Swords, Timer, Bike, Target, Heart, Globe, Shield, Activity, Users, Cpu, Briefcase } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
+import Flywheel from '@/components/Flywheel'
 
 export const metadata: Metadata = {
   title: 'About — RallyVerse | Sports Growth Partner',
@@ -32,21 +33,26 @@ export const metadata: Metadata = {
   },
 }
 
-const values = [
+const differentiators = [
   {
-    icon: Heart,
-    title: 'Community First',
-    desc: 'Everything we build starts with people. The Verse thrives when every player, partner, and volunteer feels they belong to something bigger than themselves.',
+    icon: Users,
+    title: 'Active Community',
+    desc: "We own and operate our active sports community rather than simply advising on one.",
   },
   {
-    icon: Target,
-    title: 'Inclusive Competition',
-    desc: 'From beginners to advanced athletes, there is a place for every skill level. We believe the best rivalries and friendships are formed when everyone shows up.',
+    icon: Cpu,
+    title: 'Event Infrastructure',
+    desc: 'Proprietary check-in tools, registration databases, templates, and analytics pipelines.',
   },
   {
-    icon: Globe,
-    title: 'Beyond the Scoreboard',
-    desc: 'A tournament is just the beginning. We are building sports experiences that connect communities, brands, academies, and players for long-term growth.',
+    icon: Activity,
+    title: 'Sports Expertise',
+    desc: 'Deep operational insight running everything from regional badminton brackets to league series.',
+  },
+  {
+    icon: Briefcase,
+    title: 'Partnership Network',
+    desc: 'Direct channels connecting corporate sports programs, brands, players, and venue owners.',
   },
 ]
 
@@ -71,107 +77,98 @@ export default function AboutPage() {
           </p>
         </AnimatedSection>
 
-        {/* ── What is RallyVerse ─────────────────────────────── */}
+        {/* ── Our Story ────────────────────────────────────── */}
         <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-2 md:items-start">
           <AnimatedSection>
             <h2 className="font-display text-[24px] uppercase sm:text-[32px]" style={{ color: 'var(--text-primary)' }}>
-              What is RallyVerse?
+              Our Story
             </h2>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <div className="space-y-5 font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               <p>
-                RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow. We don&apos;t just consult on community — we own and operate one.
+                RallyVerse began with a simple observation: running sports events is hard, and building active, recurring sports communities is even harder. What started as organizing local badminton tournaments in Bengaluru quickly evolved. We realized that organizers, academies, and brands did not just need generic marketing; they needed a partner that understood operational logistics and community dynamics.
               </p>
               <p>
-                We provide the technology, operations, outreach, and marketing support to scale sports events, build active member bases, and connect sports entities with the right audience.
-              </p>
-              <p>
-                Event technology, community operations, and outreach. One Partner.
+                Today, RallyVerse has grown from a single event management service into a comprehensive Sports Growth Partner. We have developed custom event registration software, built a vibrant player network, and connected brands with active communities to scale sports participation.
               </p>
             </div>
           </AnimatedSection>
         </div>
 
-        {/* ── Mission ──────────────────────────────────────── */}
-        <div className="mt-20 py-14 px-8 rounded-xl" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-start">
-            <AnimatedSection>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
-                <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                  MISSION
-                </span>
-              </div>
-              <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
-                Why We Exist
-              </h2>
-            </AnimatedSection>
-            <AnimatedSection delay={0.1}>
-              <p className="font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                RallyVerse was created to help the sports ecosystem scale and thrive. Our mission is to enable sports organizers, academies, and brands to grow their impact through powerful community building, custom event technology, and outreach.
-              </p>
-            </AnimatedSection>
-          </div>
-        </div>
-
-        {/* ── Vision ────────────────────────────────────────── */}
-        <div className="mt-14">
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-start">
-            <AnimatedSection>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
-                <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                  VISION
-                </span>
-              </div>
-              <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
-                Where We Are Headed
-              </h2>
-            </AnimatedSection>
-            <AnimatedSection delay={0.1}>
-              <p className="font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                We envision a connected sports ecosystem in every city. Starting with Bengaluru, we are building a blueprint for how sports communities, brands, and academies grow together, creating a sustainable environment for athletic participation and community building.
-              </p>
-            </AnimatedSection>
-          </div>
-        </div>
-
-        {/* ── Community-First ───────────────────────────────── */}
-        <div className="mt-20">
+        {/* ── Mission & Vision ──────────────────────────────── */}
+        <div className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-2">
           <AnimatedSection>
-            <div className="text-center mb-14">
+            <div className="py-10 px-8 rounded-xl h-full flex flex-col justify-between" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
+                  <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                    MISSION
+                  </span>
+                </div>
+                <h3 className="font-display text-[28px] uppercase sm:text-[36px]" style={{ color: 'var(--text-primary)' }}>
+                  Our Mission
+                </h3>
+                <p className="mt-4 font-body text-[15px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                  To grow India&apos;s sports ecosystem by building communities, amplifying sports brands, and making great sports events happen. We empower organizers with technology and support.
+                </p>
+              </div>
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.1}>
+            <div className="py-10 px-8 rounded-xl h-full flex flex-col justify-between" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
+                  <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                    VISION
+                  </span>
+                </div>
+                <h3 className="font-display text-[28px] uppercase sm:text-[36px]" style={{ color: 'var(--text-primary)' }}>
+                  Our Vision
+                </h3>
+                <p className="mt-4 font-body text-[15px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                  To become India&apos;s most trusted community-driven sports growth platform, uniting venue owners, brands, clubs, and players in a cohesive, sustainable sports network.
+                </p>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+
+        {/* ── What Makes Us Different ─────────────────────────── */}
+        <div className="mt-24">
+          <AnimatedSection>
+            <div className="text-center mb-16">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
                 <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                  COMMUNITY-FIRST PHILOSOPHY
+                  OUR EDGE
                 </span>
                 <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
               </div>
-              <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
-                Built by the Community,
-                <br />
-                for the Community
+              <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
+                What Makes Us Different
               </h2>
-              <p className="mt-6 max-w-2xl mx-auto font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                Every decision we make starts with the people who participate and run events. RallyVerse is shaped by players, coaches, organizers, and brands who believe that sports communities are built on trust and shared execution.
-              </p>
             </div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {values.map((val, i) => {
-              const Icon = val.icon
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {differentiators.map((diff, i) => {
+              const Icon = diff.icon
               return (
-                <AnimatedSection key={val.title} delay={i * 0.1}>
-                  <div className="rounded-xl p-8 h-full" style={{ backgroundColor: 'var(--card-bg)', borderLeft: '3px solid var(--accent-primary)' }}>
-                    <Icon size={28} className="mb-4" style={{ color: 'var(--accent-primary)' }} />
-                    <h3 className="font-display text-[22px] uppercase mb-3" style={{ color: 'var(--text-primary)' }}>
-                      {val.title}
-                    </h3>
-                    <p className="font-body text-[15px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                      {val.desc}
-                    </p>
+                <AnimatedSection key={diff.title} delay={i * 0.1}>
+                  <div className="rounded-xl p-8 h-full flex flex-col justify-between transition-all duration-300" style={{ backgroundColor: 'var(--card-bg)', borderLeft: '3px solid var(--accent-primary)' }}>
+                    <div>
+                      <Icon size={28} className="mb-4" style={{ color: 'var(--accent-primary)' }} />
+                      <h3 className="font-display text-[22px] uppercase mb-3 font-semibold" style={{ color: 'var(--text-primary)' }}>
+                        {diff.title}
+                      </h3>
+                      <p className="font-body text-[13px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                        {diff.desc}
+                      </p>
+                    </div>
                   </div>
                 </AnimatedSection>
               )
@@ -179,10 +176,10 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* ── Categories ────────────────────────────────────── */}
-        <div className="mt-20">
+        {/* ── Sports Core ────────────────────────────────────── */}
+        <div className="mt-28">
           <AnimatedSection>
-            <div className="text-center mb-12">
+            <div className="text-center mb-16">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
                 <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
@@ -219,6 +216,11 @@ export default function AboutPage() {
             })}
           </div>
         </div>
+      </div>
+
+      {/* Flywheel section */}
+      <div className="mt-28">
+        <Flywheel />
       </div>
     </div>
   )

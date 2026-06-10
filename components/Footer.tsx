@@ -107,7 +107,7 @@ export default function Footer() {
               <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'var(--text-faint)' }}>
                 Quick Links
               </h3>
-              <ul className="flex flex-col gap-3">
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-3">
                 {QUICK_LINKS.map((link) => (
                   <li key={link.label}>
                     <Link

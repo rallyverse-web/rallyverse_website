@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
-import { ExternalLink } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import { believers } from '@/data/believers'
+import BelieversTabs from '@/components/BelieversTabs'
 
 export const metadata: Metadata = {
   title: 'Believers — RallyVerse | Early Supporters & Community Builders',
@@ -89,97 +88,9 @@ export default function BelieversPage() {
           </div>
         </AnimatedSection>
 
-        <div className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {believers.map((person, i) => (
-            <AnimatedSection key={person.name} delay={i * 0.1}>
-              <div
-                className="flex flex-col items-center text-center rounded-xl p-8 transition-all duration-200 h-full"
-                style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
-              >
-                <div className="mb-3">
-                  <div
-                    className="relative mx-auto h-32 w-32 overflow-hidden rounded-full"
-                    style={{ border: '2px solid var(--border-subtle)' }}
-                  >
-                    <Image
-                      src={person.image}
-                      alt={person.name}
-                      fill
-                      className="object-cover"
-                      sizes="128px"
-                    />
-                  </div>
-                </div>
-
-                <div
-                  className="mx-auto mb-4 inline-flex items-center justify-center rounded-xl px-6 py-1.5"
-                  style={{
-                    backgroundColor: 'color-mix(in srgb, var(--accent-primary) 6%, transparent)',
-                    border: '1px solid color-mix(in srgb, var(--accent-primary) 40%, transparent)',
-                    boxShadow: '0 0 14px color-mix(in srgb, var(--accent-primary) 10%, transparent)',
-                  }}
-                >
-                  <span className="font-body text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'var(--accent-primary)' }}>
-                    Early Supporter
-                  </span>
-                </div>
-
-                <h2 className="font-display text-[20px] uppercase leading-tight mb-1" style={{ color: 'var(--text-primary)' }}>
-                  {person.name}
-                </h2>
-                <p className="font-body text-[13px] font-medium tracking-wide mb-1" style={{ color: 'var(--accent-primary)' }}>
-                  {person.headline}
-                </p>
-                <p className="font-body text-[11px] leading-relaxed mb-5" style={{ color: 'var(--text-faint)' }}>
-                  {person.context}
-                </p>
-
-                <div
-                  className="w-full rounded-lg px-5 py-4 mb-5"
-                  style={{
-                    backgroundColor: 'color-mix(in srgb, var(--accent-primary) 8%, transparent)',
-                    borderLeft: '3px solid var(--accent-primary)',
-                  }}
-                >
-                  <p
-                    className="font-body text-sm leading-relaxed italic"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {person.quote}
-                  </p>
-                </div>
-
-                <p className="font-body text-sm leading-relaxed mb-6" style={{ color: 'var(--text-muted)' }}>
-                  {person.description}
-                </p>
-
-                <a
-                  href={person.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto inline-flex items-center gap-2 rounded-md px-5 py-3 font-body text-sm font-semibold transition-all duration-200"
-                  style={{
-                    background: 'var(--rallyverse-gradient)',
-                    color: 'var(--btn-primary-text)',
-                  }}
-                >
-                  View LinkedIn
-                  <ExternalLink size={14} />
-                </a>
-              </div>
-            </AnimatedSection>
-          ))}
+        <div className="mt-10">
+          <BelieversTabs initialBelievers={believers} />
         </div>
-
-        {believers.length === 0 && (
-          <AnimatedSection delay={0.2}>
-            <div className="mt-20 text-center py-20 rounded-xl" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
-              <p className="font-body text-base" style={{ color: 'var(--text-faint)' }}>
-                More profiles coming soon.
-              </p>
-            </div>
-          </AnimatedSection>
-        )}
 
       </div>
     </div>
