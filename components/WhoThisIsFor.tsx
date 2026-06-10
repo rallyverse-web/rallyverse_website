@@ -104,7 +104,7 @@ export default function WhoThisIsFor() {
         >
           <button
             type="button"
-            onClick={() => router.push('/contact')}
+            onClick={() => router.push('/partners')}
             className="font-body text-base font-semibold transition-all duration-200 hover:underline"
             style={{ color: 'var(--link-color)' }}
             onMouseEnter={(e) => e.currentTarget.style.color = 'var(--link-hover)'}

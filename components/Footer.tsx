@@ -60,7 +60,7 @@ export default function Footer() {
             RallyVerse is a sports growth partner helping communities, organizers, academies, and brands grow through sports.
           </motion.p>
           <Link
-            href="/contact"
+            href="/partners"
             className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
             style={{
               background: 'var(--rallyverse-gradient)',
@@ -98,10 +98,7 @@ export default function Footer() {
                 <ThemedLogo context="footer" />
               </Link>
               <p className="mb-3 max-w-[260px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                {SITE.description}
-              </p>
-              <p className="max-w-[260px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                {COMPANY.shortDescription}
+                RallyVerse is a sports growth partner helping communities, organizers, academies, and brands grow through community, events, technology, and marketing.
               </p>
             </div>
 

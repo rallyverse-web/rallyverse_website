@@ -21,7 +21,7 @@ export default function ManifestoStrip() {
 
           <button
             type="button"
-            onClick={() => router.push('/contact')}
+            onClick={() => router.push('/partners')}
             className="mt-8 inline-block rounded-md border-2 px-10 py-4 font-display text-xl tracking-wider transition-all duration-200"
             style={{
               borderColor: 'var(--manifesto-btn-border)',

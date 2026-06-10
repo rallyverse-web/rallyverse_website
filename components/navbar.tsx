@@ -12,15 +12,15 @@ type NavLink = { label: string; href: string; isRoute?: boolean }
 
 const navLinks: NavLink[] = [
   { label: 'Home', href: '#hero' },
-  { label: 'Services', href: '#services' },
+  { label: 'Services', href: '/services', isRoute: true },
   { label: 'Community', href: '#community' },
   { label: 'Events', href: '/events', isRoute: true },
-  { label: 'Partners', href: '#partner-with-us' },
+  { label: 'Partners', href: '/partners', isRoute: true },
   { label: 'About', href: '/about', isRoute: true },
   { label: 'Contact', href: '/contact', isRoute: true },
 ]
 
-const sectionIds = ['hero', 'services', 'community', 'partner-with-us']
+const sectionIds = ['hero', 'community']
 
 export default function Navbar() {
   const router = useRouter()
@@ -169,7 +169,7 @@ export default function Navbar() {
             <ThemeToggle />
             <button
               type="button"
-              onClick={() => router.push('/contact')}
+              onClick={() => router.push('/partners')}
               className="whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95"
               style={{
                 background: 'var(--rallyverse-gradient)',
@@ -295,7 +295,7 @@ export default function Navbar() {
                   type="button"
                   onClick={() => {
                     setMenuOpen(false)
-                    router.push('/contact')
+                    router.push('/partners')
                   }}
                   className="w-full rounded-md py-4 text-base font-semibold transition-all duration-200 active:scale-95"
                   style={{

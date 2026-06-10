@@ -129,7 +129,7 @@ export default function HeroIntro() {
         >
           <button
             type="button"
-            onClick={() => router.push('/contact')}
+            onClick={() => router.push('/partners')}
             className="group relative overflow-hidden rounded-md px-10 py-4 font-body text-base font-semibold transition-all duration-200 active:scale-95"
             style={{
               backgroundColor: 'var(--btn-primary-bg)',

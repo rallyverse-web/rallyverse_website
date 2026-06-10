@@ -118,12 +118,10 @@ export const SOCIAL_LINKS = [
 
 // ─── Quick Links ─────────────────────────────────────────────────
 export const QUICK_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'Services', href: '/#services' },
+  { label: 'Services', href: '/services' },
+  { label: 'Partners', href: '/partners' },
   { label: 'Community', href: '/#community' },
   { label: 'Events', href: '/events' },
-  { label: 'Partners', href: '/#partner-with-us' },
-  { label: 'About Us', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ]
 
