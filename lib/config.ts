@@ -1,16 +1,16 @@
 // ─── Site ─────────────────────────────────────────────────────────
 export const SITE = {
   name: 'RallyVerse',
-  tagline: 'Rally Beyond Routine',
+  tagline: 'Rallying Communities Through Sports',
   domain: 'https://rallyverse.social',
   description:
-    'RallyVerse is a community built around badminton, movement, competition, and meaningful experiences.',
+    'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
 }
 
 // ─── Company Bio (E-E-A-T signals for footer / trust) ───────────
 export const COMPANY = {
   shortDescription:
-    'A Bengaluru-based sports community organizing badminton tournaments, events, and social experiences — Rally Beyond Routine.',
+    'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow.',
 }
 
 // ─── Email ────────────────────────────────────────────────────────
@@ -119,9 +119,11 @@ export const SOCIAL_LINKS = [
 // ─── Quick Links ─────────────────────────────────────────────────
 export const QUICK_LINKS = [
   { label: 'Home', href: '/' },
-  { label: 'About Us', href: '/about' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Community', href: '/#community' },
   { label: 'Events', href: '/events' },
-  { label: 'Believers', href: '/believers' },
+  { label: 'Partners', href: '/#partner-with-us' },
+  { label: 'About Us', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ]
 

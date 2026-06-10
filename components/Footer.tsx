@@ -47,20 +47,20 @@ export default function Footer() {
             className="mb-4 text-3xl font-bold tracking-tight md:text-4xl"
             style={{ color: 'var(--text-primary)' }}
           >
-            Ready to Rally Beyond Routine?
+            Rallying Communities Through Sports
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="mx-auto mb-8 max-w-md text-base leading-relaxed"
+            className="mx-auto mb-8 max-w-xl text-base leading-relaxed"
             style={{ color: 'var(--text-muted)' }}
           >
-            Join a community built around movement, adventure, and meaningful experiences.
+            RallyVerse is a sports growth partner helping communities, organizers, academies, and brands grow through sports.
           </motion.p>
           <Link
-            href="/events"
+            href="/contact"
             className="inline-flex items-center gap-2 rounded-lg px-8 py-4 text-base font-semibold transition-all duration-200 active:scale-95"
             style={{
               background: 'var(--rallyverse-gradient)',
@@ -68,7 +68,7 @@ export default function Footer() {
             }}
           >
             <ShinyText
-              text="Secure Your Spot"
+              text="Partner With Us"
               disabled={false}
               speed={3}
               className="text-base font-semibold"

@@ -24,16 +24,16 @@ export default function CommunityProof() {
 
         <AnimatedSection>
           <h2 className="text-center font-display text-[32px] leading-none uppercase sm:text-[44px] md:text-[64px]" style={{ color: 'var(--text-primary)' }}>
-            Join the RallyVerse
+            More Than Events.
             <br />
-            Community
+            A Sports Community.
           </h2>
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
           <p className="mx-auto mt-6 max-w-xl text-center font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
             {isCommunity
-              ? 'Meet players, adventurers, and explorers before the next event.'
+              ? 'Our WhatsApp community connects active participants, local organizers, and sports enthusiasts.'
               : 'Connect with us directly and be part of the RallyVerse journey from day one.'}
           </p>
         </AnimatedSection>
@@ -41,8 +41,8 @@ export default function CommunityProof() {
         <AnimatedSection delay={0.15}>
           <p className="mx-auto mt-4 max-w-2xl text-center font-body text-[15px] leading-relaxed" style={{ color: 'var(--text-faint)' }}>
             {isCommunity
-              ? 'The best experiences begin before game day. Join the community to discover upcoming events, connect with people, and stay part of the journey.'
-              : 'The community is coming soon. Until then, reach out to us on WhatsApp for event updates, questions, or just to say hello.'}
+              ? 'Discover upcoming recurring events, find game partners, and stay active in a community designed for people who show up and play hard.'
+              : 'The community chat is launching soon. Until then, message us on WhatsApp for event details, partnerships, or recurring matches.'}
           </p>
         </AnimatedSection>
 
@@ -61,7 +61,7 @@ export default function CommunityProof() {
               whileTap={{ scale: 0.96 }}
             >
               <WhatsAppIcon size={20} />
-              {isCommunity ? 'Join WhatsApp Community' : 'Message on WhatsApp'}
+              {isCommunity ? 'Join the RallyVerse Community' : 'Message on WhatsApp'}
               <ArrowRight size={16} />
             </motion.a>
             <p className="mt-4 font-body text-xs" style={{ color: 'var(--text-faint)' }}>

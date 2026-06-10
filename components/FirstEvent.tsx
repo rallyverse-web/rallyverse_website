@@ -17,21 +17,21 @@ export default function FirstEvent({ event }: { event: EventWithFormats | null }
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-10 px-6 md:grid-cols-2 md:gap-16 md:items-start">
         <AnimatedSection>
           <p className="mb-5 font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-            UPCOMING EVENTS · {event.venue?.split(',').pop()?.trim() || 'BENGALURU'}
+            EVENTS POWERED BY RALLYVERSE · {event.venue?.split(',').pop()?.trim() || 'BENGALURU'}
           </p>
 
           <div className="font-display text-[36px] leading-none uppercase sm:text-[48px] md:text-[88px]" style={{ color: 'var(--text-primary)' }}>
-            EXPERIENCES
+            EVENTS
             <br />
-            THAT MOVE YOU.
+            WE POWER.
           </div>
           <div className="mt-2 font-display text-[18px] uppercase sm:text-[22px] md:text-[36px]" style={{ color: 'var(--accent-primary)' }}>
-            RALLYVERSE
+            CAPABILITY IN ACTION
           </div>
 
           <div className="mt-7 space-y-5 font-body text-base leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
             <p>
-              RallyVerse is a universe of experiences — from competitive badminton tournaments to community treks, marathons, and cycling events. The first chapter begins now.
+              RallyVerse is a sports growth partner. We don&apos;t just consult on community — we design, execute, and power sports events with our custom technology, operations support, and active participant network.
             </p>
             <p>
               {event.name} is currently open for registration
@@ -41,7 +41,7 @@ export default function FirstEvent({ event }: { event: EventWithFormats | null }
               {' '}Whether you are a seasoned competitor or a first-time participant, there is a place for you.
             </p>
             <p>
-              Spots are deliberately limited because every participant deserves a well-run experience.
+              Every event is powered by the RallyVerse infrastructure, ensuring a premium experience for both organizers and players.
             </p>
           </div>
 

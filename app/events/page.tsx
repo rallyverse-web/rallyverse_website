@@ -9,21 +9,21 @@ import type { EventWithFormats } from '@/lib/types/supabase'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Events — RallyVerse | Badminton, Treks & Adventures in Bengaluru',
-  description: 'Discover upcoming RallyVerse events. Badminton tournaments, treks, marathons, and cycling in Bengaluru.',
+  title: 'Events — RallyVerse | Sports Growth Partner',
+  description: 'Discover upcoming sports events powered by RallyVerse. Badminton tournaments, runs, and cycling events in Bengaluru.',
   openGraph: {
-    title: 'Events — RallyVerse | Badminton, Treks & Adventures in Bengaluru',
-    description: 'Discover upcoming RallyVerse events. Badminton tournaments, treks, marathons, and cycling in Bengaluru.',
+    title: 'Events — RallyVerse | Sports Growth Partner',
+    description: 'Discover upcoming sports events powered by RallyVerse. Badminton tournaments, runs, and cycling events in Bengaluru.',
     url: 'https://rallyverse.social/events',
     siteName: 'RallyVerse',
     locale: 'en_IN',
     type: 'website',
-    images: [{ url: '/og', width: 1200, height: 630, alt: 'RallyVerse — Rally Beyond Routine' }],
+    images: [{ url: '/og', width: 1200, height: 630, alt: 'RallyVerse — Rallying Communities Through Sports' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Events — RallyVerse | Badminton, Treks & Adventures in Bengaluru',
-    description: 'Discover upcoming RallyVerse events. Badminton tournaments, treks, marathons, and cycling in Bengaluru.',
+    title: 'Events — RallyVerse | Sports Growth Partner',
+    description: 'Discover upcoming sports events powered by RallyVerse. Badminton tournaments, runs, and cycling events in Bengaluru.',
     images: ['/og'],
   },
   alternates: { canonical: '/events' },
@@ -44,8 +44,7 @@ const categoryLabels: Record<string, string> = {
 }
 
 const futureConcepts = [
-  { icon: Swords, name: 'The Court', desc: 'Badminton — Season 01', status: 'Registrations Open', color: 'var(--pill-active-text)' as string, bg: 'var(--pill-active-bg)' as string },
-  { icon: Mountain, name: 'The Trail', desc: 'Trekking', status: 'Coming Soon', color: 'var(--pill-inactive-text)' as string, bg: 'var(--pill-inactive-bg)' as string },
+  { icon: Swords, name: 'The Court', desc: 'Badminton Leagues', status: 'Registrations Open', color: 'var(--pill-active-text)' as string, bg: 'var(--pill-active-bg)' as string },
   { icon: Timer, name: 'The Road', desc: 'Marathons & Runs', status: 'Coming Soon', color: 'var(--pill-inactive-text)' as string, bg: 'var(--pill-inactive-bg)' as string },
   { icon: Bike, name: 'The Ride', desc: 'Cycling Events', status: 'Coming Soon', color: 'var(--pill-inactive-text)' as string, bg: 'var(--pill-inactive-bg)' as string },
 ]
@@ -226,7 +225,7 @@ export default async function EventsPage() {
                 <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
               </div>
               <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
-                More Adventures Ahead
+                More Sports Concepts Ahead
               </h2>
               <p className="mt-4 max-w-lg mx-auto font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                 The Verse is just getting started. Here is what is on the horizon.
@@ -234,7 +233,7 @@ export default async function EventsPage() {
             </div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
             {futureConcepts.map((ev, i) => {
               const Icon = ev.icon
               return (

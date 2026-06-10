@@ -1,77 +1,78 @@
-import { Swords, Mountain, Timer, Bike } from 'lucide-react'
+'use client'
+
+import { CreditCard, LayoutDashboard, Users, Mail, BarChart3, ShieldCheck } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 
-const categories = [
+const infrastructureFeatures = [
   {
-    icon: Swords,
-    name: 'THE COURT',
-    desc: 'Where rivals become friends at the net. Competitive brackets, fair draws, verified venues.',
-    status: 'Season 01 · Bengaluru',
-    statusColor: 'orange',
+    icon: CreditCard,
+    name: 'Registration Management',
+    desc: 'Seamless ticketing, automated waiver collection, secure payments, and instant confirmation for participants.',
   },
   {
-    icon: Mountain,
-    name: 'THE TRAIL',
-    desc: 'Some stories are only written on the move. Karnataka\'s best trails, with your people beside you.',
-    status: 'Coming to the Verse',
-    statusColor: 'gray',
+    icon: LayoutDashboard,
+    name: 'Organizer Dashboard',
+    desc: 'Configure draws, brackets, scheduling, and match results dynamically using our bespoke tournament tool.',
   },
   {
-    icon: Timer,
-    name: 'THE ROAD',
-    desc: 'Every kilometre is a conversation with yourself. Community runs that push you further than you\'d go alone.',
-    status: 'Coming to the Verse',
-    statusColor: 'gray',
+    icon: Users,
+    name: 'Participant Management',
+    desc: 'Real-time entry lists, digital check-ins, seedings, and division groupings without spreadsheet overhead.',
   },
   {
-    icon: Bike,
-    name: 'THE RIDE',
-    desc: 'Open roads. Shared miles. Group rides and timed events across Bengaluru.',
-    status: 'Coming to the Verse',
-    statusColor: 'gray',
+    icon: Mail,
+    name: 'Email Communication',
+    desc: 'Automated custom-branded email confirmations, schedule updates, and post-event match details.',
+  },
+  {
+    icon: BarChart3,
+    name: 'Event Analytics',
+    desc: 'Track registration pacing, participant demographics, revenue metrics, and engagement trends.',
+  },
+  {
+    icon: ShieldCheck,
+    name: 'Operational Support',
+    desc: 'On-the-ground support, logistics checklists, digital scheduling tools, and operations consulting.',
   },
 ]
 
 export default function EventCategories() {
   return (
-    <section id="sports" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+    <section id="infrastructure" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
       <div className="mx-auto max-w-[1100px] px-6">
         <AnimatedSection>
-          <div className="mb-12 flex flex-col items-center gap-3">
+          <div className="mb-8 flex flex-col items-center gap-3">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
             <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-              WHAT WE CREATE
+              EVENT TECHNOLOGY
             </span>
           </div>
 
-          <div className="mb-14 text-center font-display text-[28px] leading-none uppercase sm:text-[40px] md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
-            ONE VERSE.
+          <div className="mb-16 text-center font-display text-[28px] leading-none uppercase sm:text-[40px] md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
+            We Don&apos;t Just Advise on Events.
             <br />
-            INFINITE WAYS TO RALLY.
+            We Run Them.
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 md:grid-cols-4">
-          {categories.map((cat, i) => {
-            const Icon = cat.icon
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {infrastructureFeatures.map((feat, i) => {
+            const Icon = feat.icon
             return (
-              <AnimatedSection key={cat.name} delay={i * 0.1}>
-                <div className="group flex flex-col items-center text-center">
-                  <Icon size={32} className="mb-4 transition-all duration-300 group-hover:glow-accent-filter" style={{ color: 'var(--accent-primary)' }} />
-                  <div className="font-display text-[28px] uppercase transition-colors duration-300" style={{ color: 'var(--text-primary)' }}>
-                    {cat.name}
+              <AnimatedSection key={feat.name} delay={i * 0.08}>
+                <div className="group flex flex-col items-start p-8 rounded-xl h-full transition-all duration-300"
+                  style={{
+                    backgroundColor: 'var(--card-bg)',
+                    border: '1px solid var(--border-subtle)',
+                  }}
+                >
+                  <Icon size={32} className="mb-5 transition-transform duration-300 group-hover:scale-110" style={{ color: 'var(--accent-primary)' }} />
+                  <div className="font-display text-[22px] uppercase mb-3 transition-colors duration-300" style={{ color: 'var(--text-primary)' }}>
+                    {feat.name}
                   </div>
-                  <p className="mt-2 max-w-[160px] font-body text-[13px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                    {cat.desc}
+                  <p className="font-body text-[14px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                    {feat.desc}
                   </p>
-                  <span className="mt-3 inline-block rounded-full px-3 py-1 font-body text-[11px] font-semibold uppercase tracking-wider"
-                    style={{
-                      backgroundColor: cat.statusColor === 'orange' ? 'var(--pill-active-bg)' : 'var(--pill-inactive-bg)',
-                      color: cat.statusColor === 'orange' ? 'var(--pill-active-text)' : 'var(--pill-inactive-text)',
-                    }}
-                  >
-                    {cat.status}
-                  </span>
                 </div>
               </AnimatedSection>
             )

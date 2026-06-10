@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
-import { Swords, Mountain, Timer, Bike, Target, Heart, Globe } from 'lucide-react'
+import { Swords, Timer, Bike, Target, Heart, Globe } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 
 export const metadata: Metadata = {
-  title: 'About — RallyVerse | Rally Beyond Routine — Bengaluru Sports Community',
-  description: 'RallyVerse is a community-first universe built for people who move, compete, explore, and connect. Learn about our mission, vision, and why we exist.',
+  title: 'About — RallyVerse | Sports Growth Partner',
+  description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
   openGraph: {
-    title: 'About — RallyVerse | Rally Beyond Routine — Bengaluru Sports Community',
-    description: 'RallyVerse is a community-first universe built for people who move, compete, explore, and connect. Learn about our mission, vision, and why we exist.',
+    title: 'About — RallyVerse | Sports Growth Partner',
+    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
     url: 'https://rallyverse.social/about',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -17,14 +17,14 @@ export const metadata: Metadata = {
         url: '/og',
         width: 1200,
         height: 630,
-        alt: 'RallyVerse — Rally Beyond Routine',
+        alt: 'RallyVerse — Rallying Communities Through Sports',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About — RallyVerse | Rally Beyond Routine — Bengaluru Sports Community',
-    description: 'RallyVerse is a community-first universe built for people who move, compete, explore, and connect. Learn about our mission, vision, and why we exist.',
+    title: 'About — RallyVerse | Sports Growth Partner',
+    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
     images: ['/og'],
   },
   alternates: {
@@ -36,7 +36,7 @@ const values = [
   {
     icon: Heart,
     title: 'Community First',
-    desc: 'Everything we build starts with people. The Verse thrives when every player, explorer, and volunteer feels they belong to something bigger than themselves.',
+    desc: 'Everything we build starts with people. The Verse thrives when every player, partner, and volunteer feels they belong to something bigger than themselves.',
   },
   {
     icon: Target,
@@ -46,7 +46,7 @@ const values = [
   {
     icon: Globe,
     title: 'Beyond the Scoreboard',
-    desc: 'A tournament is just the beginning. We are building experiences that carry beyond the court, trail, road, and ride — into how we live and connect every day.',
+    desc: 'A tournament is just the beginning. We are building sports experiences that connect communities, brands, academies, and players for long-term growth.',
   },
 ]
 
@@ -67,7 +67,7 @@ export default function AboutPage() {
             RALLYVERSE
           </h1>
           <p className="font-display text-[20px] uppercase sm:text-[28px] md:text-[40px] mt-1" style={{ color: 'var(--accent-primary)' }}>
-            Rally Beyond Routine
+            Rallying Communities Through Sports
           </p>
         </AnimatedSection>
 
@@ -81,13 +81,13 @@ export default function AboutPage() {
           <AnimatedSection delay={0.1}>
             <div className="space-y-5 font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               <p>
-                RallyVerse is not an event company. It is a universe built for people who still believe the best moments happen when you move, compete, and show up for each other.
+                RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow. We don&apos;t just consult on community — we own and operate one.
               </p>
               <p>
-                We are a community-driven platform that brings together badminton tournaments, treks, marathons, cycling events, and more — all under one roof. Every tournament, every trek, every ride, every race is the same thing: a reason to be fully alive.
+                We provide the technology, operations, outreach, and marketing support to scale sports events, build active member bases, and connect sports entities with the right audience.
               </p>
               <p>
-                The Court. The Trail. The Road. The Ride. One Verse.
+                Event technology, community operations, and outreach. One Partner.
               </p>
             </div>
           </AnimatedSection>
@@ -109,7 +109,7 @@ export default function AboutPage() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <p className="font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                Somewhere between the morning alarm and the weekend scroll, life started feeling smaller than it should. RallyVerse exists to reverse that. Our mission is to build a universe where movement, competition, and community converge — creating experiences that push people beyond routine and into something extraordinary.
+                RallyVerse was created to help the sports ecosystem scale and thrive. Our mission is to enable sports organizers, academies, and brands to grow their impact through powerful community building, custom event technology, and outreach.
               </p>
             </AnimatedSection>
           </div>
@@ -131,7 +131,7 @@ export default function AboutPage() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <p className="font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                We envision a world where every city has its own Verse — a connected ecosystem of sports and adventure communities. Starting with Bengaluru, we are building a blueprint for how people can rally through life together. A future where RallyVerse is synonymous with the joy of showing up, playing hard, and belonging.
+                We envision a connected sports ecosystem in every city. Starting with Bengaluru, we are building a blueprint for how sports communities, brands, and academies grow together, creating a sustainable environment for athletic participation and community building.
               </p>
             </AnimatedSection>
           </div>
@@ -154,7 +154,7 @@ export default function AboutPage() {
                 for the Community
               </h2>
               <p className="mt-6 max-w-2xl mx-auto font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                Every decision we make starts with the people who show up. RallyVerse is shaped by players, explorers, and community builders who believe that shared experiences make life richer.
+                Every decision we make starts with the people who participate and run events. RallyVerse is shaped by players, coaches, organizers, and brands who believe that sports communities are built on trust and shared execution.
               </p>
             </div>
           </AnimatedSection>
@@ -186,20 +186,19 @@ export default function AboutPage() {
               <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
                 <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                  THE FOUR PILLARS
+                  SPORTS CORE
                 </span>
                 <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
               </div>
               <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
-                One Verse. Four Ways to Rally.
+                One Verse. Multiple Ways to Rally.
               </h2>
             </div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
             {[
-              { icon: Swords, name: 'The Court', desc: 'Badminton tournaments with competitive brackets for all skill levels.' },
-              { icon: Mountain, name: 'The Trail', desc: 'Group treks through Karnataka\'s best trails and landscapes.' },
+              { icon: Swords, name: 'The Court', desc: 'Badminton tournaments and leagues with competitive brackets for all skill levels.' },
               { icon: Timer, name: 'The Road', desc: 'Community runs and marathons that push you further.' },
               { icon: Bike, name: 'The Ride', desc: 'Group rides and cycling events across Bengaluru.' },
             ].map((pillar, i) => {

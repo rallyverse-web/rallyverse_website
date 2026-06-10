@@ -12,15 +12,15 @@ type NavLink = { label: string; href: string; isRoute?: boolean }
 
 const navLinks: NavLink[] = [
   { label: 'Home', href: '#hero' },
-  { label: 'About', href: '/about', isRoute: true },
-  { label: 'Events', href: '/events', isRoute: true },
+  { label: 'Services', href: '#services' },
   { label: 'Community', href: '#community' },
-  { label: 'Believers', href: '/believers', isRoute: true },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'Events', href: '/events', isRoute: true },
+  { label: 'Partners', href: '#partner-with-us' },
+  { label: 'About', href: '/about', isRoute: true },
   { label: 'Contact', href: '/contact', isRoute: true },
 ]
 
-const sectionIds = ['hero', 'about', 'events', 'community', 'faq', 'contact', 'believers']
+const sectionIds = ['hero', 'services', 'community', 'partner-with-us']
 
 export default function Navbar() {
   const router = useRouter()
@@ -169,7 +169,7 @@ export default function Navbar() {
             <ThemeToggle />
             <button
               type="button"
-              onClick={() => router.push('/events')}
+              onClick={() => router.push('/contact')}
               className="whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95"
               style={{
                 background: 'var(--rallyverse-gradient)',
@@ -177,7 +177,7 @@ export default function Navbar() {
               }}
             >
               <ShinyText
-                text="Register Now"
+                text="Partner With Us"
                 disabled={false}
                 speed={3}
                 className="text-base font-semibold"
@@ -295,7 +295,7 @@ export default function Navbar() {
                   type="button"
                   onClick={() => {
                     setMenuOpen(false)
-                    router.push('/events')
+                    router.push('/contact')
                   }}
                   className="w-full rounded-md py-4 text-base font-semibold transition-all duration-200 active:scale-95"
                   style={{
@@ -304,7 +304,7 @@ export default function Navbar() {
                   }}
                 >
                   <ShinyText
-                text="Register Now"
+                    text="Partner With Us"
                     disabled={false}
                     speed={3}
                     className="text-base font-semibold"

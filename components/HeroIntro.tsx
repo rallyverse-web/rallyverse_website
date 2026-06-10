@@ -51,10 +51,10 @@ export default function HeroIntro() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px' }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="mb-8 max-w-[280px] font-body text-[11px] uppercase tracking-widest"
+          className="mb-8 max-w-[400px] font-body text-[11px] uppercase tracking-widest"
           style={{ color: 'var(--text-muted)' }}
         >
-          BENGALURU &middot; SPORTS &middot; ADVENTURE &middot; COMMUNITY &middot; 2026
+          Rallying Communities Through Sports
         </motion.p>
 
         <motion.div
@@ -63,13 +63,13 @@ export default function HeroIntro() {
           animate={{ opacity: introActive ? 1 : 0 }}
           transition={{ duration: 0.35 }}
         >
-          {['RALLY.', 'BEYOND.', 'ROUTINE.'].slice(0, visibleTaglines).map((word) => (
+          {['BUILDING.', 'SPORTS.', 'COMMUNITIES.'].slice(0, visibleTaglines).map((word) => (
             <motion.div
               key={word}
               initial={{ opacity: 0 }}
               animate={{ opacity: introActive ? 1 : 0 }}
               transition={{ duration: 0.25 }}
-              style={{ color: word === 'ROUTINE.' ? undefined : 'var(--text-primary)' }}
+              style={{ color: word === 'COMMUNITIES.' ? undefined : 'var(--text-primary)' }}
             >
               <DecryptedText
                 text={word}
@@ -78,7 +78,7 @@ export default function HeroIntro() {
                 speed={80}
                 sequential={true}
                 className={`font-display text-[40px] uppercase leading-none sm:text-[56px] md:text-[84px] lg:text-[104px] ${
-                  word === 'ROUTINE.' ? 'rally-gradient-text' : ''
+                  word === 'COMMUNITIES.' ? 'rally-gradient-text' : ''
                 }`}
                 encryptedClassName="font-display text-[40px] uppercase leading-none encrypted-glitch sm:text-[56px] md:text-[84px] lg:text-[104px]"
               />
@@ -100,10 +100,10 @@ export default function HeroIntro() {
               <RotatingText
                 texts={[
                   'Competitors',
-                  'Explorers',
-                  'Community Builders',
-                  'Weekend Warriors',
-                  'People Who Show Up',
+                  'Sports Organizers',
+                  'Academies',
+                  'Sports Brands',
+                  'Active Communities',
                 ]}
                 mainClassName="font-display text-[28px] md:text-[36px] leading-none"
                 staggerDuration={0.03}
@@ -115,8 +115,8 @@ export default function HeroIntro() {
                 rotationInterval={2500}
               />
             </div>
-            <p className="font-body text-sm md:text-base mt-1" style={{ color: 'var(--text-muted)' }}>
-              Move. Compete. Explore. Connect.
+            <p className="font-body text-sm md:text-base mt-4 max-w-2xl leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+              RallyVerse helps sports organizers, communities, academies, and brands grow through event management, community building, outreach, and sports marketing.
             </p>
           </div>
         </motion.div>
@@ -125,20 +125,38 @@ export default function HeroIntro() {
           initial={{ opacity: 0, y: 20 }}
           animate={subtextActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
-          className="mt-8"
+          className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <button
             type="button"
-            onClick={() => router.push('/events')}
+            onClick={() => router.push('/contact')}
+            className="group relative overflow-hidden rounded-md px-10 py-4 font-body text-base font-semibold transition-all duration-200 active:scale-95"
+            style={{
+              backgroundColor: 'var(--btn-primary-bg)',
+              color: 'var(--btn-primary-text)',
+              minWidth: '200px'
+            }}
+          >
+            <span className="relative z-10">Partner With Us</span>
+            <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'var(--rallyverse-gradient)' }} />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('community')
+              if (el) el.scrollIntoView({ behavior: 'smooth' })
+            }}
             className="group relative overflow-hidden rounded-md border px-10 py-4 font-body text-base font-semibold transition-all duration-200 active:scale-95"
             style={{
               borderColor: 'var(--btn-outline-border)',
               backgroundColor: 'transparent',
               color: 'var(--btn-outline-text)',
+              minWidth: '200px'
             }}
           >
-            <span className="relative z-10 transition-colors duration-200" style={{ color: 'var(--btn-outline-text)' }}>
-              Register Now
+            <span className="relative z-10 transition-colors duration-200">
+              Join Community
             </span>
             <span className="absolute inset-0 -translate-x-full transition-transform duration-300 group-hover:translate-x-0" style={{ background: 'var(--rallyverse-gradient)' }} />
           </button>

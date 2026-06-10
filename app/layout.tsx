@@ -22,17 +22,17 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://rallyverse.social'),
-  title: 'RallyVerse — Rally Beyond Routine | Sports & Community in Bengaluru',
-  description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
+  title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
+  description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
   twitter: {
     card: 'summary_large_image',
-    title: 'RallyVerse — Rally Beyond Routine | Sports & Community in Bengaluru',
-    description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
+    title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
+    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
     images: ['/og'],
   },
   openGraph: {
-    title: 'RallyVerse — Rally Beyond Routine | Sports & Community in Bengaluru',
-    description: 'RallyVerse is a universe built for people who move, compete, explore, and connect. Badminton tournaments, treks, marathons, and cycling events in Bengaluru. Rally Beyond Routine.',
+    title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
+    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
     url: 'https://rallyverse.social',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
         url: '/og',
         width: 1200,
         height: 630,
-        alt: 'RallyVerse — Rally Beyond Routine',
+        alt: 'RallyVerse — Rallying Communities Through Sports',
       },
     ],
   },
@@ -98,7 +98,7 @@ export default function RootLayout({
               "name": SITE.name,
               "url": SITE.domain,
               "logo": `${SITE.domain}/logo_transparent.png`,
-              "description": `Competitive badminton tournaments, community treks, marathons and cycling events in ${ADDRESS.city}.`,
+              "description": `RallyVerse is a sports growth partner helping sports communities, organizers, academies, and brands grow.`,
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": ADDRESS.area,

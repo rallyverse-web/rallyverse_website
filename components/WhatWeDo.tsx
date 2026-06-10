@@ -1,53 +1,82 @@
+'use client'
+
+import { Users, Trophy, Megaphone, Handshake } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
+
+const services = [
+  {
+    icon: Users,
+    title: 'Community Building',
+    desc: 'Build engaged sports communities that participate, return, and grow.',
+  },
+  {
+    icon: Trophy,
+    title: 'Event Management',
+    desc: 'Run seamless sports events with RallyVerse infrastructure.',
+  },
+  {
+    icon: Megaphone,
+    title: 'Sports Marketing',
+    desc: 'Reach the right audience and grow participation.',
+  },
+  {
+    icon: Handshake,
+    title: 'Partnerships & Outreach',
+    desc: 'Connect with communities, brands, academies, and organizers.',
+  },
+]
 
 export default function WhatWeDo() {
   return (
-    <section id="about" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-20 px-6 md:grid-cols-2 md:items-start">
+    <section id="services" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+      <div className="mx-auto max-w-[1100px] px-6">
         <AnimatedSection>
-          <div className="flex items-center gap-3">
+          <div className="mb-5 flex items-center justify-center gap-3">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
             <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-              WHY WE EXIST
+              WHAT WE DO
             </span>
-          </div>
-
-          <div className="mt-5 font-display text-[24px] leading-none uppercase sm:text-[36px] md:text-[48px] lg:text-[56px]" style={{ color: 'var(--text-primary)' }}>
-            SOME PEOPLE WATCH LIFE HAPPEN.
-            <br />
-            WE RALLY THROUGH IT.
+            <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
           </div>
         </AnimatedSection>
 
-        <AnimatedSection delay={0.15}>
-          <div>
-            <div style={{ color: 'var(--text-muted)' }}>
-              <AnimatedSection delay={0}>
-                <p className="text-base md:text-lg font-body leading-relaxed mb-6">
-                  Somewhere between the morning alarm and the weekend scroll, life started feeling smaller than it should.
-                </p>
-              </AnimatedSection>
-              <AnimatedSection delay={0.1}>
-                <p className="text-base md:text-lg font-body leading-relaxed mb-6">
-                  RallyVerse exists to reverse that. We are not an event company. We are a universe built for people who still believe the best moments happen when you move, compete, and show up for each other.
-                </p>
-              </AnimatedSection>
-              <AnimatedSection delay={0.2}>
-                <p className="text-base md:text-lg font-body leading-relaxed mb-6">
-                  Every tournament. Every trek. Every ride. Every race. It is all the same thing: a reason to be fully alive.
-                </p>
-              </AnimatedSection>
-            </div>
-
-            <div style={{ color: 'var(--text-primary)' }}>
-              <AnimatedSection delay={0.3}>
-                <p className="text-base md:text-lg font-body leading-relaxed mb-6 font-semibold">
-                  The Court. The Trail. The Road. The Ride. One Verse. Welcome.
-                </p>
-              </AnimatedSection>
-            </div>
-          </div>
+        <AnimatedSection delay={0.05}>
+          <h2 className="text-center font-display text-[32px] leading-none uppercase sm:text-[44px] md:text-[56px] mb-16" style={{ color: 'var(--text-primary)' }}>
+            Building Sports Communities That Grow
+          </h2>
         </AnimatedSection>
+
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {services.map((item, i) => {
+            const Icon = item.icon
+            return (
+              <AnimatedSection key={item.title} delay={i * 0.1}>
+                <div
+                  className="group rounded-xl p-8 transition-all duration-300 h-full flex flex-col justify-between"
+                  style={{
+                    backgroundColor: 'var(--card-bg)',
+                    borderLeft: '3px solid var(--accent-primary)',
+                    boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div>
+                    <Icon
+                      size={36}
+                      className="mb-6 transition-transform duration-300 group-hover:scale-110"
+                      style={{ color: 'var(--accent-primary)' }}
+                    />
+                    <h3 className="font-display text-[24px] uppercase leading-tight font-semibold" style={{ color: 'var(--text-primary)' }}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-4 font-body text-[14px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              </AnimatedSection>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

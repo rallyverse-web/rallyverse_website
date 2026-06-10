@@ -9,7 +9,7 @@ export const faqs: FAQItem[] = [
   {
     question: 'What is RallyVerse?',
     answer:
-      'RallyVerse is a badminton community that brings players together through games, tournaments, and shared experiences. We believe sport is more than competition. It\u2019s about connection, growth, and creating memorable experiences on and off the court.',
+      'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing. We don\'t just consult on community — we own and operate one.',
   },
   {
     question: 'When and where is Rally Series 01 happening?',

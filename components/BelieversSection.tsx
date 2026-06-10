@@ -19,7 +19,7 @@ export default function BelieversSection() {
             <div className="mb-5 flex items-center justify-center gap-3">
               <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
               <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                BELIEVERS
+                TRUST
               </span>
               <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
             </div>
@@ -27,13 +27,13 @@ export default function BelieversSection() {
 
           <AnimatedSection delay={0.05}>
             <h2 className="font-display text-[28px] leading-none uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
-              Believers
+              Trusted By Communities, Organizers & Partners
             </h2>
           </AnimatedSection>
 
           <AnimatedSection delay={0.1}>
             <p className="mx-auto mt-4 max-w-xl font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              The people who believe in the RallyVerse vision and help bring it to life.
+              The individuals and organizations that trust RallyVerse to power their sports initiatives.
             </p>
           </AnimatedSection>
         </div>

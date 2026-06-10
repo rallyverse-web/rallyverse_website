@@ -1,7 +1,5 @@
 import { ImageResponse } from 'next/og'
 
-export const runtime = 'edge'
-
 async function loadGoogleFont(font: string, weight: number) {
   const css = await (
     await fetch(
