@@ -14,6 +14,7 @@ const defaultForm: EventFormData = {
   event_date: '', date_label: '', time_label: '', is_date_confirmed: true,
   registration_fee: 0, payment_info: '', capacity: 0, rally_points: 0,
   whatsapp_number: '', whatsapp_group_link: '',
+  featured: false,
   status: 'draft', formats: [],
 }
 
@@ -154,6 +155,7 @@ export default function AdminEventsPage() {
       rally_points: event.rally_points ?? 0,
       whatsapp_number: event.whatsapp_number || '',
       whatsapp_group_link: event.whatsapp_group_link || '',
+      featured: event.featured ?? false,
       status: event.status,
       formats: event.formats?.map(f => f.format_name) || [],
     })
@@ -557,6 +559,16 @@ export default function AdminEventsPage() {
                 </div>
 
                 <div>
+                  <label style={s.label}>Featured Event</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 48 }}>
+                    <label style={{ color: '#ccc', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input type="checkbox" checked={formData.featured} onChange={(e) => updateForm('featured', e.target.checked)} />
+                      Show this event first on the homepage
+                    </label>
+                  </div>
+                </div>
+
+                <div>
                   <label style={s.label}>Status</label>
                   <select value={formData.status} onChange={(e) => updateForm('status', e.target.value)} style={s.select}>
                     <option value="draft">Draft</option>
@@ -778,4 +790,3 @@ export default function AdminEventsPage() {
     </div>
   )
 }
-

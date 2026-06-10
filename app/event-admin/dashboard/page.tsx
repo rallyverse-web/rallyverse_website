@@ -45,10 +45,22 @@ export default function EventAdminDashboard() {
   const [filterStatus, setFilterStatus] = useState('all')
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [selectedReg, setSelectedReg] = useState<Registration | null>(null)
+  const [editingReg, setEditingReg] = useState<Registration | null>(null)
+  const [editForm, setEditForm] = useState({
+    full_name: '',
+    email: '',
+    phone_number: '',
+    format: '',
+    partner_name: '',
+    partner_phone: '',
+  })
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({})
+  const [savingEdit, setSavingEdit] = useState(false)
   const [approvalNotes, setApprovalNotes] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
   const [sendEmailCheck, setSendEmailCheck] = useState(true)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [emailLogs, setEmailLogs] = useState<Array<{ created_at: string; status: 'sent' | 'failed' }>>([])
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
@@ -64,11 +76,19 @@ export default function EventAdminDashboard() {
       setAdminName(meData.admin.name)
       setEventId(meData.admin.event_id)
 
-      const regRes = await fetch(`/api/event-admin/registrations/${meData.admin.event_id}`)
+      const [regRes, logRes] = await Promise.all([
+        fetch(`/api/event-admin/registrations/${meData.admin.event_id}`),
+        fetch(`/api/event-admin/email-logs/${meData.admin.event_id}`),
+      ])
+
       if (regRes.ok) {
         const regData = await regRes.json()
         setRegistrations(regData.registrations || [])
         setMetrics(regData.metrics || { total: 0, pending: 0, approved: 0, rejected: 0 })
+      }
+      if (logRes.ok) {
+        const logData = await logRes.json()
+        setEmailLogs((logData.logs || []).map((log: { created_at: string; status: 'sent' | 'failed' }) => ({ created_at: log.created_at, status: log.status })))
       }
     } catch {
       notify('error', 'Failed to load data')
@@ -152,6 +172,66 @@ export default function EventAdminDashboard() {
     } catch { notify('error', 'Failed to delete registration') }
   }
 
+  const openEdit = (reg: Registration) => {
+    setEditingReg(reg)
+    setEditForm({
+      full_name: reg.full_name,
+      email: reg.email,
+      phone_number: reg.phone_number,
+      format: reg.format,
+      partner_name: reg.partner_name || '',
+      partner_phone: reg.partner_phone || '',
+    })
+    setEditErrors({})
+  }
+
+  const validateEditForm = () => {
+    const nextErrors: Record<string, string> = {}
+    if (!editForm.full_name.trim()) nextErrors.full_name = 'Name is required'
+    if (!editForm.email.trim()) nextErrors.email = 'Email is required'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editForm.email)) nextErrors.email = 'Enter a valid email'
+    if (!editForm.phone_number.trim()) nextErrors.phone_number = 'Phone is required'
+    else if (!/^[+]?[0-9\s-]{10,15}$/.test(editForm.phone_number)) nextErrors.phone_number = 'Enter a valid phone number'
+    if (!editForm.format.trim()) nextErrors.format = 'Category is required'
+    if (editForm.format.includes('Doubles')) {
+      if (!editForm.partner_name.trim()) nextErrors.partner_name = 'Partner name is required'
+      if (!editForm.partner_phone.trim()) nextErrors.partner_phone = 'Partner phone is required'
+      else if (!/^[+]?[0-9\s-]{10,15}$/.test(editForm.partner_phone)) nextErrors.partner_phone = 'Enter a valid partner phone number'
+    }
+    setEditErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
+  }
+
+  const saveEdit = async () => {
+    if (!editingReg || !validateEditForm()) return
+    setSavingEdit(true)
+    try {
+      const res = await fetch(`/api/event-admin/registrations/${eventId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          registrationId: editingReg.id,
+          updates: {
+            full_name: editForm.full_name,
+            email: editForm.email,
+            phone_number: editForm.phone_number,
+            format: editForm.format,
+            partner_name: editForm.format.includes('Doubles') ? editForm.partner_name : null,
+            partner_phone: editForm.format.includes('Doubles') ? editForm.partner_phone : null,
+          },
+        }),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to update registration'); return }
+      notify('success', 'Registration updated')
+      setEditingReg(null)
+      fetchData()
+    } catch {
+      notify('error', 'Failed to update registration')
+    } finally {
+      setSavingEdit(false)
+    }
+  }
+
   const handleSignOut = async () => {
     await fetch('/api/event-admin/logout', { method: 'POST' })
     router.push('/event-admin')
@@ -176,6 +256,16 @@ export default function EventAdminDashboard() {
     a.click()
     URL.revokeObjectURL(url)
   }
+
+  const emailUsage = useMemo(() => {
+    const total = emailLogs.length
+    const sent = emailLogs.filter((log) => log.status === 'sent').length
+    const failed = emailLogs.filter((log) => log.status === 'failed').length
+    const now = new Date()
+    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    const monthly = emailLogs.filter((log) => log.status === 'sent' && log.created_at.slice(0, 7) === monthKey).length
+    return { total, sent, failed, monthly }
+  }, [emailLogs])
 
   if (loading) {
     return (
@@ -207,6 +297,9 @@ export default function EventAdminDashboard() {
           <div style={s.card}><Clock size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Pending</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.pending}</p></div>
           <div style={s.card}><CheckCircle size={18} color="#4ade80" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Approved</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.approved}</p></div>
           <div style={s.card}><XCircle size={18} color="#ff4444" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Rejected</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.rejected}</p></div>
+          <div style={s.card}><Mail size={18} color="#38bdf8" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Emails Sent</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.sent}</p></div>
+          <div style={s.card}><BarChart3 size={18} color="#a78bfa" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Total Emails</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.total}</p></div>
+          <div style={s.card}><RefreshCw size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>This Month</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.monthly}</p></div>
         </div>
 
         {/* Search & Filters */}
@@ -256,6 +349,7 @@ export default function EventAdminDashboard() {
                     <td style={{ ...s.td, textAlign: 'center' }}>
                       <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
                         <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => { setSelectedReg(reg); setApprovalNotes(reg.notes || '') }}>View</button>
+                        <button style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8' }} onClick={() => openEdit(reg)}>Edit</button>
                         {reg.status === 'Pending' && (
                           <>
                             <button style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleApprove(reg, true)} disabled={actionLoading} title="Approve & Send Email">Approve + Send</button>
@@ -353,6 +447,64 @@ export default function EventAdminDashboard() {
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                 <button onClick={() => setConfirmDeleteId(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
                 <button onClick={() => handleDeleteRegistration(confirmDeleteId)} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700 }}>Delete</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Registration */}
+        {editingReg && (
+          <div style={s.overlay} onClick={() => !savingEdit && setEditingReg(null)}>
+            <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Edit Registration</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={s.label}>Name</label>
+                  <input value={editForm.full_name} onChange={(e) => setEditForm((p) => ({ ...p, full_name: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                  {editErrors.full_name && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.full_name}</p>}
+                </div>
+                <div>
+                  <label style={s.label}>Email</label>
+                  <input value={editForm.email} onChange={(e) => setEditForm((p) => ({ ...p, email: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                  {editErrors.email && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.email}</p>}
+                </div>
+                <div>
+                  <label style={s.label}>Phone</label>
+                  <input value={editForm.phone_number} onChange={(e) => setEditForm((p) => ({ ...p, phone_number: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                  {editErrors.phone_number && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.phone_number}</p>}
+                </div>
+                <div>
+                  <label style={s.label}>Category</label>
+                  <select value={editForm.format} onChange={(e) => setEditForm((p) => ({ ...p, format: e.target.value, partner_name: e.target.value.includes('Doubles') ? p.partner_name : '', partner_phone: e.target.value.includes('Doubles') ? p.partner_phone : '' }))} style={{ ...s.input, height: 40 }}>
+                    <option value="">Select category</option>
+                    <option value="Men's Singles">Men's Singles</option>
+                    <option value="Women's Singles">Women's Singles</option>
+                    <option value="Men's Doubles">Men's Doubles</option>
+                    <option value="Women's Doubles">Women's Doubles</option>
+                    <option value="Mixed Doubles">Mixed Doubles</option>
+                  </select>
+                  {editErrors.format && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.format}</p>}
+                </div>
+                {editForm.format.includes('Doubles') && (
+                  <>
+                    <div>
+                      <label style={s.label}>Partner Name</label>
+                      <input value={editForm.partner_name} onChange={(e) => setEditForm((p) => ({ ...p, partner_name: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                      {editErrors.partner_name && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.partner_name}</p>}
+                    </div>
+                    <div>
+                      <label style={s.label}>Partner Phone</label>
+                      <input value={editForm.partner_phone} onChange={(e) => setEditForm((p) => ({ ...p, partner_phone: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                      {editErrors.partner_phone && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.partner_phone}</p>}
+                    </div>
+                  </>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>
+                <button onClick={() => setEditingReg(null)} disabled={savingEdit} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+                <button onClick={saveEdit} disabled={savingEdit} style={{ ...s.btnSm, background: 'var(--rallyverse-gradient)', color: '#000', fontWeight: 700, ...(savingEdit ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                  {savingEdit ? <Loader2 size={12} className="animate-spin" /> : 'Save Changes'}
+                </button>
               </div>
             </div>
           </div>

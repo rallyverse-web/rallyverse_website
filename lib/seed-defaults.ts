@@ -32,6 +32,23 @@ const DEFAULT_TEMPLATES: TemplateSpec[] = [
 <p>Regards,<br />RallyVerse</p>`,
   },
   {
+    template_type: 'registration_received',
+    subject: 'Registration Received — {{event_name}}',
+    content: `Hi {{participant_name}},
+
+<p>We have received your registration for <strong>{{event_name}}</strong>.</p>
+
+<p><strong>Registration ID:</strong> {{registration_id}}<br />
+<strong>Current Status:</strong> {{registration_status}}<br />
+<strong>Format:</strong> {{format}}</p>
+
+<p>We will review your registration and share the next update shortly.</p>
+
+<p>If you need help, contact <a href="mailto:{{support_email}}">{{support_email}}</a>.</p>
+
+<p>Regards,<br />RallyVerse</p>`,
+  },
+  {
     template_type: 'rejection',
     subject: 'Registration Update — {{event_name}}',
     content: `Hi {{participant_name}},
@@ -108,8 +125,8 @@ export async function seedEventDefaults(eventId: string): Promise<void> {
   // ── Templates ──
   const { data: existingTemplates } = await supabase
     .from('email_templates')
-    .select('template_type')
-    .eq('event_id', eventId)
+      .select('template_type')
+      .eq('event_id', eventId)
 
   const existingTypes = new Set((existingTemplates ?? []).map((t: { template_type: string }) => t.template_type))
 

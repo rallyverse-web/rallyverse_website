@@ -39,6 +39,7 @@ Stores information about each sports event campaign.
 | `rally_points`| `integer` | Default: `0` | Loyalty points awarded |
 | `whatsapp_number` | `text` | - | Organizer WhatsApp contact number |
 | `whatsapp_group_link`| `text` | - | Community/Event invite URL |
+| `featured` | `boolean` | Default: `false` | Promotes the event on the homepage and services pages |
 | `status` | `text` | Check: `draft, published, cancelled, completed` | Event lifecycle state |
 | `created_at` | `timestamptz`| Default: `now()` | Record creation timestamp |
 | `updated_at` | `timestamptz`| Default: `now()` | Last modification timestamp |
@@ -118,7 +119,24 @@ Stores submissions from players registering for events.
 
 ---
 
-### 9. `partner_enquiries`
+### 6. `registration_audit_logs`
+Tracks profile edits, approval changes, and deletions made by organizers.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `uuid` | Primary Key | Audit record identifier |
+| `registration_id` | `uuid` | Foreign Key (registrations.id) ON DELETE CASCADE | Registration being changed |
+| `event_id` | `uuid` | Foreign Key (events.id) ON DELETE CASCADE | Associated event |
+| `action` | `text` | NOT NULL | Update type, e.g. `profile_update` or `status_approved` |
+| `changed_by` | `uuid` | Foreign Key (event_admins.id) | Organizer who made the change |
+| `previous_data` | `jsonb` | - | Record snapshot before the change |
+| `next_data` | `jsonb` | - | Record snapshot after the change |
+| `notes` | `text` | - | Optional explanation or organizer note |
+| `created_at` | `timestamptz` | Default: `now()` | Audit timestamp |
+
+---
+
+### 7. `partner_enquiries`
 Stores B2B partnership enquiries submitted by organizations, sports academies, brands, and organizers.
 
 | Column | Type | Constraints | Description |
@@ -136,7 +154,7 @@ Stores B2B partnership enquiries submitted by organizations, sports academies, b
 
 ---
 
-### 10. `contact_submissions`
+### 8. `contact_submissions`
 Stores direct contact messages submitted by visitors.
 
 | Column | Type | Constraints | Description |
@@ -174,7 +192,7 @@ Event-specific email templates.
 | :--- | :--- | :--- | :--- |
 | `id` | `uuid` | Primary Key | Identifier |
 | `event_id` | `uuid` | Foreign Key (events.id) ON DELETE CASCADE | Associated event |
-| `template_type`| `text` | Check: `approval, rejection, reminder, results, broadcast` | Template category |
+| `template_type`| `text` | Check: `approval, rejection, reminder, results, broadcast, registration_received` | Template category |
 | `subject` | `text` | NOT NULL | Subject header |
 | `content` | `text` | NOT NULL | HTML template body with variables |
 | `created_by` | `uuid` | Foreign Key (event_admins.id) | Author |

@@ -24,6 +24,7 @@ export interface Event {
   image_url: string | null
   whatsapp_number: string | null
   whatsapp_group_link: string | null
+  featured: boolean | null
   status: EventStatus
   created_at: string
   updated_at: string | null
@@ -70,6 +71,7 @@ export interface EventFormData {
   rally_points: number
   whatsapp_number: string
   whatsapp_group_link: string
+  featured: boolean
   status: EventStatus
   formats: string[]
 }
@@ -109,6 +111,19 @@ export interface Registration {
   approved_at: string | null
   created_at: string
   updated_at: string | null
+}
+
+// ── Registration audit log ──
+export interface RegistrationAuditLog {
+  id: string
+  registration_id: string
+  event_id: string
+  action: string
+  changed_by: string | null
+  previous_data: Record<string, unknown> | null
+  next_data: Record<string, unknown> | null
+  notes: string | null
+  created_at: string
 }
 
 // ── Registration form data ──
@@ -173,7 +188,7 @@ export interface EventWithPaymentConfig extends EventWithFormats {
 // ══════════════════════════════════════════════════════════════
 
 // ── Email Template Types ──
-export type EmailTemplateType = 'approval' | 'rejection' | 'reminder' | 'results' | 'broadcast'
+export type EmailTemplateType = 'approval' | 'rejection' | 'reminder' | 'results' | 'broadcast' | 'registration_received'
 
 // ── Event Email Settings ──
 export interface EventEmailSettings {
@@ -233,6 +248,7 @@ export interface TemplateVariables {
   event_venue: string
   format: string
   registration_status: string
+  registration_id: string
   support_email: string
   whatsapp_number: string
   event_whatsapp: string

@@ -14,6 +14,7 @@ import {
   ShieldAlert,
   Users,
   XCircle,
+  Briefcase,
 } from 'lucide-react'
 
 /* ─── Types ─── */
@@ -126,6 +127,13 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false)
   const [lastSync, setLastSync] = useState('')
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [partnerMetrics, setPartnerMetrics] = useState({
+    total: 0,
+    new: 0,
+    contacted: 0,
+    qualified: 0,
+    won: 0,
+  })
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
@@ -149,6 +157,22 @@ export default function AdminPage() {
       }
       const data = await res.json()
       setEventsData(data.events || [])
+
+      // Fetch partner enquiries metrics
+      const partnerRes = await fetch('/api/admin/partner-enquiries', { headers: authHeaders() })
+      if (partnerRes.ok) {
+        const partnerData = await partnerRes.json()
+        if (partnerData.metrics) {
+          setPartnerMetrics({
+            total: partnerData.metrics.total || 0,
+            new: partnerData.metrics.new || 0,
+            contacted: partnerData.metrics.contacted || 0,
+            qualified: partnerData.metrics.qualified || 0,
+            won: partnerData.metrics.won || 0,
+          })
+        }
+      }
+
       setLastSync(new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }))
     } catch {
       notify('error', 'Failed to connect to backend server')
@@ -333,6 +357,52 @@ export default function AdminPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#facc15', fontSize: 12, fontWeight: 700, marginTop: 16 }}>
               Open Dashboard <ExternalLink size={12} />
+            </div>
+          </a>
+
+          <a
+            href="/admin/partners"
+            style={s.navCard}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#1a1a1a'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            <div>
+              <Briefcase size={24} style={{ color: '#ff5e00', marginBottom: 12 }} />
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Partner Enquiries</h3>
+              <p style={{ margin: '6px 0 0 0', color: '#666', fontSize: 13, lineHeight: 1.4 }}>
+                Manage B2B enquiries, track status, update internal CRM notes, and view organization details.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginTop: 16, borderTop: '1px solid #1a1a1a', paddingTop: 10, fontSize: 11, textAlign: 'center' }}>
+                <div>
+                  <span style={{ color: '#666', display: 'block', marginBottom: 2 }}>New</span>
+                  <span style={{ color: '#ff8c00', fontWeight: 'bold' }}>{partnerMetrics.new}</span>
+                </div>
+                <div>
+                  <span style={{ color: '#666', display: 'block', marginBottom: 2 }}>Contact</span>
+                  <span style={{ color: '#facc15', fontWeight: 'bold' }}>{partnerMetrics.contacted}</span>
+                </div>
+                <div>
+                  <span style={{ color: '#666', display: 'block', marginBottom: 2 }}>Qualify</span>
+                  <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>{partnerMetrics.qualified}</span>
+                </div>
+                <div>
+                  <span style={{ color: '#666', display: 'block', marginBottom: 2 }}>Won</span>
+                  <span style={{ color: '#4ade80', fontWeight: 'bold' }}>{partnerMetrics.won}</span>
+                </div>
+                <div>
+                  <span style={{ color: '#666', display: 'block', marginBottom: 2 }}>Total</span>
+                  <span style={{ color: '#fff', fontWeight: 'bold' }}>{partnerMetrics.total}</span>
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#ff5e00', fontSize: 12, fontWeight: 700, marginTop: 16 }}>
+              Open CRM Dashboard <ExternalLink size={12} />
             </div>
           </a>
         </div>

@@ -30,6 +30,9 @@ export interface EventAnalytics {
   whatsapp_group_clicks: number
   emails_sent: number
   emails_failed: number
+  email_success_rate: number
+  status_breakdown: { label: string; count: number }[]
+  format_breakdown: { label: string; count: number }[]
 }
 
 export interface TrendPoint {
@@ -80,13 +83,13 @@ export async function getAllEventAnalytics(): Promise<EventAnalytics[]> {
   const eventIds = events.map(e => e.id)
 
   const [registrationsRes, pageViewsRes, waClicksRes, emailLogsRes] = await Promise.all([
-    supabase.from('registrations').select('event_id, status').in('event_id', eventIds),
+    supabase.from('registrations').select('event_id, status, format').in('event_id', eventIds),
     supabase.from('page_views').select('event_id, page_type').in('event_id', eventIds),
     supabase.from('whatsapp_clicks').select('event_id, click_type').in('event_id', eventIds),
     supabase.from('email_logs').select('event_id, status').in('event_id', eventIds),
   ])
 
-  const regs = (registrationsRes.data ?? []) as { event_id: string; status: string }[]
+  const regs = (registrationsRes.data ?? []) as { event_id: string; status: string; format?: string }[]
   const views = (pageViewsRes.data ?? []) as { event_id: string; page_type: string }[]
   const wa = (waClicksRes.data ?? []) as { event_id: string; click_type: string }[]
   const emails = (emailLogsRes.data ?? []) as { event_id: string; status: string }[]
@@ -96,11 +99,22 @@ export async function getAllEventAnalytics(): Promise<EventAnalytics[]> {
     const eventViews = views.filter(v => v.event_id === event.id)
     const eventWa = wa.filter(w => w.event_id === event.id)
     const eventEmails = emails.filter(e => e.event_id === event.id)
-
     const totalRegs = eventRegs.length
     const approved = eventRegs.filter(r => r.status === 'Approved').length
     const pending = eventRegs.filter(r => r.status === 'Pending').length
     const rejected = eventRegs.filter(r => r.status === 'Rejected').length
+
+    const breakdownCounts = (items: { label: string; count: number }[]) => items
+      .filter((item) => item.count > 0)
+      .sort((a, b) => b.count - a.count)
+
+    const formatBreakdownMap = new Map<string, number>()
+    for (const reg of eventRegs) {
+      formatBreakdownMap.set(reg.format ?? 'Unknown', (formatBreakdownMap.get(reg.format ?? 'Unknown') ?? 0) + 1)
+    }
+
+    const sent = eventEmails.filter(e => e.status === 'sent').length
+    const failed = eventEmails.filter(e => e.status === 'failed').length
 
     const eventDetailViews = eventViews.filter(v => v.page_type === 'event_detail').length
     const regPageViews = eventViews.filter(v => v.page_type === 'registration').length
@@ -120,8 +134,15 @@ export async function getAllEventAnalytics(): Promise<EventAnalytics[]> {
       approval_rate: totalRegs > 0 ? Math.round((approved / totalRegs) * 100) : 0,
       whatsapp_contact_clicks: eventWa.filter(w => w.click_type === 'contact').length,
       whatsapp_group_clicks: eventWa.filter(w => w.click_type === 'group').length,
-      emails_sent: eventEmails.filter(e => e.status === 'sent').length,
-      emails_failed: eventEmails.filter(e => e.status === 'failed').length,
+      emails_sent: sent,
+      emails_failed: failed,
+      email_success_rate: sent + failed > 0 ? Math.round((sent / (sent + failed)) * 100) : 0,
+      status_breakdown: breakdownCounts([
+        { label: 'Approved', count: approved },
+        { label: 'Pending', count: pending },
+        { label: 'Rejected', count: rejected },
+      ]),
+      format_breakdown: breakdownCounts(Array.from(formatBreakdownMap.entries()).map(([label, count]) => ({ label, count }))),
     }
   })
 }
@@ -150,6 +171,12 @@ export async function getEventAnalytics(eventId: string): Promise<EventAnalytics
   const rejected = regs.filter(r => r.status === 'Rejected').length
   const eventDetailViews = pageViews.filter(v => v.page_type === 'event_detail').length
   const regPageViews = pageViews.filter(v => v.page_type === 'registration').length
+  const sent = emails.filter(e => e.status === 'sent').length
+  const failed = emails.filter(e => e.status === 'failed').length
+  const formatBreakdownMap = new Map<string, number>()
+  for (const reg of regs as { status: string; format?: string }[]) {
+    formatBreakdownMap.set(reg.format || 'Unknown', (formatBreakdownMap.get(reg.format || 'Unknown') ?? 0) + 1)
+  }
 
   return {
     event_id: event.id,
@@ -166,8 +193,15 @@ export async function getEventAnalytics(eventId: string): Promise<EventAnalytics
     approval_rate: totalRegs > 0 ? Math.round((approved / totalRegs) * 100) : 0,
     whatsapp_contact_clicks: wa.filter(w => w.click_type === 'contact').length,
     whatsapp_group_clicks: wa.filter(w => w.click_type === 'group').length,
-    emails_sent: emails.filter(e => e.status === 'sent').length,
-    emails_failed: emails.filter(e => e.status === 'failed').length,
+    emails_sent: sent,
+    emails_failed: failed,
+    email_success_rate: sent + failed > 0 ? Math.round((sent / (sent + failed)) * 100) : 0,
+    status_breakdown: [
+      { label: 'Approved', count: approved },
+      { label: 'Pending', count: pending },
+      { label: 'Rejected', count: rejected },
+    ],
+    format_breakdown: Array.from(formatBreakdownMap.entries()).map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count),
   }
 }
 

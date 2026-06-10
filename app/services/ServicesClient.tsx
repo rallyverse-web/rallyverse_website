@@ -55,10 +55,9 @@ const pricingPlans = [
       'Registrations through RallyVerse',
       'Organizer Dashboard',
       'Registration Analytics',
-      'Add/Edit/Remove Participants',
-      'Registration & Payment Confirmation Emails',
-      'Up to 300 Emails',
-      'Featured Tournament Listing',
+      'Review, approve/reject, and manage registrations',
+      'Participant Email Communication & Updates',
+      'Enhanced Event Visibility',
       'One Custom Tournament Poster',
     ],
     footerInfo: 'Billed per event. Fully managed registration cycle.',
@@ -92,27 +91,27 @@ const infrastructureFeatures = [
   {
     icon: CreditCard,
     name: 'Registration Management',
-    desc: 'Seamless ticketing, automated waiver collection, secure payments, and instant confirmation for participants.',
+    desc: 'Review registrations, manage approval status, and export participant data from one dashboard.',
   },
   {
     icon: LayoutDashboard,
     name: 'Organizer Dashboard',
-    desc: 'Configure draws, brackets, scheduling, and match results dynamically using our bespoke tournament tool.',
+    desc: 'Manage events, registrations, payment settings, and communication workflows in one place.',
   },
   {
     icon: Users,
     name: 'Participant Management',
-    desc: 'Real-time entry lists, digital check-ins, seedings, and division groupings without spreadsheet overhead.',
+    desc: 'Review participant records, update doubles details, and keep registration data in sync.',
   },
   {
     icon: Mail,
     name: 'Email Communication',
-    desc: 'Automated custom-branded email confirmations, schedule updates, and post-event match details.',
+    desc: 'Send templated participant emails, broadcasts, and updates with sent/failed logging.',
   },
   {
     icon: BarChart3,
     name: 'Event Analytics',
-    desc: 'Track registration pacing, participant demographics, revenue metrics, and engagement trends.',
+    desc: 'Track views, registrations, approval rates, email activity, and WhatsApp engagement.',
   },
   {
     icon: ShieldCheck,
@@ -486,11 +485,11 @@ function MockupExplorer() {
   const [activeTab, setActiveTab] = useState(0)
 
   const tabs = [
-    { label: 'Organizer Dashboard', desc: 'Active bracket control' },
-    { label: 'Registration Management', desc: 'Pass types & ticket control' },
-    { label: 'Participant Management', desc: 'Roster check-ins & status' },
-    { label: 'Analytics', desc: 'Sign-up velocities & reports' },
-    { label: 'Email Communication', desc: 'Transactional templates' },
+    { label: 'Event Admin Dashboard', desc: 'Registrations and approvals' },
+    { label: 'Registration Management', desc: 'Search, export, and status tools' },
+    { label: 'Participant Management', desc: 'Edit contact and category details' },
+    { label: 'Analytics', desc: 'Views, approvals, and email performance' },
+    { label: 'Email Communication', desc: 'Templates, preview, and logs' },
   ]
 
   return (
@@ -803,4 +802,3 @@ function MockupExplorer() {
     </AnimatedSection>
   )
 }
-

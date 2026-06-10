@@ -54,6 +54,9 @@ interface AnalyticsData {
   whatsapp_group_clicks: number
   emails_sent: number
   emails_failed: number
+  email_success_rate: number
+  status_breakdown: { label: string; count: number }[]
+  format_breakdown: { label: string; count: number }[]
 }
 
 interface TrendsData {
@@ -140,10 +143,10 @@ export default function EventAdminAnalyticsPage() {
             </div>
 
             {/* Rates & Details */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 32 }}>
-              <div style={s.card}>
-                <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', marginBottom: 8 }}>Conversion Rate</p>
-                <p style={{ color: '#facc15', fontSize: 32, fontWeight: 700 }}>{analytics.conversion_rate}%</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 32 }}>
+                <div style={s.card}>
+                  <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', marginBottom: 8 }}>Conversion Rate</p>
+                  <p style={{ color: '#facc15', fontSize: 32, fontWeight: 700 }}>{analytics.conversion_rate}%</p>
                 <p style={{ color: '#666', fontSize: 12 }}>{analytics.registrations} / {analytics.views} views</p>
               </div>
               <div style={s.card}>
@@ -156,14 +159,45 @@ export default function EventAdminAnalyticsPage() {
                 <p style={{ color: '#25d366', fontSize: 32, fontWeight: 700 }}>{analytics.whatsapp_contact_clicks + analytics.whatsapp_group_clicks}</p>
                 <p style={{ color: '#666', fontSize: 12 }}>{analytics.whatsapp_contact_clicks} contact · {analytics.whatsapp_group_clicks} group</p>
               </div>
-              <div style={s.card}>
-                <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', marginBottom: 8 }}>Email Activity</p>
-                <p style={{ color: '#a78bfa', fontSize: 32, fontWeight: 700 }}>{analytics.emails_sent}</p>
-                <p style={{ color: '#666', fontSize: 12 }}>{analytics.emails_failed > 0 ? `${analytics.emails_failed} failed` : 'All sent'}</p>
+                <div style={s.card}>
+                  <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', marginBottom: 8 }}>Email Activity</p>
+                  <p style={{ color: '#a78bfa', fontSize: 32, fontWeight: 700 }}>{analytics.emails_sent}</p>
+                  <p style={{ color: '#666', fontSize: 12 }}>{analytics.emails_failed > 0 ? `${analytics.emails_failed} failed` : 'All sent'}</p>
+                  <p style={{ color: '#666', fontSize: 12 }}>Success rate: {analytics.email_success_rate}%</p>
+                </div>
               </div>
-            </div>
 
-            {/* Trend Charts */}
+              {/* Registration breakdowns */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginBottom: 32 }}>
+                <div style={s.card}>
+                  <p style={{ color: '#888', fontSize: 12, marginBottom: 10 }}>Registration Status Breakdown</p>
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    {analytics.status_breakdown.map((item) => (
+                      <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: '#ccc', fontSize: 13 }}>{item.label}</span>
+                        <span style={{ color: '#fff', fontWeight: 700 }}>{item.count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div style={s.card}>
+                  <p style={{ color: '#888', fontSize: 12, marginBottom: 10 }}>Registrations by Category</p>
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    {analytics.format_breakdown.length === 0 ? (
+                      <p style={{ color: '#666', fontSize: 13, margin: 0 }}>No registrations yet</p>
+                    ) : (
+                      analytics.format_breakdown.map((item) => (
+                        <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ color: '#ccc', fontSize: 13 }}>{item.label}</span>
+                          <span style={{ color: '#fff', fontWeight: 700 }}>{item.count}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Trend Charts */}
             {trends && (
               <>
                 <h2 style={{ color: '#888', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Trends (Last 30 Days)</h2>

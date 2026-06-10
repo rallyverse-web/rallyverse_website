@@ -33,11 +33,12 @@ export function renderEmailTemplate(
  * Returns the list of supported template variables with descriptions.
  */
 export function getTemplateVariableDefinitions(): Array<{ key: string; label: string; description: string }> {
-  return [
-    { key: 'participant_name', label: 'Participant Name', description: 'Full name of the participant' },
-    { key: 'event_name', label: 'Event Name', description: 'Name of the event' },
-    { key: 'event_date', label: 'Event Date', description: 'Date of the event' },
-    { key: 'event_venue', label: 'Event Venue', description: 'Venue of the event' },
+    return [
+      { key: 'participant_name', label: 'Participant Name', description: 'Full name of the participant' },
+      { key: 'registration_id', label: 'Registration ID', description: 'Human-friendly registration identifier' },
+      { key: 'event_name', label: 'Event Name', description: 'Name of the event' },
+      { key: 'event_date', label: 'Event Date', description: 'Date of the event' },
+      { key: 'event_venue', label: 'Event Venue', description: 'Venue of the event' },
     { key: 'format', label: 'Format', description: 'Event format (e.g. Men\'s Doubles)' },
     { key: 'registration_status', label: 'Registration Status', description: 'Current status (Approved/Rejected/Pending)' },
     { key: 'support_email', label: 'Support Email', description: 'Event support email address' },

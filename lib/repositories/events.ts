@@ -24,6 +24,7 @@ function getFallbackEvent(): EventWithFormats {
     image_url: null,
     whatsapp_number: '',
     whatsapp_group_link: '',
+    featured: false,
     status: 'published',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -45,6 +46,7 @@ export async function getAllPublishedEvents(): Promise<EventWithFormats[]> {
       .from('events')
       .select('*, formats:event_formats(*)')
       .eq('status', 'published')
+      .order('featured', { ascending: false, nullsFirst: false })
       .order('event_date', { ascending: true })
     if (error) throw error
     
@@ -139,6 +141,7 @@ export async function createEvent(formData: EventFormData): Promise<EventWithFor
       rally_points: eventData.rally_points || 0,
       whatsapp_number: eventData.whatsapp_number || null,
       whatsapp_group_link: eventData.whatsapp_group_link || null,
+      featured: (eventData as { featured?: boolean }).featured ?? false,
       status: eventData.status || 'draft',
     })
     .select()
@@ -185,6 +188,7 @@ export async function updateEvent(id: string, formData: Partial<EventFormData>):
   if (eventData.rally_points !== undefined) updatePayload.rally_points = eventData.rally_points
   if (eventData.whatsapp_number !== undefined) updatePayload.whatsapp_number = eventData.whatsapp_number
   if (eventData.whatsapp_group_link !== undefined) updatePayload.whatsapp_group_link = eventData.whatsapp_group_link
+  if ((eventData as { featured?: boolean }).featured !== undefined) updatePayload.featured = (eventData as { featured?: boolean }).featured ?? false
   if (eventData.status !== undefined) updatePayload.status = eventData.status
   updatePayload.updated_at = new Date().toISOString()
 

@@ -14,7 +14,8 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  X
+  X,
+  Briefcase
 } from 'lucide-react'
 
 // Styles
@@ -116,6 +117,7 @@ function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
     { label: 'Events', href: '/admin/events', icon: <Calendar size={16} /> },
     { label: 'Registrations', href: '/admin/registrations', icon: <Users size={16} /> },
     { label: 'Communication', href: '/admin/communication', icon: <Mail size={16} /> },
+    { label: 'Partner Enquiries', href: '/admin/partners', icon: <Briefcase size={16} /> },
     { label: 'Analytics', href: '/admin/analytics', icon: <BarChart3 size={16} /> },
   ]
 

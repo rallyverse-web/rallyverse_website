@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getEventBySlug } from '@/lib/repositories/events'
 import { createRegistration } from '@/lib/repositories/registrations'
 import { checkRateLimit, getRateLimitKey } from '@/lib/rate-limiter'
+import { sendRegistrationReceivedEmail } from '@/lib/send-email-service'
 
 const phoneRegex = /^[+]?[0-9\s-]{10,15}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -51,6 +52,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       partner_name: partner_name || '',
       partner_phone: partner_phone || '',
     })
+
+    try {
+      await sendRegistrationReceivedEmail(event.id, registration, event)
+    } catch (emailError) {
+      console.error('Registration email failed:', emailError)
+    }
 
     return NextResponse.json({
       success: true,

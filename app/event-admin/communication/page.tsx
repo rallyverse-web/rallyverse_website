@@ -9,6 +9,7 @@ import { getTemplateVariableDefinitions } from '@/lib/template-renderer'
 const TEMPLATE_TYPES: { value: EmailTemplateType; label: string }[] = [
   { value: 'approval', label: 'Approval' },
   { value: 'rejection', label: 'Rejection' },
+  { value: 'registration_received', label: 'Registration Received' },
   { value: 'reminder', label: 'Reminder' },
   { value: 'results', label: 'Results' },
   { value: 'broadcast', label: 'Broadcast' },
