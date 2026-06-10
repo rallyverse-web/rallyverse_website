@@ -22,7 +22,6 @@ const socialIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
 const contactItems = [
   { label: 'Phone', value: CONTACT.phone, href: CONTACT.telUrl },
   { label: 'Email', value: CONTACT.email, href: SOCIAL.email },
-  { label: 'WhatsApp', value: CONTACT.whatsapp, href: WHATSAPP.businessLink },
 ]
 
 export default function Footer() {

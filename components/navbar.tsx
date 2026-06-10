@@ -16,6 +16,7 @@ const navLinks: NavLink[] = [
   { label: 'Community', href: '#community' },
   { label: 'Events', href: '/events', isRoute: true },
   { label: 'Partners', href: '/partners', isRoute: true },
+  { label: 'Believers', href: '/believers', isRoute: true },
   { label: 'About', href: '/about', isRoute: true },
   { label: 'Contact', href: '/contact', isRoute: true },
 ]

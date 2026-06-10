@@ -39,8 +39,9 @@ export default function BelieversSection() {
         </div>
 
         <AnimatedSection delay={0.15}>
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {believers.slice(0, 3).map((person, i) => (
+          <div className="mt-12 flex justify-center">
+            <div className="grid grid-cols-1 gap-8 w-full max-w-sm">
+              {believers.slice(0, 3).map((person, i) => (
               <div
                 key={person.name}
                 className="flex flex-col items-center text-center rounded-xl p-6 transition-all duration-200"
@@ -115,6 +116,7 @@ export default function BelieversSection() {
                 </a>
               </div>
             ))}
+            </div>
           </div>
         </AnimatedSection>
 
