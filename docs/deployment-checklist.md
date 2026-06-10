@@ -4,7 +4,7 @@ Ensure all items in this checklist are verified and marked complete before deplo
 
 ---
 
-## 🗄️ Database & Supabase Check
+## Database & Supabase Check
 - [ ] **SQL Schemas**: Run all migrations sequentially up to `scripts/migration_cleanup_v2.sql`.
 - [ ] **Constraints Active**: Verify `UNIQUE(event_id, template_type)` on `email_templates` and `UNIQUE(event_id, format_name)` on `event_formats`.
 - [ ] **RLS Enabled**: Check that Row Level Security (RLS) is active on `registrations`, `event_admins`, `event_payment_config`, `email_templates`, `email_logs`, `page_views`, and `whatsapp_clicks`.
@@ -12,7 +12,7 @@ Ensure all items in this checklist are verified and marked complete before deplo
 
 ---
 
-## 🔑 Environment Variables
+## Environment Variables
 - [ ] **Secrets Validated**: Validate that `RESEND_API_KEY`, `ADMIN_PASSWORD`, and `SUPABASE_SERVICE_ROLE_KEY` are correct in the Vercel project panel.
 - [ ] **URLs Configured**: `NEXT_PUBLIC_SITE_URL` must point to the canonical production URL (`https://rallyverse.social`).
 - [ ] **GA4 Measurements**: Check that `NEXT_PUBLIC_GA4_MEASUREMENT_ID` is set to the correct production stream identifier.
@@ -20,7 +20,7 @@ Ensure all items in this checklist are verified and marked complete before deplo
 
 ---
 
-## 📧 Resend Gateway & Email Testing
+## Resend Gateway & Email Testing
 - [ ] **Domain Verification**: Verify the sender domain (`rallyverse.social`) is fully verified (DKIM/SPF) in the Resend dashboard.
 - [ ] **Template Seeding**: Verify that `seedEventDefaults` has run for active events, creating templates for `approval`, `rejection`, `reminder`, `results`, and `broadcast`.
 - [ ] **Test Email Delivery**:
@@ -31,16 +31,21 @@ Ensure all items in this checklist are verified and marked complete before deplo
 
 ---
 
-## 📈 Google Analytics (GA4) & Tracking
+## Google Analytics (GA4) & Tracking
 - [ ] **Script Loading**: Check the browser console on loading the site to confirm `gtag.js` is loaded without blocking errors.
 - [ ] **Funnel Clicks Tracking**:
   - [ ] Verify that starting a registration triggers GA4 client actions.
   - [ ] Verify that clicking the WhatsApp support button records a hit in the `whatsapp_clicks` table in Supabase.
   - [ ] Verify that loading pages increments `page_views` table rows.
 
+## Vercel Analytics
+- [ ] **Global Mount**: Confirm `Analytics` is rendered in `app/layout.tsx` so every page is included.
+- [ ] **Dashboard Access**: Verify the Vercel project dashboard shows the **Analytics** panel after deployment.
+- [ ] **Traffic Visibility**: Confirm page views and top pages appear after real production traffic reaches the site.
+
 ---
 
-## 🔒 Dashboards Access & Security
+## Dashboards Access & Security
 - [ ] **Founder Authentication**: Try logging into `/admin` with an incorrect password, and verify it blocks access. Verify correct password allows access and displays Platform Overview metrics.
 - [ ] **Sub-Admin Token Validation**:
   - [ ] Generate a sub-admin token inside `/admin/events` under the admin modal.
@@ -50,7 +55,7 @@ Ensure all items in this checklist are verified and marked complete before deplo
 
 ---
 
-## 📦 Production Smoke Test
+## Production Smoke Test
 - [ ] **Register Campaign Flow**:
   - [ ] Submit a registration on the live site at `/events/[slug]/register`.
   - [ ] Verify the registration record appears in Supabase.

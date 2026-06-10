@@ -4,6 +4,8 @@ RallyVerse utilizes a dual-layer analytics approach:
 1. **Google Analytics 4 (GA4)**: Captures client-side user behavior, page engagement, and client-side conversion indicators.
 2. **Server-Side Supabase Logging**: Captures concrete conversion actions (page views and WhatsApp CTA clicks) directly inside PostgreSQL.
 
+Vercel Analytics is now added as a lightweight site-traffic layer for global page-view reporting in the Vercel dashboard. It complements, rather than replaces, the existing GA4 and Supabase tracking.
+
 ---
 
 ## 📈 Client-Side Google Analytics 4 (GA4)

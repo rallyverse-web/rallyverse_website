@@ -65,6 +65,12 @@ NEXT_PUBLIC_COMMUNITY_WHATSAPP_LINK="https://chat.whatsapp.com/..."
 NEXT_PUBLIC_BUSINESS_WHATSAPP_LINK="https://wa.me/..."
 ```
 
+## Analytics Notes
+
+- **Vercel Analytics** is initialized globally from `app/layout.tsx` and does not require a dedicated environment variable.
+- Open the project in Vercel and use the **Analytics** sidebar item to review traffic, page views, and top pages after deployment.
+- Keep the root layout mounted for every route so all RallyVerse pages remain tracked automatically.
+
 ### Step 3: Trigger Build
 1. Set the framework preset to **Next.js**.
 2. Click **Deploy**.

@@ -26,6 +26,7 @@ Welcome to the RallyVerse v2.0 Documentation Portal. This system outlines the ar
 - **[WhatsApp Integrations](whatsapp-system.md)**: Business chats, invite links, and fallback configurations.
 - **[Security & RLS Policies](permissions.md)**: Database Row Level Security (RLS) policies and authentication validation rules.
 - **[Analytics Infrastructure](analytics.md)**: Google Analytics 4 (GA4) conversion funnels and Supabase logging tables.
+- **[Vercel Analytics Integration](vercel-analytics.md)**: Site-wide traffic analytics setup and Vercel dashboard access.
 
 ### 4. Configuration & Deployment
 - **[Environment Variables Guide](environment-variables.md)**: Complete list of keys required to build, test, and run the app.

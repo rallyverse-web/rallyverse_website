@@ -31,7 +31,7 @@ This repository houses the complete serverless web application, featuring dynami
 - **Framework**: Next.js 16 (React 19, App Router)
 - **Database**: PostgreSQL on Supabase (RLS Policies enabled)
 - **Email Gateway**: Resend Transactional Mail Service
-- **Analytics**: Google Analytics 4 (Client-side) & Server-side event tracking
+- **Analytics**: Vercel Analytics for site traffic, Google Analytics 4 (Client-side), and server-side event tracking
 - **Styling**: Tailwind CSS
 - **Package Manager**: pnpm
 
@@ -73,7 +73,7 @@ Full subsystem guides, setup playbooks, and operations manuals are located in th
 6. **[Security & Row Level Security (RLS)](docs/permissions.md)**: Database policy permissions.
 7. **[Outbound Emails & Resend Guide](docs/email-system.md)**: Templated transactional notifications.
 8. **[WhatsApp Integration](docs/whatsapp-system.md)**: Preferred user links generation rules and fallbacks.
-9. **[Analytics & Funnel Tracking](docs/analytics.md)**: GA4 and database conversions logs.
+9. **[Analytics & Funnel Tracking](docs/analytics.md)**: GA4, Vercel Analytics, and database conversions logs.
 10. **[Codebase & Directories Tree](docs/folder-structure.md)**: Code architecture layout.
 11. **[Environment Variables](docs/environment-variables.md)**: Variables lookup reference.
 12. **[Supabase & Vercel Deployment Manual](docs/deployment.md)**: Serverless launch configuration.
