@@ -1,5 +1,6 @@
 import Hero from '@/components/hero'
 import HeroIntro from '@/components/HeroIntro'
+import CommunityStats from '@/components/CommunityStats'
 import WhatWeDo from '@/components/WhatWeDo'
 import EventCategories from '@/components/EventCategories'
 import WhoThisIsFor from '@/components/WhoThisIsFor'
@@ -12,9 +13,11 @@ import TrackPageView from '@/components/TrackPageView'
 import { faqs } from '@/lib/faqs'
 import { SITE } from '@/lib/config'
 import { getFirstPublishedEvent } from '@/lib/repositories/events'
+import { getCommunityStats } from '@/lib/repositories/stats'
 
 export default async function Page() {
   const firstEvent = await getFirstPublishedEvent()
+  const stats = await getCommunityStats()
 
   return (
     <>
@@ -39,6 +42,7 @@ export default async function Page() {
       <TrackPageView pageType="homepage" />
       <Hero />
       <HeroIntro />
+      <CommunityStats stats={stats} />
       <WhatWeDo />
       <EventCategories />
       <WhoThisIsFor />

@@ -1,8 +1,7 @@
-'use client'
-
-import { use } from 'react'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Clock, User, Share2 } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, User } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import TrackPageView from '@/components/TrackPageView'
 
@@ -68,19 +67,34 @@ const detailedArticles: Record<string, {
   }
 }
 
-export default function BlogPostDetail({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params)
-  
-  const post = detailedArticles[slug] || {
-    title: 'Sports Ecosystem Insights',
-    category: 'Sports Strategy',
-    date: 'June 2026',
-    readTime: '3 min read',
-    author: 'RallyVerse Team',
-    paragraphs: [
-      'Building a sports community is an ongoing journey. Insights, operational guides, and sports marketing tips are published regularly to help organizers and brands grow.',
-      'Check back soon for detailed ecosystem metrics, strategies, and case studies.',
-    ]
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const post = detailedArticles[slug]
+  if (!post) return {}
+
+  return {
+    title: `${post.title} — RallyVerse | Sports Growth Partner`,
+    description: post.paragraphs[0] || 'Insights and strategy from the sports ecosystem.',
+    openGraph: {
+      title: `${post.title} — RallyVerse | Sports Growth Partner`,
+      description: post.paragraphs[0] || 'Insights and strategy from the sports ecosystem.',
+      url: `https://rallyverse.social/insights/${slug}`,
+      siteName: 'RallyVerse',
+      locale: 'en_IN',
+      type: 'article',
+    },
+    alternates: {
+      canonical: `/insights/${slug}`,
+    },
+  }
+}
+
+export default async function BlogPostDetail({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const post = detailedArticles[slug]
+
+  if (!post) {
+    notFound()
   }
 
   const jsonLd = {
@@ -119,8 +133,6 @@ export default function BlogPostDetail({ params }: { params: Promise<{ slug: str
             href="/insights"
             className="inline-flex items-center gap-2 font-body text-sm font-semibold mb-8"
             style={{ color: 'var(--text-muted)' }}
-            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-primary)'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             <ArrowLeft size={16} />
             Back to Insights

@@ -16,8 +16,8 @@ export const COMPANY = {
 // ─── Email ────────────────────────────────────────────────────────
 export const EMAIL = {
   from: 'RallyVerse <registrations@rallyverse.social>',
-  replyTo: 'rallyverseofficial@gmail.com',
-  supportEmail: 'rallyverseofficial@gmail.com',
+  replyTo: 'hello@rallyverse.social',
+  supportEmail: 'hello@rallyverse.social',
   secondaryFrom: 'RallyVerse <hello@rallyverse.social>',
 }
 
@@ -48,7 +48,7 @@ export const WHATSAPP = {
 export const CONTACT = {
   phone: WHATSAPP.businessNumber,
   telUrl: `tel:${WHATSAPP.businessNumber.replace(/[\s+]/g, '')}`,
-  email: 'rallyverseofficial@gmail.com',
+  email: 'hello@rallyverse.social',
   supportEmail: EMAIL.supportEmail,
   whatsapp: WHATSAPP.businessNumber,
   whatsappUrl: WHATSAPP.businessLink,

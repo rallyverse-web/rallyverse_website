@@ -4,8 +4,8 @@ const baseUrl = 'https://rallyverse.social'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
-    '', '/about', '/events', '/contact', '/believers',
-    '/privacy-policy', '/terms-and-conditions',
+    '', '/about', '/services', '/partners', '/community', '/events', '/believers', '/contact',
+    '/case-studies', '/insights', '/privacy-policy', '/terms-and-conditions',
   ]
 
   const staticEntries = routes.map((route) => ({
@@ -14,6 +14,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: (route === '' ? 'weekly' : 'monthly') as 'weekly' | 'monthly',
     priority: route === '' ? 1 : 0.8,
   })) as MetadataRoute.Sitemap
+
+  const caseStudySlugs = ['rally-series']
+  const caseStudyEntries = caseStudySlugs.map((slug) => ({
+    url: `${baseUrl}/case-studies/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
+
+  const blogSlugs = [
+    'grow-sports-community',
+    'event-marketing-strategies',
+    'successful-tournament-ops',
+    'community-led-sports-growth',
+  ]
+  const blogEntries = blogSlugs.map((slug) => ({
+    url: `${baseUrl}/insights/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
 
   // Add dynamic event slugs
   try {
@@ -34,11 +55,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'monthly' as const,
         priority: 0.9,
       }))
-      return [...staticEntries, ...eventEntries]
+      return [...staticEntries, ...caseStudyEntries, ...blogEntries, ...eventEntries]
     }
   } catch {
-    // If DB is not available, just return static routes
+    // If DB is not available, just return static + local entries
   }
 
-  return staticEntries
+  return [...staticEntries, ...caseStudyEntries, ...blogEntries]
 }

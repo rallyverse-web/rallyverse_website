@@ -492,9 +492,12 @@ export default function AdminEventsPage() {
                   <select value={formData.category} onChange={(e) => updateForm('category', e.target.value)} style={s.select}>
                     <option value="">Select category</option>
                     <option value="badminton">Badminton</option>
-                    <option value="trek">Trek</option>
-                    <option value="marathon">Marathon</option>
+                    <option value="pickleball">Pickleball</option>
+                    <option value="football">Football</option>
+                    <option value="basketball">Basketball</option>
+                    <option value="running">Running</option>
                     <option value="cycling">Cycling</option>
+                    <option value="other">Other Sports</option>
                   </select>
                 </div>
 

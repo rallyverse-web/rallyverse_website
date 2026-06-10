@@ -1,41 +1,107 @@
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { Event, EventFormat, EventWithFormats, EventFormData, AdminEventMetrics, EventWithPaymentConfig, EventPaymentConfig } from '@/lib/types/supabase'
 import { seedEventDefaults } from '@/lib/seed-defaults'
+import { CURRENT_EVENT } from '@/lib/config'
+
+function getFallbackEvent(): EventWithFormats {
+  const eventId = 'fallback-event-id'
+  return {
+    id: eventId,
+    name: CURRENT_EVENT.name,
+    slug: CURRENT_EVENT.slug,
+    description: CURRENT_EVENT.description,
+    category: 'badminton',
+    venue: CURRENT_EVENT.venue,
+    event_date: CURRENT_EVENT.startISO,
+    date_label: CURRENT_EVENT.date,
+    time_label: CURRENT_EVENT.time,
+    is_date_confirmed: CURRENT_EVENT.isDateConfirmed,
+    registration_fee: CURRENT_EVENT.registrationFee,
+    payment_info: '',
+    capacity: 100,
+    rally_points: 10,
+    poster_url: null,
+    image_url: null,
+    whatsapp_number: '',
+    whatsapp_group_link: '',
+    status: 'published',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    formats: CURRENT_EVENT.categories.map((name, i) => ({
+      id: `fallback-format-${i}`,
+      event_id: eventId,
+      format_name: name,
+      created_at: new Date().toISOString(),
+    })),
+  }
+}
 
 // ─── Public (read) ─────────────────────────────────────────────
 
 export async function getAllPublishedEvents(): Promise<EventWithFormats[]> {
-  const supabase = await getSupabaseServerClient()
-  const { data, error } = await supabase
-    .from('events')
-    .select('*, formats:event_formats(*)')
-    .eq('status', 'published')
-    .order('event_date', { ascending: true })
-  if (error) throw error
-  return (data ?? []).map(attachFormats)
+  try {
+    const supabase = await getSupabaseServerClient()
+    const { data, error } = await supabase
+      .from('events')
+      .select('*, formats:event_formats(*)')
+      .eq('status', 'published')
+      .order('event_date', { ascending: true })
+    if (error) throw error
+    
+    if (data && data.length > 0) {
+      return data.map(attachFormats)
+    }
+  } catch (error) {
+    if (error instanceof Error && (error.message.includes('Dynamic server usage') || (error as any).digest === 'DYNAMIC_SERVER_USAGE' || error.message.includes('cookies'))) {
+      throw error
+    }
+    console.error('Error fetching all published events from database:', error)
+  }
+  return [getFallbackEvent()]
 }
 
 export async function getEventBySlug(slug: string): Promise<EventWithFormats | null> {
-  const supabase = await getSupabaseServerClient()
-  const { data, error } = await supabase
-    .from('events')
-    .select('*, formats:event_formats(*)')
-    .eq('slug', slug)
-    .single()
-  if (error && error.code !== 'PGRST116') throw error
-  return data ? attachFormats(data) : null
+  try {
+    const supabase = await getSupabaseServerClient()
+    const { data, error } = await supabase
+      .from('events')
+      .select('*, formats:event_formats(*)')
+      .eq('slug', slug)
+      .single()
+    if (error && error.code !== 'PGRST116') throw error
+    if (data) return attachFormats(data)
+  } catch (error) {
+    if (error instanceof Error && (error.message.includes('Dynamic server usage') || (error as any).digest === 'DYNAMIC_SERVER_USAGE' || error.message.includes('cookies'))) {
+      throw error
+    }
+    console.error(`Error fetching event by slug ${slug} from database:`, error)
+  }
+  if (slug === CURRENT_EVENT.slug) {
+    return getFallbackEvent()
+  }
+  return null
 }
 
 export async function getFirstPublishedEvent(): Promise<EventWithFormats | null> {
-  const supabase = await getSupabaseServerClient()
-  const { data, error } = await supabase
-    .from('events')
-    .select('*, formats:event_formats(*)')
-    .eq('status', 'published')
-    .order('event_date', { ascending: true })
-    .limit(1)
-  if (error) throw error
-  return data && data.length > 0 ? attachFormats(data[0]) : null
+  try {
+    const supabase = await getSupabaseServerClient()
+    const { data, error } = await supabase
+      .from('events')
+      .select('*, formats:event_formats(*)')
+      .eq('status', 'published')
+      .order('event_date', { ascending: true })
+      .limit(1)
+    if (error) throw error
+    if (data && data.length > 0) {
+      return attachFormats(data[0])
+    }
+  } catch (error) {
+    if (error instanceof Error && (error.message.includes('Dynamic server usage') || (error as any).digest === 'DYNAMIC_SERVER_USAGE' || error.message.includes('cookies'))) {
+      throw error
+    }
+    console.error('Error fetching first published event from database:', error)
+  }
+  return getFallbackEvent()
 }
 
 // ─── Admin (CRUD) ──────────────────────────────────────────────

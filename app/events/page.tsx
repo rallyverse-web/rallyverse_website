@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { MapPin, Calendar, Clock, Swords, Mountain, Timer, Bike, ArrowRight } from 'lucide-react'
+import { MapPin, Calendar, Clock, Swords, Trophy, Timer, Bike, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import EventPoster from '@/components/EventPoster'
 import TrackPageView from '@/components/TrackPageView'
@@ -10,10 +10,10 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Events — RallyVerse | Sports Growth Partner',
-  description: 'Discover upcoming sports events powered by RallyVerse. Badminton tournaments, runs, and cycling events in Bengaluru.',
+  description: 'Discover upcoming sports events powered by RallyVerse. Badminton, Pickleball, Running, Cycling, Football, and Basketball tournaments and events in Bengaluru.',
   openGraph: {
     title: 'Events — RallyVerse | Sports Growth Partner',
-    description: 'Discover upcoming sports events powered by RallyVerse. Badminton tournaments, runs, and cycling events in Bengaluru.',
+    description: 'Discover upcoming sports events powered by RallyVerse. Badminton, Pickleball, Running, Cycling, Football, and Basketball tournaments and events in Bengaluru.',
     url: 'https://rallyverse.social/events',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Events — RallyVerse | Sports Growth Partner',
-    description: 'Discover upcoming sports events powered by RallyVerse. Badminton tournaments, runs, and cycling events in Bengaluru.',
+    description: 'Discover upcoming sports events powered by RallyVerse. Badminton, Pickleball, Running, Cycling, Football, and Basketball tournaments and events in Bengaluru.',
     images: ['/og'],
   },
   alternates: { canonical: '/events' },
@@ -31,21 +31,27 @@ export const metadata: Metadata = {
 
 const categoryIcons: Record<string, typeof Swords> = {
   badminton: Swords,
-  trek: Mountain,
-  marathon: Timer,
+  pickleball: Trophy,
+  football: Trophy,
+  basketball: Trophy,
+  running: Timer,
   cycling: Bike,
+  other: Trophy,
 }
 
 const categoryLabels: Record<string, string> = {
   badminton: 'The Court',
-  trek: 'The Trail',
-  marathon: 'The Road',
+  pickleball: 'The Court',
+  football: 'The Pitch',
+  basketball: 'The Court',
+  running: 'The Road',
   cycling: 'The Ride',
+  other: 'The Game',
 }
 
 const futureConcepts = [
-  { icon: Swords, name: 'The Court', desc: 'Badminton Leagues', status: 'Registrations Open', color: 'var(--pill-active-text)' as string, bg: 'var(--pill-active-bg)' as string },
-  { icon: Timer, name: 'The Road', desc: 'Marathons & Runs', status: 'Coming Soon', color: 'var(--pill-inactive-text)' as string, bg: 'var(--pill-inactive-bg)' as string },
+  { icon: Swords, name: 'The Court', desc: 'Badminton & Pickleball', status: 'Registrations Open', color: 'var(--pill-active-text)' as string, bg: 'var(--pill-active-bg)' as string },
+  { icon: Timer, name: 'The Road', desc: 'Marathons & Running', status: 'Coming Soon', color: 'var(--pill-inactive-text)' as string, bg: 'var(--pill-inactive-bg)' as string },
   { icon: Bike, name: 'The Ride', desc: 'Cycling Events', status: 'Coming Soon', color: 'var(--pill-inactive-text)' as string, bg: 'var(--pill-inactive-bg)' as string },
 ]
 

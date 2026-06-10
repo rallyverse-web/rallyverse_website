@@ -13,7 +13,7 @@ type NavLink = { label: string; href: string; isRoute?: boolean }
 const navLinks: NavLink[] = [
   { label: 'Home', href: '#hero' },
   { label: 'Services', href: '/services', isRoute: true },
-  { label: 'Community', href: '#community' },
+  { label: 'Community', href: '/community', isRoute: true },
   { label: 'Events', href: '/events', isRoute: true },
   { label: 'Partners', href: '/partners', isRoute: true },
   { label: 'Believers', href: '/believers', isRoute: true },
@@ -21,7 +21,7 @@ const navLinks: NavLink[] = [
   { label: 'Contact', href: '/contact', isRoute: true },
 ]
 
-const sectionIds = ['hero', 'community']
+const sectionIds = ['hero']
 
 export default function Navbar() {
   const router = useRouter()

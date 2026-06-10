@@ -118,6 +118,41 @@ Stores submissions from players registering for events.
 
 ---
 
+### 9. `partner_enquiries`
+Stores B2B partnership enquiries submitted by organizations, sports academies, brands, and organizers.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `uuid` | Primary Key, Default: `gen_random_uuid()` | Unique enquiry identifier |
+| `name` | `text` | NOT NULL | Contact person's full name |
+| `organization` | `text` | - | Name of company/academy |
+| `email` | `text` | NOT NULL | Contact email address |
+| `phone` | `text` | NOT NULL | Contact WhatsApp/Phone number |
+| `organization_type` | `text` | NOT NULL | E.g. "Sports Brand", "Academy", etc. |
+| `services_interested` | `text[]` | NOT NULL | Array of services they are interested in |
+| `message` | `text` | - | Optional enquiry details/message |
+| `created_at` | `timestamptz`| Default: `now()` | Enquiry timestamp |
+
+
+---
+
+### 10. `contact_submissions`
+Stores direct contact messages submitted by visitors.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `uuid` | Primary Key, Default: `gen_random_uuid()` | Unique submission identifier |
+| `name` | `text` | NOT NULL | Sender's full name |
+| `organization` | `text` | - | Optional organization/company name |
+| `email` | `text` | NOT NULL | Sender's email address |
+| `phone` | `text` | - | Optional phone number |
+| `message` | `text` | NOT NULL | Submission message body |
+| `created_at` | `timestamptz`| Default: `now()` | Submission timestamp |
+
+
+
+---
+
 ### 6. `event_email_settings`
 Custom mail server/sender profiles per event.
 

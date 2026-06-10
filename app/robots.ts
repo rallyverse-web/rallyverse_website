@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin'],
+        disallow: ['/admin', '/admin/*', '/event-admin', '/event-admin/*'],
       },
     ],
     sitemap: 'https://rallyverse.social/sitemap.xml',

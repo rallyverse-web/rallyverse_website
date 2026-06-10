@@ -5,13 +5,13 @@ import AnimatedSection from '@/components/AnimatedSection'
 import { believers } from '@/data/believers'
 
 export const metadata: Metadata = {
-  title: 'Believers — RallyVerse | Early Supporters & Community Builders',
+  title: 'Believers — RallyVerse | Early Supporters & Sports Growth Partners',
   description:
-    'Meet the early supporters and believers helping RallyVerse build a stronger badminton community through meaningful experiences and shared connections.',
+    'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, run professional tournaments, and connect brands with active players.',
   openGraph: {
-    title: 'Believers — RallyVerse | Early Supporters & Community Builders',
+    title: 'Believers — RallyVerse | Early Supporters & Sports Growth Partners',
     description:
-      'Meet the early supporters and believers helping RallyVerse build a stronger badminton community through meaningful experiences and shared connections.',
+      'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, run professional tournaments, and connect brands with active players.',
     url: 'https://rallyverse.social/believers',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
         url: '/og',
         width: 1200,
         height: 630,
-        alt: 'RallyVerse — Rally Beyond Routine',
+        alt: 'RallyVerse — Rallying Communities Through Sports',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Believers — RallyVerse | Early Supporters & Community Builders',
+    title: 'Believers — RallyVerse | Early Supporters & Sports Growth Partners',
     description:
-      'Meet the early supporters and believers helping RallyVerse build a stronger badminton community through meaningful experiences and shared connections.',
+      'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, run professional tournaments, and connect brands with active players.',
     images: ['/og'],
   },
   alternates: {

@@ -5,10 +5,10 @@ import Flywheel from '@/components/Flywheel'
 
 export const metadata: Metadata = {
   title: 'About — RallyVerse | Sports Growth Partner',
-  description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
+  description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities and powering real events in Bengaluru.',
   openGraph: {
     title: 'About — RallyVerse | Sports Growth Partner',
-    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
+    description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities and powering real events in Bengaluru.',
     url: 'https://rallyverse.social/about',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'About — RallyVerse | Sports Growth Partner',
-    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
+    description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities and powering real events in Bengaluru.',
     images: ['/og'],
   },
   alternates: {

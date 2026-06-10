@@ -1,9 +1,7 @@
-'use client'
-
-import { use, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Check, Trophy, User } from 'lucide-react'
+import { ArrowLeft, Check, User } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import TrackPageView from '@/components/TrackPageView'
 
@@ -38,27 +36,34 @@ const detailedCaseStudies: Record<string, {
   }
 }
 
-export default function CaseStudyDetail({ params }: { params: Promise<{ slug: string }> }) {
-  const router = useRouter()
-  const { slug } = use(params)
-  
-  const study = detailedCaseStudies[slug] || {
-    title: 'Upcoming Case Study',
-    subtitle: 'Scaling sport visibility and registration volumes.',
-    category: 'Ecosystem Growth',
-    overview: 'This case study outlines RallyVerse\'s upcoming initiative to scale registrations, provide customized dashboards, and launch promotional outreach for local sporting communities.',
-    challenge: 'Reaching a targeted audience of active sports competitors and managing check-in check-outs without manual intervention.',
-    solution: 'Deploying our community-owned sports channels and integrated marketing platforms.',
-    results: [
-      'Enhanced local brand visibility.',
-      'Increased athlete check-in efficiency.',
-      'Compounding member retention loops.',
-    ],
-    testimonial: {
-      quote: 'We look forward to sharing detailed metrics once this campaign completes.',
-      author: 'RallyVerse Analytics Team',
-      role: 'Operations & Tracking',
-    }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const study = detailedCaseStudies[slug]
+  if (!study) return {}
+
+  return {
+    title: `${study.title} Case Study — RallyVerse | Sports Growth Partner`,
+    description: study.overview,
+    openGraph: {
+      title: `${study.title} Case Study — RallyVerse | Sports Growth Partner`,
+      description: study.overview,
+      url: `https://rallyverse.social/case-studies/${slug}`,
+      siteName: 'RallyVerse',
+      locale: 'en_IN',
+      type: 'article',
+    },
+    alternates: {
+      canonical: `/case-studies/${slug}`,
+    },
+  }
+}
+
+export default async function CaseStudyDetail({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const study = detailedCaseStudies[slug]
+
+  if (!study) {
+    notFound()
   }
 
   const jsonLd = {
@@ -93,8 +98,6 @@ export default function CaseStudyDetail({ params }: { params: Promise<{ slug: st
             href="/case-studies"
             className="inline-flex items-center gap-2 font-body text-sm font-semibold mb-8"
             style={{ color: 'var(--text-muted)' }}
-            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-primary)'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             <ArrowLeft size={16} />
             Back to Case Studies

@@ -1,9 +1,31 @@
-'use client'
-
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Trophy, TrendingUp, Users } from 'lucide-react'
+import { ArrowRight, Trophy } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import TrackPageView from '@/components/TrackPageView'
+
+export const metadata: Metadata = {
+  title: 'Case Studies — RallyVerse | Proven Sports Growth Campaigns',
+  description: 'Explore our sports growth and operations case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
+  openGraph: {
+    title: 'Case Studies — RallyVerse | Proven Sports Growth Campaigns',
+    description: 'Explore our sports growth and operations case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
+    url: 'https://rallyverse.social/case-studies',
+    siteName: 'RallyVerse',
+    locale: 'en_IN',
+    type: 'website',
+    images: [{ url: '/og', width: 1200, height: 630, alt: 'RallyVerse — Rallying Communities Through Sports' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Case Studies — RallyVerse | Proven Sports Growth Campaigns',
+    description: 'Explore our sports growth and operations case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
+    images: ['/og'],
+  },
+  alternates: {
+    canonical: '/case-studies',
+  },
+}
 
 export const caseStudiesData = [
   {
@@ -14,24 +36,6 @@ export const caseStudiesData = [
     category: 'Tournament Operations',
     results: '150+ players registered, 100% payment verification accuracy',
     active: true,
-  },
-  {
-    slug: 'tournament-growth',
-    icon: TrendingUp,
-    title: 'Tournament Growth Campaign',
-    subtitle: 'Scaling local events through targeted sports marketing.',
-    category: 'Sports Marketing',
-    results: 'Coming soon to the ecosystem',
-    active: false,
-  },
-  {
-    slug: 'community-growth',
-    icon: Users,
-    title: 'Community Growth Initiative',
-    subtitle: 'Establishing local club networks and member acquisition channels.',
-    category: 'Community Building',
-    results: 'Coming soon to the ecosystem',
-    active: false,
   },
 ]
 
@@ -93,22 +97,14 @@ export default function CaseStudiesPage() {
                       {study.results}
                     </p>
 
-                    {study.active ? (
-                      <Link
-                        href={`/case-studies/${study.slug}`}
-                        className="group inline-flex items-center gap-2 font-body text-sm font-semibold transition-colors duration-200"
-                        style={{ color: 'var(--link-color)' }}
-                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--link-hover)'}
-                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--link-color)'}
-                      >
-                        Read Case Study
-                        <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
-                      </Link>
-                    ) : (
-                      <span className="font-body text-sm italic" style={{ color: 'var(--text-faint)' }}>
-                        Placeholder Case Study
-                      </span>
-                    )}
+                    <Link
+                      href={`/case-studies/${study.slug}`}
+                      className="group inline-flex items-center gap-2 font-body text-sm font-semibold transition-colors duration-200"
+                      style={{ color: 'var(--link-color)' }}
+                    >
+                      Read Case Study
+                      <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
+                    </Link>
                   </div>
                 </div>
               </AnimatedSection>

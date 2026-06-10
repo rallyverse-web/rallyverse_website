@@ -2,7 +2,7 @@
 export type EventStatus = 'draft' | 'published' | 'cancelled' | 'completed'
 
 // ── Event Category ──
-export type EventCategory = 'badminton' | 'trek' | 'marathon' | 'cycling'
+export type EventCategory = 'badminton' | 'pickleball' | 'football' | 'basketball' | 'running' | 'cycling' | 'other'
 
 // ── Event (matches + extends events table) ──
 export interface Event {
