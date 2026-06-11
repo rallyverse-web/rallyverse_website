@@ -8,10 +8,10 @@ import AnimatedSection from '@/components/AnimatedSection'
 import SocialIcons from '@/components/SocialIcons'
 import TrackPageView from '@/components/TrackPageView'
 import ShinyText from '@/components/ShinyText'
-import { CONTACT, ADDRESS, ADDRESS_FULL, SOCIAL, WHATSAPP, EMAIL } from '@/lib/config'
+import { CONTACT, ADDRESS_FULL, SOCIAL, WHATSAPP, EMAIL } from '@/lib/config'
 import { trackEvent } from '@/lib/analytics'
 
-const mapsQuery = encodeURIComponent(`${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state}, ${ADDRESS.country}`)
+const mapsQuery = encodeURIComponent(ADDRESS_FULL)
 const MAPS_HREF = `https://www.google.com/maps/search/${mapsQuery}`
 
 const contactMethods = [
@@ -29,7 +29,7 @@ const contactMethods = [
   },
   {
     icon: Headset,
-    label: 'Event Support',
+    label: 'Organizer Tools',
     value: EMAIL.supportEmail,
     href: `mailto:${EMAIL.supportEmail}`,
   },
@@ -392,7 +392,7 @@ export default function ContactClient() {
       <AnimatedSection>
         <div className="mt-12 text-center">
           <p className="font-body text-sm leading-relaxed" style={{ color: 'var(--text-faint)' }}>
-            RallyVerse is based in {ADDRESS.area}, {ADDRESS.city}, {ADDRESS.state}, India.
+            RallyVerse is based in {ADDRESS_FULL}.
             <br />
             Your information stays private and will only be used to respond to your inquiry.
           </p>

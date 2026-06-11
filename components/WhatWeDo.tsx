@@ -11,8 +11,8 @@ const services = [
   },
   {
     icon: Trophy,
-    title: 'Event Management',
-    desc: 'Run seamless sports events with RallyVerse infrastructure.',
+    title: 'Event Infrastructure',
+    desc: 'Power event pages, registration flows, participant management, and communication with RallyVerse infrastructure.',
   },
   {
     icon: Megaphone,

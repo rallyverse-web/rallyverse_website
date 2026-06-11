@@ -41,15 +41,15 @@ const detailedArticles: Record<string, {
   },
   'successful-tournament-ops': {
     title: 'What Makes a Successful Tournament',
-    category: 'Event Management',
+    category: 'Registration Management',
     date: '5 June 2026',
     readTime: '6 min read',
-    author: 'Operations Team',
+    author: 'Product Team',
     paragraphs: [
-      'A successful sporting event is won in the planning. Behind the scenes, the double-edged sword of tournament execution is coordinator overhead — managing draws, checking payments, and seeding divisions.',
-      'Modern tournament management requires dedicated software support. Organizers must deploy digital registration systems that automate payment verification, preventing delays where coordinators manually cross-check bank transfers with entries.',
-      'On game day, clear communication is critical. Automated email structures notifying players of their check-in times and first-round brackets prevent crowds and delays at the registration desk. If players can view live updates on match draws and schedules, check-in confusion disappears.',
-      'RallyVerse\'s organizer technology handles payment configs, double entries, and transactional emails out of the box, letting event directors focus on delivering a premium player experience.',
+      'A successful sports registration flow is won in the planning. Behind the scenes, the challenge is reducing coordinator overhead through clear approval steps, payment checks, and participant records.',
+      'Modern registration management requires dedicated software support. Organizers need digital systems that automate payment verification and approval workflows so entries move forward without manual spreadsheet work.',
+      'Clear communication is critical. Automated email structures notifying players of approval status and next steps help participants stay informed without waiting for manual updates.',
+      'RallyVerse\'s organizer technology handles payment configs, approval flows, and transactional emails out of the box, helping organizers keep registrations moving smoothly.',
     ]
   },
   'community-led-sports-growth': {
@@ -176,3 +176,4 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
     </div>
   )
 }
+

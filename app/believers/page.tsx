@@ -7,11 +7,11 @@ import { believers } from '@/data/believers'
 export const metadata: Metadata = {
   title: 'Believers — RallyVerse | Early Supporters & Sports Growth Partners',
   description:
-    'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, run professional tournaments, and connect brands with active players.',
+    'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, registration infrastructure, and connect brands with active players.',
   openGraph: {
     title: 'Believers — RallyVerse | Early Supporters & Sports Growth Partners',
     description:
-      'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, run professional tournaments, and connect brands with active players.',
+      'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, registration infrastructure, and connect brands with active players.',
     url: 'https://rallyverse.social/believers',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Believers — RallyVerse | Early Supporters & Sports Growth Partners',
     description:
-      'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, run professional tournaments, and connect brands with active players.',
+      'Meet the early supporters, believers, and sports growth partners helping RallyVerse scale sports communities, registration infrastructure, and connect brands with active players.',
     images: ['/og'],
   },
   alternates: {

@@ -3,10 +3,10 @@ import InsightsClient from './InsightsClient'
 
 export const metadata: Metadata = {
   title: 'Insights — RallyVerse | Sports Community & Event Marketing Strategy',
-  description: 'Read the latest insights and operational guides on growing sports communities, optimizing event registrations, and executing local sports marketing campaigns in Bengaluru.',
+  description: 'Read the latest insights and strategy guides on growing sports communities, optimizing event registrations, and executing local sports marketing campaigns in Bengaluru.',
   openGraph: {
     title: 'Insights — RallyVerse | Sports Community & Event Marketing Strategy',
-    description: 'Read the latest insights and operational guides on growing sports communities, optimizing event registrations, and executing local sports marketing campaigns in Bengaluru.',
+    description: 'Read the latest insights and strategy guides on growing sports communities, optimizing event registrations, and executing local sports marketing campaigns in Bengaluru.',
     url: 'https://rallyverse.social/insights',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Insights — RallyVerse | Sports Community & Event Marketing Strategy',
-    description: 'Read the latest insights and operational guides on growing sports communities, optimizing event registrations, and executing local sports marketing campaigns in Bengaluru.',
+    description: 'Read the latest insights and strategy guides on growing sports communities, optimizing event registrations, and executing local sports marketing campaigns in Bengaluru.',
     images: ['/og'],
   },
   alternates: {

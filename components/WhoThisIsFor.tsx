@@ -12,13 +12,13 @@ const differentiators = [
   },
   {
     icon: Trophy,
-    title: 'We Organize Real Events',
-    desc: "From booking venues to organizing bracket schedules, we run actual tournaments, leagues, and sports events ourselves.",
+    title: 'We Build Event Infrastructure',
+    desc: "From registration flows to approval tools, we build the systems that keep tournaments, leagues, and sports events moving.",
   },
   {
     icon: Cpu,
     title: 'We Built Our Own Infrastructure',
-    desc: "We designed and built our own tournament registration, admin dashboard, and participant management system from the ground up.",
+    desc: "We designed and built our own registration, admin dashboard, and participant management system from the ground up.",
   },
   {
     icon: HeartHandshake,
@@ -53,7 +53,7 @@ export default function WhoThisIsFor() {
           </h2>
 
           <p className="mt-6 max-w-[680px] font-body text-[16px] leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
-            We don&apos;t just consult on community. We own and operate one. RallyVerse bridges the gap between digital outreach and real-world execution, providing the ultimate environment for sports growth.
+            We don&apos;t just consult on community. We own and operate one. RallyVerse bridges digital outreach with registration infrastructure, communication, and community growth.
           </p>
         </motion.div>
 

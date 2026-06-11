@@ -15,8 +15,8 @@ const services = [
   },
   {
     icon: Trophy,
-    title: 'Event Management',
-    desc: 'Registrations, participant management, communication, and execution support.',
+    title: 'Registration Management',
+    desc: 'Registrations, participant management, communication, and event visibility support.',
   },
   {
     icon: Megaphone,
@@ -62,7 +62,7 @@ const pricingPlans = [
     ],
     footerInfo: 'Billed per event. Fully managed registration cycle.',
     ctaText: 'Get Started',
-    ctaHref: '/partners?interest=Event Management',
+    ctaHref: '/partners?interest=Registration Management',
     recommended: true,
   },
   {
@@ -80,7 +80,7 @@ const pricingPlans = [
       'Dedicated Support',
       'Priority Visibility',
     ],
-    footerInfo: 'Custom execution plans tailored to your community size.',
+    footerInfo: 'Custom service plans tailored to your community size.',
     ctaText: 'Book a Consultation',
     ctaHref: '/partners?interest=Partnerships',
     recommended: false,
@@ -91,22 +91,22 @@ const infrastructureFeatures = [
   {
     icon: CreditCard,
     name: 'Registration Management',
-    desc: 'Review registrations, manage approval status, and export participant data from one dashboard.',
+    desc: 'Manage registrations, approvals, and participant data from one dashboard.',
   },
   {
     icon: LayoutDashboard,
     name: 'Organizer Dashboard',
-    desc: 'Manage events, registrations, payment settings, and communication workflows in one place.',
+    desc: 'Manage event pages, registrations, approvals, and communication workflows in one place.',
   },
   {
     icon: Users,
     name: 'Participant Management',
-    desc: 'Review participant records, update doubles details, and keep registration data in sync.',
+    desc: 'Review participant records, update category details, and keep registration data in sync.',
   },
   {
     icon: Mail,
     name: 'Email Communication',
-    desc: 'Send templated participant emails, broadcasts, and updates with sent/failed logging.',
+    desc: 'Send templated participant emails, broadcasts, and updates with sent and failed logging.',
   },
   {
     icon: BarChart3,
@@ -115,8 +115,8 @@ const infrastructureFeatures = [
   },
   {
     icon: ShieldCheck,
-    name: 'Operational Support',
-    desc: 'On-the-ground support, logistics checklists, digital scheduling tools, and operations consulting.',
+    name: 'Registration Approvals',
+    desc: 'Review, approve, reject, and manage participant registrations from a centralized dashboard.',
   },
 ]
 
@@ -192,7 +192,7 @@ export default function ServicesClient() {
                 Services Overview
               </h2>
               <p className="mt-4 max-w-lg mx-auto font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                We don&apos;t just consult on community. We own and operate one. Here is how we help you succeed.
+                We build the registration infrastructure, communication tools, and growth systems that help sports communities scale.
               </p>
             </div>
           </AnimatedSection>
@@ -242,7 +242,7 @@ export default function ServicesClient() {
                 <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
               </div>
               <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
-                Professional Event Scaling
+                Professional Event Infrastructure
               </h2>
             </div>
           </AnimatedSection>
@@ -785,7 +785,7 @@ function MockupExplorer() {
                     </p>
                     <div className="p-3 bg-neutral-900 border border-neutral-800 rounded font-mono text-[11px] space-y-1">
                       <div>Event: Rally Series 01 — Badminton</div>
-                      <div>Venue: A2V Badminton Academy, Rajajinagar</div>
+                      <div>Venue: A2V Badminton Academy, Bengaluru</div>
                       <div>Date & Time: 5 July 2026, 11:00 AM</div>
                       <div className="text-green-400">Pass Code: RV-8951-XM</div>
                     </div>

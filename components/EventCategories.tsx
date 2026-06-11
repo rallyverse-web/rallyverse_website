@@ -7,32 +7,32 @@ const infrastructureFeatures = [
   {
     icon: CreditCard,
     name: 'Registration Management',
-    desc: 'Seamless ticketing, automated waiver collection, secure payments, and instant confirmation for participants.',
+    desc: 'Manage registrations, approvals, and participant data from one centralized dashboard.',
   },
   {
     icon: LayoutDashboard,
     name: 'Organizer Dashboard',
-    desc: 'Configure draws, brackets, scheduling, and match results dynamically using our bespoke tournament tool.',
+    desc: 'Configure event pages, approvals, communication, and visibility from one place.',
   },
   {
     icon: Users,
     name: 'Participant Management',
-    desc: 'Real-time entry lists, digital check-ins, seedings, and division groupings without spreadsheet overhead.',
+    desc: 'Review participant records, update category details, and keep registration data in sync.',
   },
   {
     icon: Mail,
     name: 'Email Communication',
-    desc: 'Automated custom-branded email confirmations, schedule updates, and post-event match details.',
+    desc: 'Automated custom-branded confirmations, updates, and participant communication.',
   },
   {
     icon: BarChart3,
     name: 'Event Analytics',
-    desc: 'Track registration pacing, participant demographics, revenue metrics, and engagement trends.',
+    desc: 'Track registration pacing, approvals, communication, revenue, and engagement trends.',
   },
   {
     icon: ShieldCheck,
-    name: 'Operational Support',
-    desc: 'On-the-ground support, logistics checklists, digital scheduling tools, and operations consulting.',
+    name: 'Registration Approvals',
+    desc: 'Review, approve, reject, and manage participant registrations from a centralized dashboard.',
   },
 ]
 
@@ -44,14 +44,14 @@ export default function EventCategories() {
           <div className="mb-8 flex flex-col items-center gap-3">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
             <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-              EVENT TECHNOLOGY
+              EVENT INFRASTRUCTURE
             </span>
           </div>
 
           <div className="mb-16 text-center font-display text-[28px] leading-none uppercase sm:text-[40px] md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
             We Don&apos;t Just Advise on Events.
             <br />
-            We Run Them.
+            We Build the Systems Behind Them.
           </div>
         </AnimatedSection>
 

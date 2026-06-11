@@ -6,10 +6,10 @@ import TrackPageView from '@/components/TrackPageView'
 
 export const metadata: Metadata = {
   title: 'Case Studies — RallyVerse | Proven Sports Growth Campaigns',
-  description: 'Explore our sports growth and operations case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
+  description: 'Explore our sports growth case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
   openGraph: {
     title: 'Case Studies — RallyVerse | Proven Sports Growth Campaigns',
-    description: 'Explore our sports growth and operations case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
+    description: 'Explore our sports growth case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
     url: 'https://rallyverse.social/case-studies',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Case Studies — RallyVerse | Proven Sports Growth Campaigns',
-    description: 'Explore our sports growth and operations case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
+    description: 'Explore our sports growth case studies. See how we scaled registrations and community participation for real tournaments in Bengaluru.',
     images: ['/og'],
   },
   alternates: {
@@ -32,8 +32,8 @@ export const caseStudiesData = [
     slug: 'rally-series',
     icon: Trophy,
     title: 'Rally Series 01',
-    subtitle: 'Event execution, registrations, and community engagement.',
-    category: 'Tournament Operations',
+    subtitle: 'Registrations, payment verification, and community engagement.',
+    category: 'Tournament Registration',
     results: '150+ players registered, 100% payment verification accuracy',
     active: true,
   },

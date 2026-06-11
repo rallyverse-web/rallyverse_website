@@ -33,7 +33,7 @@ const flywheelSteps = [
     icon: Cpu,
     num: '05',
     title: 'Better Infrastructure',
-    desc: 'We develop custom registration engines, match dashboards, and Operational checklists for premium execution.',
+    desc: 'We develop custom registration engines, match dashboards, and event checklists for consistent execution.',
   },
   {
     icon: Sparkles,

@@ -7,7 +7,7 @@ import { Instagram, Linkedin, Mail, ArrowUpRight } from 'lucide-react'
 import WhatsAppIcon from '@/components/WhatsAppIcon'
 import ThemedLogo from '@/components/ThemedLogo'
 import ShinyText from '@/components/ShinyText'
-import { SITE, COMPANY, CONTACT, ADDRESS, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS, SOCIAL_LINKS } from '@/lib/config'
+import { SITE, COMPANY, CONTACT, ADDRESS_FULL, SOCIAL, WHATSAPP, QUICK_LINKS, LEGAL_LINKS, SOCIAL_LINKS } from '@/lib/config'
 
 // ─── Social icon mapping (derived from config's SOCIAL_LINKS) ──
 const socialIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
@@ -97,7 +97,7 @@ export default function Footer() {
                 <ThemedLogo context="footer" />
               </Link>
               <p className="mb-3 max-w-[260px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                RallyVerse is a sports growth partner helping communities, organizers, academies, and brands grow through community, events, technology, and marketing.
+                RallyVerse is a sports growth partner helping communities, organizers, academies, and brands grow through registration infrastructure, communication, analytics, and marketing.
               </p>
             </div>
 
@@ -153,9 +153,7 @@ export default function Footer() {
                 Location
               </h3>
               <address className="not-italic text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                <span className="block">{ADDRESS.area}</span>
-                <span className="block">{ADDRESS.city}, {ADDRESS.state} {ADDRESS.postalCode}</span>
-                <span className="block">{ADDRESS.country}</span>
+                <span className="block">{ADDRESS_FULL}</span>
               </address>
             </div>
           </div>

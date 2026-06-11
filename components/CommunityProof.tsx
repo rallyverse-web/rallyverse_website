@@ -42,7 +42,7 @@ export default function CommunityProof() {
           <p className="mx-auto mt-4 max-w-2xl text-center font-body text-[15px] leading-relaxed" style={{ color: 'var(--text-faint)' }}>
             {isCommunity
               ? 'Discover upcoming recurring events, find game partners, and stay active in a community designed for people who show up and play hard.'
-              : 'The community chat is launching soon. Until then, message us on WhatsApp for event details, partnerships, or recurring matches.'}
+              : 'The community chat is launching soon. Until then, message us on WhatsApp for registration details, partnerships, or recurring matches.'}
           </p>
         </AnimatedSection>
 

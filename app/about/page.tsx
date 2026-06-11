@@ -5,10 +5,10 @@ import Flywheel from '@/components/Flywheel'
 
 export const metadata: Metadata = {
   title: 'About — RallyVerse | Sports Growth Partner',
-  description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities and powering real events in Bengaluru.',
+  description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities, registration infrastructure, and sports visibility in Bengaluru.',
   openGraph: {
     title: 'About — RallyVerse | Sports Growth Partner',
-    description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities and powering real events in Bengaluru.',
+    description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities, registration infrastructure, and sports visibility in Bengaluru.',
     url: 'https://rallyverse.social/about',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'About — RallyVerse | Sports Growth Partner',
-    description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities and powering real events in Bengaluru.',
+    description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities, registration infrastructure, and sports visibility in Bengaluru.',
     images: ['/og'],
   },
   alternates: {
@@ -42,12 +42,12 @@ const differentiators = [
   {
     icon: Cpu,
     title: 'Event Infrastructure',
-    desc: 'Proprietary check-in tools, registration databases, templates, and analytics pipelines.',
+    desc: 'Proprietary registration workflows, organizer dashboards, templates, and analytics pipelines.',
   },
   {
     icon: Activity,
     title: 'Sports Expertise',
-    desc: 'Deep operational insight running everything from regional badminton brackets to league series.',
+    desc: 'Deep product insight across registration flows, event pages, and community growth systems.',
   },
   {
     icon: Briefcase,
@@ -87,10 +87,10 @@ export default function AboutPage() {
           <AnimatedSection delay={0.1}>
             <div className="space-y-5 font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               <p>
-                RallyVerse began with a simple observation: running sports events is hard, and building active, recurring sports communities is even harder. What started as organizing local badminton tournaments in Bengaluru quickly evolved. We realized that organizers, academies, and brands did not just need generic marketing; they needed a partner that understood operational logistics and community dynamics.
+                RallyVerse began with a simple observation: growing sports communities takes more than promotion. What started as organizing local badminton tournaments in Bengaluru quickly evolved. We realized that organizers, academies, and brands did not just need generic marketing; they needed a partner that understood registration workflows, communication, and community dynamics.
               </p>
               <p>
-                Today, RallyVerse has grown from a single event management service into a comprehensive Sports Growth Partner. We have developed custom event registration software, built a vibrant player network, and connected brands with active communities to scale sports participation.
+                Today, RallyVerse has grown from a single registration and event infrastructure service into a comprehensive Sports Growth Partner. We have developed custom event registration software, built a vibrant player network, and connected brands with active communities to scale sports participation.
               </p>
             </div>
           </AnimatedSection>
@@ -111,7 +111,7 @@ export default function AboutPage() {
                   Our Mission
                 </h3>
                 <p className="mt-4 font-body text-[15px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                  To grow India&apos;s sports ecosystem by building communities, amplifying sports brands, and making great sports events happen. We empower organizers with technology and support.
+                  To grow India&apos;s sports ecosystem by building communities, amplifying sports brands, and giving organizers the infrastructure they need to manage registrations, communication, and visibility.
                 </p>
               </div>
             </div>

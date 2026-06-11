@@ -1,4 +1,4 @@
-import { CURRENT_EVENT, CONTACT, WHATSAPP, ADDRESS } from '@/lib/config'
+import { CURRENT_EVENT, CONTACT, WHATSAPP, ADDRESS_FULL } from '@/lib/config'
 
 export interface FAQItem {
   question: string
@@ -9,7 +9,7 @@ export const faqs: FAQItem[] = [
   {
     question: 'What is RallyVerse?',
     answer:
-      'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing. We don\'t just consult on community — we own and operate one.',
+      'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, community building, communication, and sports marketing. We build the systems that help communities grow.',
   },
   {
     question: 'When and where is Rally Series 01 happening?',
@@ -24,7 +24,7 @@ export const faqs: FAQItem[] = [
   {
     question: 'What is the registration fee?',
     answer:
-      `The registration fee is \u20B9${CURRENT_EVENT.registrationFee} per team. This includes participation in the tournament and event operations.`,
+      `The registration fee is \u20B9${CURRENT_EVENT.registrationFee} per team. This includes participation in the tournament and the registration workflow.`,
   },
   {
     question: 'How do I register?',
@@ -64,6 +64,7 @@ export const faqs: FAQItem[] = [
   {
     question: 'How can I contact RallyVerse?',
     answer:
-      `Email: ${CONTACT.email}  |  WhatsApp: ${WHATSAPP.businessNumber}  |  Location: ${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state}`,
+      `Email: ${CONTACT.email}  |  WhatsApp: ${WHATSAPP.businessNumber}  |  Location: ${ADDRESS_FULL}`,
   },
 ]
+

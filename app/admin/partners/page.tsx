@@ -176,7 +176,7 @@ const organizationTypes = [
 const servicesList = [
   'Sports Marketing',
   'Community Building',
-  'Event Management',
+  'Registration Management',
   'Event Promotion',
   'Partnerships',
   'Sponsorship Opportunities',

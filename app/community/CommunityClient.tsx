@@ -23,7 +23,7 @@ const pillars = [
   {
     icon: Heart,
     title: 'Volunteer',
-    desc: 'Contribute to community-led sports initiatives, operations, check-ins, and event marshalling.',
+    desc: 'Contribute to community-led sports initiatives, logistics, check-ins, and event coordination.',
   },
   {
     icon: TrendingUp,
@@ -36,7 +36,7 @@ const benefits = [
   { icon: Sparkles, title: 'Early Event Access', desc: 'Secure slots for popular tournaments and matches before public listings open.' },
   { icon: Share2, title: 'Community Updates', desc: 'Get instant notifications on schedules, results, local matches, and news.' },
   { icon: Gift, title: 'Exclusive Experiences', desc: 'Enjoy members-only custom gear, match highlights, and sponsored venue discounts.' },
-  { icon: Heart, title: 'Volunteer Opportunities', desc: 'Contribute on-ground and learn the operations of running large sports programs.' },
+  { icon: Heart, title: 'Volunteer Opportunities', desc: 'Contribute hands-on and learn event coordination of running large sports programs.' },
   { icon: Network, title: 'Sports Ecosystem Connections', desc: 'Direct access to coaches, academies, brands, and venue owners in Bengaluru.' },
   { icon: Users, title: 'Active Networking', desc: 'Connect directly with sports-minded corporate peers, athletes, and builders.' },
 ]

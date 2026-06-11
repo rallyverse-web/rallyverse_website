@@ -31,7 +31,7 @@ export default function FirstEvent({ event }: { event: EventWithFormats | null }
 
           <div className="mt-7 space-y-5 font-body text-base leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
             <p>
-              RallyVerse is a sports growth partner. We don&apos;t just consult on community — we design, execute, and power sports events with our custom technology, operations support, and active participant network.
+              RallyVerse is a sports growth partner. We don&apos;t just consult on community — we design and power sports events with our registration and communication platform, and active participant network.
             </p>
             <p>
               {event.name} is currently open for registration

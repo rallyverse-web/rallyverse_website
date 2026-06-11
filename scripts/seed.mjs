@@ -37,7 +37,7 @@ const seedEvents = [
     category: 'badminton',
     description: [
       "Rally Series 01 marks the beginning of RallyVerse.",
-      "Taking place on 5 July 2026 at A2V Badminton Academy in Rajajinagar, Bengaluru.",
+      "Taking place on 5 July 2026 at A2V Badminton Academy in Bengaluru.",
       "The tournament features Mixed Doubles and Men's Doubles categories.",
     ].join('\n'),
     venue: 'A2V Badminton Academy',

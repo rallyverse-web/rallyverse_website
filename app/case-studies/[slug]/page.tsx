@@ -17,8 +17,8 @@ const detailedCaseStudies: Record<string, {
 }> = {
   'rally-series': {
     title: 'Rally Series 01',
-    subtitle: 'Event execution, custom registration engine, and active community launch.',
-    category: 'Tournament Operations',
+    subtitle: 'Custom registration engine, payment verification, and community launch.',
+    category: 'Tournament Registration',
     overview: 'Rally Series 01 was a competitive badminton tournament launched in Bengaluru. The goal was to prove the efficiency of RallyVerse\'s custom registration flow and player communication infrastructure in replacing fragmented coordinator workflows.',
     challenge: 'Local organizers were struggling with manual WhatsApp checks, untracked bank transfers, duplicate registrations, and lack of real-time scheduling coordination with participants.',
     solution: 'RallyVerse deployed custom-built digital registration systems, payment verification portals, automated notification templates, and routed all players into our owned WhatsApp community hub.',

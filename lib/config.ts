@@ -4,13 +4,13 @@ export const SITE = {
   tagline: 'Rallying Communities Through Sports',
   domain: 'https://rallyverse.social',
   description:
-    'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
+    'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, community visibility, analytics, and sports marketing.',
 }
 
 // ─── Company Bio (E-E-A-T signals for footer / trust) ───────────
 export const COMPANY = {
   shortDescription:
-    'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow.',
+    'RallyVerse is a sports growth partner helping communities, organizers, academies, and brands grow through registration infrastructure and sports marketing.',
 }
 
 // ─── Email ────────────────────────────────────────────────────────
@@ -56,14 +56,13 @@ export const CONTACT = {
 
 // ─── Address ─────────────────────────────────────────────────────
 export const ADDRESS = {
-  area: 'Rajajinagar',
   city: 'Bengaluru',
   state: 'Karnataka',
-  postalCode: '560010',
+  postalCode: '560001',
   country: 'India',
 }
 
-export const ADDRESS_FULL = `${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state} ${ADDRESS.postalCode}, ${ADDRESS.country}`
+export const ADDRESS_FULL = `${ADDRESS.city}, ${ADDRESS.state} ${ADDRESS.postalCode}, ${ADDRESS.country}`
 
 // ─── Current Event (legacy fallback — Supabase-backed in Phase 1+) ──
 // Kept for backward compatibility with registration form, email, and

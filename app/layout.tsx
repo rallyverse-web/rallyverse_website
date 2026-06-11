@@ -23,16 +23,16 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://rallyverse.social'),
   title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-  description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
+  description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, communication, analytics, and sports marketing.',
   twitter: {
     card: 'summary_large_image',
     title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
+    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, communication, analytics, and sports marketing.',
     images: ['/og'],
   },
   openGraph: {
     title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through community building, event management, outreach, and sports marketing.',
+    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, communication, analytics, and sports marketing.',
     url: 'https://rallyverse.social',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -101,7 +101,6 @@ export default function RootLayout({
               "description": `RallyVerse is a sports growth partner helping sports communities, organizers, academies, and brands grow.`,
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": ADDRESS.area,
                 "addressLocality": ADDRESS.city,
                 "addressRegion": ADDRESS.state,
                 "postalCode": ADDRESS.postalCode,
@@ -134,7 +133,6 @@ export default function RootLayout({
               "image": `${SITE.domain}/logo_transparent.png`,
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": ADDRESS.area,
                 "addressLocality": ADDRESS.city,
                 "addressRegion": ADDRESS.state,
                 "postalCode": ADDRESS.postalCode,

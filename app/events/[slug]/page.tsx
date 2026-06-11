@@ -6,7 +6,7 @@ import AnimatedSection from '@/components/AnimatedSection'
 import EventPoster from '@/components/EventPoster'
 import TrackPageView from '@/components/TrackPageView'
 import { WhatsAppContactLink, WhatsAppGroupLink } from '@/components/WhatsAppLink'
-import { SITE, ADDRESS } from '@/lib/config'
+import { SITE, ADDRESS, ADDRESS_FULL } from '@/lib/config'
 import { getEventBySlug } from '@/lib/repositories/events'
 import { getEventPosterPath, PLACEHOLDER_POSTER } from '@/lib/assets'
 import type { EventWithFormats } from '@/lib/types/supabase'
@@ -96,7 +96,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
                 "name": event.venue,
                 "address": {
                   "@type": "PostalAddress",
-                  "streetAddress": `${event.venue}, ${ADDRESS.area}`,
+                  "streetAddress": `${event.venue}, ${ADDRESS.city}`,
                   "addressLocality": ADDRESS.city,
                   "addressRegion": ADDRESS.state,
                   "postalCode": ADDRESS.postalCode,
@@ -224,7 +224,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
                 <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-2">
                   <div className="space-y-5 font-body text-base leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
                     <p>
-                      This event will be hosted at {event.venue} in {ADDRESS.area}, Bengaluru. The venue is easily accessible from all parts of the city.
+                      This event will be hosted at {event.venue} in {ADDRESS.city}, {ADDRESS.state}. The venue is easily accessible from all parts of the city.
                     </p>
                   </div>
 
@@ -239,7 +239,7 @@ function EventDetailContent({ event }: { event: EventWithFormats }) {
                       <MapPin size={18} className="mt-0.5 shrink-0" style={{ color: 'var(--accent-primary)' }} />
                       <div>
                         <p className="font-body text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{event.venue}</p>
-                        <p className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{ADDRESS.area}, {ADDRESS.city}, {ADDRESS.state} {ADDRESS.postalCode}</p>
+                        <p className="font-body text-sm" style={{ color: 'var(--text-muted)' }}>{ADDRESS_FULL}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">

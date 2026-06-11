@@ -28,7 +28,7 @@ const targets = [
   {
     icon: CalendarDays,
     title: 'Event Organizers',
-    desc: 'Registrations, promotions, and event operations.',
+    desc: 'Registrations, promotions, and organizer tools.',
   },
   {
     icon: Briefcase,
@@ -46,12 +46,12 @@ const differentiators = [
   {
     icon: Cpu,
     title: 'Event Infrastructure',
-    desc: 'Bespoke custom-built ticketing, email automations, and administrative dashboards.',
+    desc: 'Bespoke registration infrastructure, email automations, and administrative dashboards.',
   },
   {
     icon: Activity,
     title: 'Sports-Specific Expertise',
-    desc: 'We understand brackets, court operations, scheduling, and athlete expectations.',
+    desc: 'We understand registration workflows, communication needs, and athlete expectations.',
   },
   {
     icon: Send,
@@ -83,7 +83,7 @@ const organizationTypes = [
 const servicesList = [
   'Sports Marketing',
   'Community Building',
-  'Event Management',
+  'Registration Management',
   'Event Promotion',
   'Partnerships',
   'Sponsorship Opportunities',

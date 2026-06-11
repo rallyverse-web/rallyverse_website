@@ -68,22 +68,22 @@ Look for the `ADDRESS` object.
 Current value:
 
 ```
-Rajajinagar, Bengaluru, Karnataka, India
+Bengaluru, Karnataka 560001, India
 ```
 
 Fields in the object:
 
 | Field | Current Value |
 |---|---|
-| `area` | `Rajajinagar` |
 | `city` | `Bengaluru` |
 | `state` | `Karnataka` |
+| `postalCode` | `560001` |
 | `country` | `India` |
 
 `ADDRESS_FULL` is derived automatically:
 
 ```ts
-`${ADDRESS.area}, ${ADDRESS.city}, ${ADDRESS.state}, ${ADDRESS.country}`
+`${ADDRESS.city}, ${ADDRESS.state} ${ADDRESS.postalCode}, ${ADDRESS.country}`
 ```
 
 ---
