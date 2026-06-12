@@ -1,5 +1,5 @@
 import { getSupabaseServerClient } from '@/lib/supabase/server'
-import type { Registration, RegistrationFormData, RegistrationStatus, ApprovalAction, RegistrationAuditLog } from '@/lib/types/supabase'
+import type { PaymentStatus, Registration, RegistrationFormData, RegistrationStatus, ApprovalAction, RegistrationAuditLog } from '@/lib/types/supabase'
 import { generateRegistrationId } from '@/lib/utils'
 
 export async function createRegistration(formData: RegistrationFormData): Promise<Registration> {
@@ -30,8 +30,8 @@ export async function createRegistration(formData: RegistrationFormData): Promis
     format: formData.format,
     partner_name: formData.partner_name || null,
     partner_phone: formData.partner_phone || null,
-    status: hasPaymentInfo ? ('Pending Verification' as RegistrationStatus) : ('Pending' as RegistrationStatus),
-    payment_status: hasPaymentInfo ? 'Pending Verification' : null,
+    status: 'Pending' as RegistrationStatus,
+    payment_status: hasPaymentInfo ? ('pending_verification' as PaymentStatus) : null,
     payment_upi_id: formData.payment_upi_id || null,
     transaction_name: formData.transaction_name || null,
     transaction_reference: formData.transaction_reference || null,
@@ -231,8 +231,96 @@ export async function getRegistrationsMetrics(eventId: string): Promise<{
   const registrations = await getRegistrationsByEventId(eventId)
   return {
     total: registrations.length,
-    pending: registrations.filter((r) => r.status === 'Pending').length,
+    pending: registrations.filter((r) => r.status === 'Pending' || r.status === 'Pending Verification').length,
     approved: registrations.filter((r) => r.status === 'Approved').length,
     rejected: registrations.filter((r) => r.status === 'Rejected').length,
   }
+}
+
+export async function getPaymentMetrics(eventId: string): Promise<{
+  pending_verification: number
+  verified: number
+  rejected: number
+  total: number
+}> {
+  const registrations = await getRegistrationsByEventId(eventId)
+  return {
+    pending_verification: registrations.filter((r) => r.payment_status === 'pending_verification').length,
+    verified: registrations.filter((r) => r.payment_status === 'verified').length,
+    rejected: registrations.filter((r) => r.payment_status === 'rejected').length,
+    total: registrations.filter((r) => r.payment_status !== null).length,
+  }
+}
+
+export async function verifyPayment(id: string, adminId: string): Promise<Registration> {
+  const supabase = await getSupabaseServerClient()
+  const existing = await getRegistrationById(id)
+  if (!existing) throw new Error('Registration not found')
+  if (existing.payment_status !== 'pending_verification') {
+    throw new Error('Payment is not pending verification')
+  }
+
+  const updateData: Record<string, unknown> = {
+    payment_status: 'verified',
+    payment_verified_by: adminId,
+    payment_verified_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+
+  const { data, error } = await supabase
+    .from('registrations')
+    .update(updateData)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw error
+
+  await writeRegistrationAuditLog({
+    registration: data,
+    action: 'payment_verified',
+    changedBy: adminId,
+    previousData: existing as unknown as Record<string, unknown>,
+    nextData: data as unknown as Record<string, unknown>,
+    notes: null,
+  })
+
+  return data
+}
+
+export async function rejectPayment(id: string, adminId: string, reason?: string | null): Promise<Registration> {
+  const supabase = await getSupabaseServerClient()
+  const existing = await getRegistrationById(id)
+  if (!existing) throw new Error('Registration not found')
+  if (existing.payment_status !== 'pending_verification') {
+    throw new Error('Payment is not pending verification')
+  }
+
+  const updateData: Record<string, unknown> = {
+    payment_status: 'rejected',
+    payment_rejected_by: adminId,
+    payment_rejected_at: new Date().toISOString(),
+    payment_rejection_reason: reason || null,
+    updated_at: new Date().toISOString(),
+  }
+
+  const { data, error } = await supabase
+    .from('registrations')
+    .update(updateData)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw error
+
+  await writeRegistrationAuditLog({
+    registration: data,
+    action: 'payment_rejected',
+    changedBy: adminId,
+    previousData: existing as unknown as Record<string, unknown>,
+    nextData: data as unknown as Record<string, unknown>,
+    notes: reason || null,
+  })
+
+  return data
 }

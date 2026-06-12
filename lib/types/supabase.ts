@@ -96,7 +96,7 @@ export interface AdminEventMetrics {
 export type RegistrationStatus = 'Pending' | 'Pending Verification' | 'Approved' | 'Rejected'
 
 // ── Payment Status ──
-export type PaymentStatus = 'Pending Verification' | 'Completed' | 'Failed' | 'Refunded'
+export type PaymentStatus = 'pending_verification' | 'verified' | 'rejected'
 
 // ── Registration ──
 export interface Registration {
@@ -117,10 +117,15 @@ export interface Registration {
   approved_at: string | null
   created_at: string
   updated_at: string | null
-  payment_status: string | null
+  payment_status: PaymentStatus | null
   payment_upi_id: string | null
   transaction_name: string | null
   transaction_reference: string | null
+  payment_verified_by: string | null
+  payment_verified_at: string | null
+  payment_rejected_by: string | null
+  payment_rejected_at: string | null
+  payment_rejection_reason: string | null
 }
 
 // ── Registration audit log ──
@@ -205,7 +210,7 @@ export interface EventWithPaymentConfig extends EventWithFormats {
 // ══════════════════════════════════════════════════════════════
 
 // ── Email Template Types ──
-export type EmailTemplateType = 'approval' | 'rejection' | 'reminder' | 'results' | 'broadcast' | 'registration_received'
+export type EmailTemplateType = 'approval' | 'rejection' | 'reminder' | 'results' | 'broadcast' | 'registration_received' | 'payment_verified' | 'payment_rejected'
 
 // ── Event Email Settings ──
 export interface EventEmailSettings {

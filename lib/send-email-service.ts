@@ -3,7 +3,7 @@ import { getEmailSettings } from '@/lib/repositories/email-settings'
 import { renderEmailTemplate } from '@/lib/template-renderer'
 import { sendEmail } from '@/lib/resend-service'
 import { createEmailLog } from '@/lib/repositories/email-logs'
-import type { Registration, EmailTemplate, EventWithFormats, EventEmailSettings, EmailTemplateType } from '@/lib/types/supabase'
+import type { EmailTemplate, EventEmailSettings, EventWithFormats, Registration, EmailTemplateType } from '@/lib/types/supabase'
 
 export interface BulkSendRecipient {
   registration: Registration
@@ -66,6 +66,158 @@ const REGISTRATION_RECEIVED_DEFAULT = {
 <p>We will review your registration and share the next update shortly.</p>
 <p>If you need help, contact <a href="mailto:{{support_email}}">{{support_email}}</a>.</p>
 <p>Regards,<br />RallyVerse</p>`,
+}
+
+const PAYMENT_VERIFIED_DEFAULT = {
+  subject: 'Payment Verified — {{event_name}}',
+  content: `<p>Hi {{participant_name}},</p>
+<p>Your payment for <strong>{{event_name}}</strong> has been successfully verified.</p>
+<p><strong>Registration ID:</strong> {{registration_id}}<br />
+<strong>Payment Status:</strong> Verified</p>
+<p>Your registration is currently under review. We will notify you once it has been approved.</p>
+<p>If you need help, contact <a href="mailto:{{support_email}}">{{support_email}}</a>.</p>
+<p>Regards,<br />RallyVerse</p>`,
+}
+
+const PAYMENT_REJECTED_DEFAULT = {
+  subject: 'Payment Verification Failed — {{event_name}}',
+  content: `<p>Hi {{participant_name}},</p>
+<p>We were unable to verify your payment for <strong>{{event_name}}</strong>.</p>
+<p><strong>Registration ID:</strong> {{registration_id}}</p>
+<p>Please contact the organizer or submit updated payment information.</p>
+<p>If you need help, contact <a href="mailto:{{support_email}}">{{support_email}}</a>.</p>
+<p>Regards,<br />RallyVerse</p>`,
+}
+
+export async function sendPaymentVerifiedEmail(
+  eventId: string,
+  registration: Registration,
+  event: EventWithFormats,
+  sentBy: string | null = null
+) {
+  const settings = await getEmailSettings(eventId)
+  const templates = await getTemplates(eventId)
+  const template = templates.find(t => t.template_type === 'payment_verified')
+  const variables = buildVariables(registration, event, settings)
+
+  let subject = ''
+  let sendSuccess = false
+  let messageId = ''
+  let sendError: string | undefined
+
+  try {
+    const rendered = renderEmailTemplate(
+      template?.subject || PAYMENT_VERIFIED_DEFAULT.subject,
+      template?.content || PAYMENT_VERIFIED_DEFAULT.content,
+      variables
+    )
+    subject = rendered.subject
+
+    const senderName = settings?.sender_name || 'RallyVerse'
+    const replyTo = settings?.reply_to_email || undefined
+    const result = await sendEmail({
+      from: `${senderName} <registrations@rallyverse.social>`,
+      to: registration.email,
+      subject: rendered.subject,
+      html: rendered.content,
+      replyTo,
+    })
+
+    sendSuccess = result.success
+    messageId = result.messageId || ''
+    sendError = result.error
+  } catch (err) {
+    sendError = err instanceof Error ? err.message : 'Send failed'
+  }
+
+  try {
+    await createEmailLog({
+      event_id: eventId,
+      template_id: template?.id || null,
+      recipient_email: registration.email,
+      subject,
+      sent_by: sentBy,
+      status: sendSuccess ? 'sent' : 'failed',
+      provider_message_id: messageId,
+    })
+  } catch {
+    // Email logging should never block payment verification.
+  }
+
+  return {
+    registrationId: registration.registration_id,
+    recipientEmail: registration.email,
+    success: sendSuccess,
+    error: sendError,
+    messageId: sendSuccess ? messageId : undefined,
+  }
+}
+
+export async function sendPaymentRejectedEmail(
+  eventId: string,
+  registration: Registration,
+  event: EventWithFormats,
+  sentBy: string | null = null,
+  reason?: string
+) {
+  const settings = await getEmailSettings(eventId)
+  const templates = await getTemplates(eventId)
+  const template = templates.find(t => t.template_type === 'payment_rejected')
+  const variables = buildVariables(registration, event, settings, {
+    rejection_reason: reason || '',
+  })
+
+  let subject = ''
+  let sendSuccess = false
+  let messageId = ''
+  let sendError: string | undefined
+
+  try {
+    const rendered = renderEmailTemplate(
+      template?.subject || PAYMENT_REJECTED_DEFAULT.subject,
+      template?.content || PAYMENT_REJECTED_DEFAULT.content,
+      variables
+    )
+    subject = rendered.subject
+
+    const senderName = settings?.sender_name || 'RallyVerse'
+    const replyTo = settings?.reply_to_email || undefined
+    const result = await sendEmail({
+      from: `${senderName} <registrations@rallyverse.social>`,
+      to: registration.email,
+      subject: rendered.subject,
+      html: rendered.content,
+      replyTo,
+    })
+
+    sendSuccess = result.success
+    messageId = result.messageId || ''
+    sendError = result.error
+  } catch (err) {
+    sendError = err instanceof Error ? err.message : 'Send failed'
+  }
+
+  try {
+    await createEmailLog({
+      event_id: eventId,
+      template_id: template?.id || null,
+      recipient_email: registration.email,
+      subject,
+      sent_by: sentBy,
+      status: sendSuccess ? 'sent' : 'failed',
+      provider_message_id: messageId,
+    })
+  } catch {
+    // Email logging should never block payment rejection.
+  }
+
+  return {
+    registrationId: registration.registration_id,
+    recipientEmail: registration.email,
+    success: sendSuccess,
+    error: sendError,
+    messageId: sendSuccess ? messageId : undefined,
+  }
 }
 
 export async function sendSingleTemplatedEmail(

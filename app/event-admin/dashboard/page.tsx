@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { BarChart3, Loader2, Users, CheckCircle, XCircle, Clock, Search, Download, RefreshCw, ArrowLeft, ExternalLink, Trash2, Mail } from 'lucide-react'
+import { BarChart3, Loader2, Users, CheckCircle, XCircle, Clock, Search, Download, RefreshCw, Trash2, Mail, CreditCard } from 'lucide-react'
 import type { Registration } from '@/lib/types/supabase'
 
 const s = {
@@ -37,23 +37,25 @@ function statusBadge(status: string) {
 
 function paymentStatusBadge(status: string | null) {
   switch (status) {
-    case 'Completed': return <Badge color="#4ade80" label="Paid" />
-    case 'Pending Verification': return <Badge color="#facc15" label="Pending Verification" />
-    case 'Failed': return <Badge color="#ff4444" label="Failed" />
-    case 'Refunded': return <Badge color="#888" label="Refunded" />
-    default: return null
+    case 'verified': return <Badge color="#4ade80" label="Verified" />
+    case 'pending_verification': return <Badge color="#facc15" label="Pending Verification" />
+    case 'rejected': return <Badge color="#ff4444" label="Rejected" />
+    default: return <span style={{ color: '#666', fontSize: 12 }}>—</span>
   }
 }
 
 export default function EventAdminDashboard() {
   const router = useRouter()
   const [adminName, setAdminName] = useState('')
+  const [adminId, setAdminId] = useState('')
   const [eventId, setEventId] = useState('')
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [metrics, setMetrics] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 })
+  const [paymentMetrics, setPaymentMetrics] = useState({ pending_verification: 0, verified: 0, rejected: 0, total: 0 })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
+  const [filterPaymentStatus, setFilterPaymentStatus] = useState('all')
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [selectedReg, setSelectedReg] = useState<Registration | null>(null)
   const [editingReg, setEditingReg] = useState<Registration | null>(null)
@@ -73,6 +75,12 @@ export default function EventAdminDashboard() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [emailLogs, setEmailLogs] = useState<Array<{ created_at: string; status: 'sent' | 'failed' }>>([])
 
+  // Payment verification state
+  const [paymentVerifyReg, setPaymentVerifyReg] = useState<Registration | null>(null)
+  const [paymentRejectReg, setPaymentRejectReg] = useState<Registration | null>(null)
+  const [paymentRejectReason, setPaymentRejectReason] = useState('')
+  const [paymentActionLoading, setPaymentActionLoading] = useState(false)
+
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
     setTimeout(() => setNotification(null), 5000)
@@ -85,6 +93,7 @@ export default function EventAdminDashboard() {
       if (!meRes.ok) { notify('error', 'Failed to load session'); return }
       const meData = await meRes.json()
       setAdminName(meData.admin.name)
+      setAdminId(meData.admin.id)
       setEventId(meData.admin.event_id)
 
       const [regRes, logRes] = await Promise.all([
@@ -96,6 +105,14 @@ export default function EventAdminDashboard() {
         const regData = await regRes.json()
         setRegistrations(regData.registrations || [])
         setMetrics(regData.metrics || { total: 0, pending: 0, approved: 0, rejected: 0 })
+        // Compute payment metrics from registrations
+        const regs: Registration[] = regData.registrations || []
+        setPaymentMetrics({
+          pending_verification: regs.filter((r: Registration) => r.payment_status === 'pending_verification').length,
+          verified: regs.filter((r: Registration) => r.payment_status === 'verified').length,
+          rejected: regs.filter((r: Registration) => r.payment_status === 'rejected').length,
+          total: regs.filter((r: Registration) => r.payment_status !== null).length,
+        })
       }
       if (logRes.ok) {
         const logData = await logRes.json()
@@ -115,6 +132,8 @@ export default function EventAdminDashboard() {
       if (e.key === 'Escape') {
         setSelectedReg(null)
         setConfirmDeleteId(null)
+        setPaymentVerifyReg(null)
+        setPaymentRejectReg(null)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -128,6 +147,7 @@ export default function EventAdminDashboard() {
       list = list.filter((r) =>
         r.full_name.toLowerCase().includes(q) ||
         r.email.toLowerCase().includes(q) ||
+        r.phone_number.toLowerCase().includes(q) ||
         r.registration_id.toLowerCase().includes(q) ||
         (r.payment_upi_id || '').toLowerCase().includes(q) ||
         (r.transaction_name || '').toLowerCase().includes(q) ||
@@ -137,8 +157,46 @@ export default function EventAdminDashboard() {
     if (filterStatus !== 'all') {
       list = list.filter((r) => r.status === filterStatus)
     }
+    if (filterPaymentStatus !== 'all') {
+      list = list.filter((r) => r.payment_status === filterPaymentStatus)
+    }
     return list
-  }, [registrations, search, filterStatus])
+  }, [registrations, search, filterStatus, filterPaymentStatus])
+
+  const handleVerifyPayment = async (reg: Registration, sendEmail = false) => {
+    setPaymentActionLoading(true)
+    try {
+      const res = await fetch('/api/event-admin/payments/verify', {
+        method: 'POST',
+        body: JSON.stringify({ registration_id: reg.id, send_email: sendEmail }),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to verify payment'); return }
+      const data = await res.json()
+      const msg = sendEmail ? (data.email_sent?.success ? 'Payment verified & email sent' : 'Payment verified (email failed)') : 'Payment verified'
+      notify('success', msg)
+      setPaymentVerifyReg(null)
+      fetchData()
+    } catch { notify('error', 'Failed to verify payment') }
+    finally { setPaymentActionLoading(false) }
+  }
+
+  const handleRejectPayment = async (reg: Registration, sendEmail = false) => {
+    setPaymentActionLoading(true)
+    try {
+      const res = await fetch('/api/event-admin/payments/reject', {
+        method: 'POST',
+        body: JSON.stringify({ registration_id: reg.id, reason: paymentRejectReason || null, send_email: sendEmail }),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to reject payment'); return }
+      const data = await res.json()
+      const msg = sendEmail ? (data.email_sent?.success ? 'Payment rejected & email sent' : 'Payment rejected (email failed)') : 'Payment rejected'
+      notify('success', msg)
+      setPaymentRejectReg(null)
+      setPaymentRejectReason('')
+      fetchData()
+    } catch { notify('error', 'Failed to reject payment') }
+    finally { setPaymentActionLoading(false) }
+  }
 
   const handleApprove = async (reg: Registration, sendEmail = false) => {
     setActionLoading(true)
@@ -252,15 +310,16 @@ export default function EventAdminDashboard() {
   }
 
   const downloadCSV = () => {
-    const headers = ['Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender', 'Format', 'Partner Name', 'Partner Phone', 'Payment Status', 'UPI ID Used', 'Transaction Name', 'Transaction Reference', 'Status', 'Notes', 'Created At']
+    const headers = ['Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender', 'Format', 'Partner Name', 'Partner Phone', 'Payment Status', 'UPI ID Used', 'Transaction Name', 'Transaction Reference', 'Payment Verified At', 'Status', 'Notes', 'Created At']
     const rows = filtered.map((r) =>
       headers.map((h) => {
-        const key = h.toLowerCase().replace(/ /g, '_').replace(/_id_used/, '_upi_id') as keyof Registration
+        const key = h.toLowerCase().replace(/ /g, '_').replace(/_id_used/, '_upi_id').replace(/_verified_at/, '_verified_at') as keyof Registration
         let val: string
         if (key === 'payment_status') val = String(r.payment_status ?? '')
         else if (key === 'transaction_name') val = String(r.transaction_name ?? '')
         else if (key === 'transaction_reference') val = String(r.transaction_reference ?? '')
         else if (key === 'payment_upi_id') val = String(r.payment_upi_id ?? '')
+        else if (key === 'payment_verified_at') val = r.payment_verified_at ? new Date(r.payment_verified_at).toLocaleString('en-IN') : ''
         else val = String(r[key] ?? '')
         if (val.includes(',') || val.includes('"') || val.includes('\n')) val = `"${val.replace(/"/g, '""')}"`
         return val
@@ -304,235 +363,372 @@ export default function EventAdminDashboard() {
         </div>
       </div>
 
-        {notification && (
-          <div style={{ padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16, background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)', border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`, color: notification.type === 'success' ? '#4ade80' : '#ff4444' }}>
-            {notification.message}
-          </div>
-        )}
-
-        {/* Metrics */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 24 }}>
-          <div style={s.card}><Users size={18} color="#e5e5e5" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Total</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.total}</p></div>
-          <div style={s.card}><Clock size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Pending</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.pending}</p></div>
-          <div style={s.card}><CheckCircle size={18} color="#4ade80" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Approved</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.approved}</p></div>
-          <div style={s.card}><XCircle size={18} color="#ff4444" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Rejected</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.rejected}</p></div>
-          <div style={s.card}><Mail size={18} color="#38bdf8" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Emails Sent</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.sent}</p></div>
-          <div style={s.card}><BarChart3 size={18} color="#a78bfa" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Total Emails</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.total}</p></div>
-          <div style={s.card}><RefreshCw size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>This Month</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.monthly}</p></div>
+      {notification && (
+        <div style={{ padding: '10px 16px', borderRadius: 6, fontSize: 13, fontWeight: 600, marginBottom: 16, background: notification.type === 'success' ? 'rgba(74,222,128,0.12)' : 'rgba(255,68,68,0.12)', border: `1px solid ${notification.type === 'success' ? 'rgba(74,222,128,0.3)' : 'rgba(255,68,68,0.3)'}`, color: notification.type === 'success' ? '#4ade80' : '#ff4444' }}>
+          {notification.message}
         </div>
+      )}
 
-        {/* Search & Filters */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-          <div style={{ position: 'relative', flex: '1 1 260px', minWidth: 200 }}>
-            <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#555', pointerEvents: 'none' }} />
-            <input placeholder="Search name, email, ID..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ width: '100%', height: 36, padding: '0 12px 0 32px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none' }} />
-          </div>
-          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', cursor: 'pointer' }}>
-            <option value="all">All Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-          </select>
-          <span style={{ color: '#666', fontSize: 12 }}>{filtered.length} registration{filtered.length !== 1 ? 's' : ''}</span>
-          <button onClick={fetchData} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh"><RefreshCw size={16} /></button>
-          <button onClick={downloadCSV} style={{ ...s.btn, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>
-            <Download size={14} /> CSV
-          </button>
-        </div>
-
-        {/* Table */}
-        <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid #222', background: '#111' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
-            <thead>
-              <tr>
-                {['Registration ID', 'Name', 'Phone', 'Email', 'Format', 'Payment', 'Status', 'Created At', 'Actions'].map((h) => (
-                  <th key={h} style={s.th}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr><td colSpan={8} style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No registrations found</td></tr>
-              ) : filtered.map((reg) => (
-                <tr key={reg.id} style={{ transition: 'background 0.15s' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#1a1a1a')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
-                  <td style={s.td}><span style={{ color: '#888', fontSize: 11, fontFamily: 'monospace' }}>{reg.registration_id}</span></td>
-                  <td style={s.td}>
-                    <span style={{ color: '#fff', fontWeight: 600 }}>{reg.full_name}</span>
-                    {reg.partner_name && <><br /><span style={{ color: '#666', fontSize: 12 }}>+ {reg.partner_name}</span></>}
-                  </td>
-                  <td style={s.td}>{reg.phone_number}</td>
-                  <td style={{ ...s.td, fontSize: 12, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{reg.email}</td>
-                  <td style={s.td}>{reg.format}</td>
-                  <td style={s.td}>{paymentStatusBadge(reg.payment_status)}</td>
-                  <td style={s.td}>{statusBadge(reg.status)}</td>
-                  <td style={{ ...s.td, fontSize: 12 }}>{new Date(reg.created_at).toLocaleDateString('en-IN')}</td>
-                    <td style={{ ...s.td, textAlign: 'center' }}>
-                      <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
-                        <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => { setSelectedReg(reg); setApprovalNotes(reg.notes || '') }}>View</button>
-                        <button style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8' }} onClick={() => openEdit(reg)}>Edit</button>
-                        {reg.status === 'Pending' && (
-                          <>
-                            <button style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleApprove(reg, true)} disabled={actionLoading} title="Approve & Send Email">Approve + Send</button>
-                            <button style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleApprove(reg)} disabled={actionLoading}>Approve</button>
-                            <button style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700, ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleReject(reg, true)} disabled={actionLoading} title="Reject & Send Email">Reject + Send</button>
-                            <button style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444', ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleReject(reg)} disabled={actionLoading}>Reject</button>
-                          </>
-                        )}
-                        <button style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }} onClick={() => setConfirmDeleteId(reg.id)} title="Delete">
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* View Details Modal */}
-        {selectedReg && (
-          <div style={s.overlay} onClick={() => setSelectedReg(null)}>
-            <div style={s.modal} onClick={(e) => e.stopPropagation()}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, margin: 0 }}>Registration Details</h3>
-                <span style={{ color: '#888', fontSize: 12, fontFamily: 'monospace' }}>{selectedReg.registration_id}</span>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {[
-                  ['Full Name', selectedReg.full_name],
-                  ['Phone', selectedReg.phone_number],
-                  ['Email', selectedReg.email],
-                  ['City', selectedReg.city],
-                  ['Gender', selectedReg.gender],
-                  ['Format', selectedReg.format],
-                  ['Registration Status', selectedReg.status],
-                  ['Payment Status', selectedReg.payment_status || '—'],
-                  ['UPI ID Used', selectedReg.payment_upi_id || '—'],
-                  ['Transaction Name', selectedReg.transaction_name || '—'],
-                  ['Transaction Ref', selectedReg.transaction_reference || '—'],
-                  ['Registered', new Date(selectedReg.created_at).toLocaleString('en-IN')],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>{label}</p>
-                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{value}</p>
-                  </div>
-                ))}
-                {selectedReg.partner_name && (
-                  <>
-                    <div><p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Partner Name</p><p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.partner_name}</p></div>
-                    <div><p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Partner Phone</p><p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.partner_phone}</p></div>
-                  </>
-                )}
-                {selectedReg.notes && (
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Notes</p>
-                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.notes}</p>
-                  </div>
-                )}
-              </div>
-
-              <div style={{ borderTop: '1px solid #222', marginTop: 16, paddingTop: 16 }}>
-                <label style={s.label}>Verification Notes</label>
-                <textarea
-                  value={approvalNotes}
-                  onChange={(e) => setApprovalNotes(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', resize: 'vertical', minHeight: 60 }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
-                <input type="checkbox" id="sendEmailChk" checked={sendEmailCheck} onChange={(e) => setSendEmailCheck(e.target.checked)} />
-                <label htmlFor="sendEmailChk" style={{ color: '#888', fontSize: 12, cursor: 'pointer' }}>Send email notification</label>
-              </div>
-
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 12 }}>
-                {selectedReg.status === 'Pending' && (
-                  <>
-                    <button onClick={() => { handleReject(selectedReg, sendEmailCheck); setApprovalNotes(approvalNotes) }} disabled={actionLoading} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700, ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
-                      {actionLoading ? <Loader2 size={12} className="animate-spin" /> : 'Reject'}
-                    </button>
-                    <button onClick={() => { handleApprove(selectedReg, sendEmailCheck); setApprovalNotes(approvalNotes) }} disabled={actionLoading} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
-                      {actionLoading ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
-                    </button>
-                  </>
-                )}
-                <button onClick={() => setSelectedReg(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Close</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Delete Confirmation */}
-        {confirmDeleteId && (
-          <div style={s.overlay} onClick={() => setConfirmDeleteId(null)}>
-            <div style={{ ...s.modal, maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
-              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Delete Registration</h3>
-              <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>Are you sure? This will permanently delete this registration. This action cannot be undone.</p>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                <button onClick={() => setConfirmDeleteId(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
-                <button onClick={() => handleDeleteRegistration(confirmDeleteId)} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700 }}>Delete</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Edit Registration */}
-        {editingReg && (
-          <div style={s.overlay} onClick={() => !savingEdit && setEditingReg(null)}>
-            <div style={s.modal} onClick={(e) => e.stopPropagation()}>
-              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Edit Registration</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div>
-                  <label style={s.label}>Name</label>
-                  <input value={editForm.full_name} onChange={(e) => setEditForm((p) => ({ ...p, full_name: e.target.value }))} style={{ ...s.input, height: 40 }} />
-                  {editErrors.full_name && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.full_name}</p>}
-                </div>
-                <div>
-                  <label style={s.label}>Email</label>
-                  <input value={editForm.email} onChange={(e) => setEditForm((p) => ({ ...p, email: e.target.value }))} style={{ ...s.input, height: 40 }} />
-                  {editErrors.email && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.email}</p>}
-                </div>
-                <div>
-                  <label style={s.label}>Phone</label>
-                  <input value={editForm.phone_number} onChange={(e) => setEditForm((p) => ({ ...p, phone_number: e.target.value }))} style={{ ...s.input, height: 40 }} />
-                  {editErrors.phone_number && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.phone_number}</p>}
-                </div>
-                <div>
-                  <label style={s.label}>Category</label>
-                  <select value={editForm.format} onChange={(e) => setEditForm((p) => ({ ...p, format: e.target.value, partner_name: e.target.value.includes('Doubles') ? p.partner_name : '', partner_phone: e.target.value.includes('Doubles') ? p.partner_phone : '' }))} style={{ ...s.input, height: 40 }}>
-                    <option value="">Select category</option>
-                    <option value="Men's Singles">Men's Singles</option>
-                    <option value="Women's Singles">Women's Singles</option>
-                    <option value="Men's Doubles">Men's Doubles</option>
-                    <option value="Women's Doubles">Women's Doubles</option>
-                    <option value="Mixed Doubles">Mixed Doubles</option>
-                  </select>
-                  {editErrors.format && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.format}</p>}
-                </div>
-                {editForm.format.includes('Doubles') && (
-                  <>
-                    <div>
-                      <label style={s.label}>Partner Name</label>
-                      <input value={editForm.partner_name} onChange={(e) => setEditForm((p) => ({ ...p, partner_name: e.target.value }))} style={{ ...s.input, height: 40 }} />
-                      {editErrors.partner_name && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.partner_name}</p>}
-                    </div>
-                    <div>
-                      <label style={s.label}>Partner Phone</label>
-                      <input value={editForm.partner_phone} onChange={(e) => setEditForm((p) => ({ ...p, partner_phone: e.target.value }))} style={{ ...s.input, height: 40 }} />
-                      {editErrors.partner_phone && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.partner_phone}</p>}
-                    </div>
-                  </>
-                )}
-              </div>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>
-                <button onClick={() => setEditingReg(null)} disabled={savingEdit} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
-                <button onClick={saveEdit} disabled={savingEdit} style={{ ...s.btnSm, background: 'var(--rallyverse-gradient)', color: '#000', fontWeight: 700, ...(savingEdit ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
-                  {savingEdit ? <Loader2 size={12} className="animate-spin" /> : 'Save Changes'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+      {/* Registration Metrics */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 24 }}>
+        <div style={s.card}><Users size={18} color="#e5e5e5" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Total</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.total}</p></div>
+        <div style={s.card}><Clock size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Pending</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.pending}</p></div>
+        <div style={s.card}><CheckCircle size={18} color="#4ade80" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Approved</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.approved}</p></div>
+        <div style={s.card}><XCircle size={18} color="#ff4444" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Rejected</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.rejected}</p></div>
+        <div style={s.card}><Mail size={18} color="#38bdf8" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Emails Sent</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.sent}</p></div>
+        <div style={s.card}><BarChart3 size={18} color="#a78bfa" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Total Emails</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.total}</p></div>
+        <div style={s.card}><RefreshCw size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>This Month</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.monthly}</p></div>
       </div>
+
+      {/* Payment Metrics */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 24 }}>
+        <div style={{ ...s.card, border: '1px solid rgba(250,204,21,0.2)' }}><CreditCard size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Pending Payments</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{paymentMetrics.pending_verification}</p></div>
+        <div style={{ ...s.card, border: '1px solid rgba(74,222,128,0.2)' }}><CheckCircle size={18} color="#4ade80" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Verified Payments</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{paymentMetrics.verified}</p></div>
+        <div style={{ ...s.card, border: '1px solid rgba(255,68,68,0.2)' }}><XCircle size={18} color="#ff4444" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Rejected Payments</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{paymentMetrics.rejected}</p></div>
+        <div style={{ ...s.card, border: '1px solid rgba(139,92,246,0.2)' }}><CreditCard size={18} color="#a78bfa" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Total Payments</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{paymentMetrics.total}</p></div>
+      </div>
+
+      {/* Search & Filters */}
+      <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ position: 'relative', flex: '1 1 260px', minWidth: 200 }}>
+          <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#555', pointerEvents: 'none' }} />
+          <input placeholder="Search name, email, phone, ID, UPI, transaction..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ width: '100%', height: 36, padding: '0 12px 0 32px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none' }} />
+        </div>
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', cursor: 'pointer' }}>
+          <option value="all">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <select value={filterPaymentStatus} onChange={(e) => setFilterPaymentStatus(e.target.value)} style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', cursor: 'pointer' }}>
+          <option value="all">All Payments</option>
+          <option value="pending_verification">Pending Verification</option>
+          <option value="verified">Verified</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <span style={{ color: '#666', fontSize: 12 }}>{filtered.length} registration{filtered.length !== 1 ? 's' : ''}</span>
+        <button onClick={fetchData} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh"><RefreshCw size={16} /></button>
+        <button onClick={downloadCSV} style={{ ...s.btn, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>
+          <Download size={14} /> CSV
+        </button>
+      </div>
+
+      {/* Table */}
+      <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid #222', background: '#111' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
+          <thead>
+            <tr>
+              {['Registration ID', 'Name', 'Phone', 'Email', 'Format', 'Payment', 'Status', 'Created At', 'Actions'].map((h) => (
+                <th key={h} style={s.th}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr><td colSpan={9} style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No registrations found</td></tr>
+            ) : filtered.map((reg) => (
+              <tr key={reg.id} style={{ transition: 'background 0.15s' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#1a1a1a')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+                <td style={s.td}><span style={{ color: '#888', fontSize: 11, fontFamily: 'monospace' }}>{reg.registration_id}</span></td>
+                <td style={s.td}>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>{reg.full_name}</span>
+                  {reg.partner_name && <><br /><span style={{ color: '#666', fontSize: 12 }}>+ {reg.partner_name}</span></>}
+                </td>
+                <td style={s.td}>{reg.phone_number}</td>
+                <td style={{ ...s.td, fontSize: 12, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{reg.email}</td>
+                <td style={s.td}>{reg.format}</td>
+                <td style={s.td}>{paymentStatusBadge(reg.payment_status)}</td>
+                <td style={s.td}>{statusBadge(reg.status)}</td>
+                <td style={{ ...s.td, fontSize: 12 }}>{new Date(reg.created_at).toLocaleDateString('en-IN')}</td>
+                <td style={{ ...s.td, textAlign: 'center' }}>
+                  <div style={{ display: 'flex', gap: 4, justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => { setSelectedReg(reg); setApprovalNotes(reg.notes || '') }}>View</button>
+                    <button style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8' }} onClick={() => openEdit(reg)}>Edit</button>
+                    {reg.payment_status === 'pending_verification' && (
+                      <>
+                        <button style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700 }} onClick={() => { setPaymentVerifyReg(reg); setSendEmailCheck(true) }}>Verify Pay</button>
+                        <button style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700 }} onClick={() => { setPaymentRejectReg(reg); setPaymentRejectReason(''); setSendEmailCheck(true) }}>Reject Pay</button>
+                      </>
+                    )}
+                    {reg.status === 'Pending' && (
+                      <>
+                        <button style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleApprove(reg, true)} disabled={actionLoading} title="Approve & Send Email">Approve + Send</button>
+                        <button style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleApprove(reg)} disabled={actionLoading}>Approve</button>
+                        <button style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700, ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleReject(reg, true)} disabled={actionLoading} title="Reject & Send Email">Reject + Send</button>
+                        <button style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444', ...(actionLoading ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleReject(reg)} disabled={actionLoading}>Reject</button>
+                      </>
+                    )}
+                    <button style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }} onClick={() => setConfirmDeleteId(reg.id)} title="Delete">
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* View Details Modal */}
+      {selectedReg && (
+        <div style={s.overlay} onClick={() => setSelectedReg(null)}>
+          <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, margin: 0 }}>Registration Details</h3>
+              <span style={{ color: '#888', fontSize: 12, fontFamily: 'monospace' }}>{selectedReg.registration_id}</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {[
+                ['Full Name', selectedReg.full_name],
+                ['Phone', selectedReg.phone_number],
+                ['Email', selectedReg.email],
+                ['City', selectedReg.city],
+                ['Gender', selectedReg.gender],
+                ['Format', selectedReg.format],
+                ['Registration Status', selectedReg.status],
+                ['Registered', new Date(selectedReg.created_at).toLocaleString('en-IN')],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>{label}</p>
+                  <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{value}</p>
+                </div>
+              ))}
+              {selectedReg.partner_name && (
+                <>
+                  <div><p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Partner Name</p><p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.partner_name}</p></div>
+                  <div><p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Partner Phone</p><p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.partner_phone}</p></div>
+                </>
+              )}
+            </div>
+
+            {/* Payment Information Section */}
+            {selectedReg.payment_status && (
+              <div style={{ borderTop: '1px solid #333', marginTop: 16, paddingTop: 16 }}>
+                <h4 style={{ color: '#fff', fontSize: 14, fontWeight: 600, margin: '0 0 12px' }}>Payment Information</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div>
+                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Event Fee</p>
+                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.payment_status ? 'See event details' : '—'}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Payment Status</p>
+                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{paymentStatusBadge(selectedReg.payment_status)}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>UPI ID Used</p>
+                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.payment_upi_id || '—'}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Transaction Name</p>
+                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.transaction_name || '—'}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Transaction Reference</p>
+                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.transaction_reference || '—'}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Submitted At</p>
+                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.created_at ? new Date(selectedReg.created_at).toLocaleString('en-IN') : '—'}</p>
+                  </div>
+                  {selectedReg.payment_verified_at && (
+                    <div>
+                      <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Verified At</p>
+                      <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{new Date(selectedReg.payment_verified_at).toLocaleString('en-IN')}</p>
+                    </div>
+                  )}
+                  {selectedReg.payment_rejected_at && (
+                    <div>
+                      <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Rejected At</p>
+                      <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{new Date(selectedReg.payment_rejected_at).toLocaleString('en-IN')}</p>
+                    </div>
+                  )}
+                  {selectedReg.payment_rejection_reason && (
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Rejection Reason</p>
+                      <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.payment_rejection_reason}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {selectedReg.notes && (
+              <div style={{ borderTop: '1px solid #333', marginTop: 16, paddingTop: 16 }}>
+                <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Notes</p>
+                <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.notes}</p>
+              </div>
+            )}
+
+            <div style={{ borderTop: '1px solid #222', marginTop: 16, paddingTop: 16 }}>
+              <label style={s.label}>Verification Notes</label>
+              <textarea
+                value={approvalNotes}
+                onChange={(e) => setApprovalNotes(e.target.value)}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', resize: 'vertical', minHeight: 60 }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+              <input type="checkbox" id="sendEmailChk" checked={sendEmailCheck} onChange={(e) => setSendEmailCheck(e.target.checked)} />
+              <label htmlFor="sendEmailChk" style={{ color: '#888', fontSize: 12, cursor: 'pointer' }}>Send email notification</label>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 12 }}>
+              {selectedReg.status === 'Pending' && (
+                <>
+                  <button onClick={() => { handleReject(selectedReg, sendEmailCheck); setApprovalNotes(approvalNotes) }} disabled={actionLoading} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700, ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                    {actionLoading ? <Loader2 size={12} className="animate-spin" /> : 'Reject'}
+                  </button>
+                  <button onClick={() => { handleApprove(selectedReg, sendEmailCheck); setApprovalNotes(approvalNotes) }} disabled={actionLoading} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(actionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                    {actionLoading ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
+                  </button>
+                </>
+              )}
+              <button onClick={() => setSelectedReg(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Verify Confirmation Modal */}
+      {paymentVerifyReg && (
+        <div style={s.overlay} onClick={() => !paymentActionLoading && setPaymentVerifyReg(null)}>
+          <div style={{ ...s.modal, maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Verify Payment</h3>
+            <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>
+              Confirm that payment has been received and verified for <strong style={{ color: '#ccc' }}>{paymentVerifyReg.full_name}</strong>?
+            </p>
+            <p style={{ color: '#888', fontSize: 12, marginBottom: 16 }}>
+              <strong>UPI ID Used:</strong> {paymentVerifyReg.payment_upi_id || '—'}<br />
+              <strong>Transaction Name:</strong> {paymentVerifyReg.transaction_name || '—'}<br />
+              <strong>Transaction Ref:</strong> {paymentVerifyReg.transaction_reference || '—'}
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              <input type="checkbox" id="sendEmailPayVerify" checked={sendEmailCheck} onChange={(e) => setSendEmailCheck(e.target.checked)} />
+              <label htmlFor="sendEmailPayVerify" style={{ color: '#888', fontSize: 12, cursor: 'pointer' }}>Send payment verified email</label>
+            </div>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button onClick={() => { setPaymentVerifyReg(null); setSendEmailCheck(true) }} disabled={paymentActionLoading} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+              <button onClick={() => handleVerifyPayment(paymentVerifyReg, sendEmailCheck)} disabled={paymentActionLoading} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(paymentActionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                {paymentActionLoading ? <Loader2 size={12} className="animate-spin" /> : 'Verify Payment'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Reject Modal */}
+      {paymentRejectReg && (
+        <div style={s.overlay} onClick={() => !paymentActionLoading && setPaymentRejectReg(null)}>
+          <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Reject Payment</h3>
+            <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>
+              Reject payment for <strong style={{ color: '#ccc' }}>{paymentRejectReg.full_name}</strong>?
+            </p>
+            <label style={s.label}>Reason (optional)</label>
+            <select
+              value={paymentRejectReason}
+              onChange={(e) => setPaymentRejectReason(e.target.value)}
+              style={{ width: '100%', height: 40, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', cursor: 'pointer', marginBottom: 12 }}
+            >
+              <option value="">Select a reason...</option>
+              <option value="Payment not received">Payment not received</option>
+              <option value="Invalid transaction details">Invalid transaction details</option>
+              <option value="Unable to verify payment">Unable to verify payment</option>
+              <option value="custom">Other (type below)</option>
+            </select>
+            {paymentRejectReason === 'custom' && (
+              <textarea
+                value={paymentRejectReason}
+                onChange={(e) => setPaymentRejectReason(e.target.value)}
+                placeholder="Enter reason..."
+                style={{ width: '100%', padding: '10px 12px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', resize: 'vertical', minHeight: 60, marginBottom: 12 }}
+              />
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              <input type="checkbox" id="sendEmailPayReject" checked={sendEmailCheck} onChange={(e) => setSendEmailCheck(e.target.checked)} />
+              <label htmlFor="sendEmailPayReject" style={{ color: '#888', fontSize: 12, cursor: 'pointer' }}>Send payment rejected email</label>
+            </div>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button onClick={() => { setPaymentRejectReg(null); setPaymentRejectReason(''); setSendEmailCheck(true) }} disabled={paymentActionLoading} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+              <button onClick={() => handleRejectPayment(paymentRejectReg, sendEmailCheck)} disabled={paymentActionLoading} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700, ...(paymentActionLoading ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                {paymentActionLoading ? <Loader2 size={12} className="animate-spin" /> : 'Reject Payment'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation */}
+      {confirmDeleteId && (
+        <div style={s.overlay} onClick={() => setConfirmDeleteId(null)}>
+          <div style={{ ...s.modal, maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Delete Registration</h3>
+            <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>Are you sure? This will permanently delete this registration. This action cannot be undone.</p>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button onClick={() => setConfirmDeleteId(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+              <button onClick={() => handleDeleteRegistration(confirmDeleteId)} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700 }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Registration */}
+      {editingReg && (
+        <div style={s.overlay} onClick={() => !savingEdit && setEditingReg(null)}>
+          <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Edit Registration</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div>
+                <label style={s.label}>Name</label>
+                <input value={editForm.full_name} onChange={(e) => setEditForm((p) => ({ ...p, full_name: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                {editErrors.full_name && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.full_name}</p>}
+              </div>
+              <div>
+                <label style={s.label}>Email</label>
+                <input value={editForm.email} onChange={(e) => setEditForm((p) => ({ ...p, email: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                {editErrors.email && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.email}</p>}
+              </div>
+              <div>
+                <label style={s.label}>Phone</label>
+                <input value={editForm.phone_number} onChange={(e) => setEditForm((p) => ({ ...p, phone_number: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                {editErrors.phone_number && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.phone_number}</p>}
+              </div>
+              <div>
+                <label style={s.label}>Category</label>
+                <select value={editForm.format} onChange={(e) => setEditForm((p) => ({ ...p, format: e.target.value, partner_name: e.target.value.includes('Doubles') ? p.partner_name : '', partner_phone: e.target.value.includes('Doubles') ? p.partner_phone : '' }))} style={{ ...s.input, height: 40 }}>
+                  <option value="">Select category</option>
+                  <option value="Men's Singles">Men's Singles</option>
+                  <option value="Women's Singles">Women's Singles</option>
+                  <option value="Men's Doubles">Men's Doubles</option>
+                  <option value="Women's Doubles">Women's Doubles</option>
+                  <option value="Mixed Doubles">Mixed Doubles</option>
+                </select>
+                {editErrors.format && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.format}</p>}
+              </div>
+              {editForm.format.includes('Doubles') && (
+                <>
+                  <div>
+                    <label style={s.label}>Partner Name</label>
+                    <input value={editForm.partner_name} onChange={(e) => setEditForm((p) => ({ ...p, partner_name: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                    {editErrors.partner_name && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.partner_name}</p>}
+                  </div>
+                  <div>
+                    <label style={s.label}>Partner Phone</label>
+                    <input value={editForm.partner_phone} onChange={(e) => setEditForm((p) => ({ ...p, partner_phone: e.target.value }))} style={{ ...s.input, height: 40 }} />
+                    {editErrors.partner_phone && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.partner_phone}</p>}
+                  </div>
+                </>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>
+              <button onClick={() => setEditingReg(null)} disabled={savingEdit} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+              <button onClick={saveEdit} disabled={savingEdit} style={{ ...s.btnSm, background: 'var(--rallyverse-gradient)', color: '#000', fontWeight: 700, ...(savingEdit ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                {savingEdit ? <Loader2 size={12} className="animate-spin" /> : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
