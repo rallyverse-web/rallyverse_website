@@ -81,6 +81,8 @@ export default function AdminEventsPage() {
   /* QR Upload */
   const [uploadingQR, setUploadingQR] = useState(false)
   const qrInputRef = useRef<HTMLInputElement>(null)
+  const [uploadingFormQR, setUploadingFormQR] = useState(false)
+  const formQrInputRef = useRef<HTMLInputElement>(null)
 
   /* Payment Config */
   const [paymentConfigTarget, setPaymentConfigTarget] = useState<string | null>(null)
@@ -88,6 +90,11 @@ export default function AdminEventsPage() {
     upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '', qr_code_url: '', payment_enabled: false, transaction_ref_required: true,
   })
   const [savingPayment, setSavingPayment] = useState(false)
+
+  /* Form-level payment config (for inline fields in create/edit modal) */
+  const [formPaymentConfig, setFormPaymentConfig] = useState<Partial<EventPaymentConfigFormData>>({
+    upi_id: '', qr_code_url: '', transaction_ref_required: true,
+  })
 
   /* Event Admins */
   const [adminTarget, setAdminTarget] = useState<string | null>(null)
@@ -143,10 +150,11 @@ export default function AdminEventsPage() {
   const handleCreate = () => {
     setEditingId(null)
     setFormData(defaultForm)
+    setFormPaymentConfig({ upi_id: '', qr_code_url: '', transaction_ref_required: true })
     setShowForm(true)
   }
 
-  const handleEdit = (event: EventWithFormats) => {
+  const handleEdit = async (event: EventWithFormats) => {
     setEditingId(event.id)
     setFormData({
       name: event.name,
@@ -169,6 +177,24 @@ export default function AdminEventsPage() {
       status: event.status,
       formats: event.formats?.map(f => f.format_name) || [],
     })
+    // Load existing payment config for this event
+    try {
+      const res = await fetch(`/api/admin/payment-config/${event.id}`, { headers: authHeaders() })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.config) {
+          setFormPaymentConfig({
+            upi_id: data.config.upi_id || '',
+            qr_code_url: data.config.qr_code_url || '',
+            transaction_ref_required: data.config.transaction_ref_required ?? true,
+          })
+        } else {
+          setFormPaymentConfig({ upi_id: '', qr_code_url: '', transaction_ref_required: true })
+        }
+      }
+    } catch {
+      setFormPaymentConfig({ upi_id: '', qr_code_url: '', transaction_ref_required: true })
+    }
     setShowForm(true)
   }
 
@@ -296,6 +322,15 @@ export default function AdminEventsPage() {
         })
         if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Update failed'); return }
         notify('success', 'Event updated successfully')
+        // Save payment config if payment is enabled
+        if (formData.payment_enabled) {
+          const payRes = await fetch(`/api/admin/payment-config/${editingId}`, {
+            method: 'PUT',
+            headers: authHeaders(),
+            body: JSON.stringify(formPaymentConfig),
+          })
+          if (!payRes.ok) { const d = await payRes.json(); notify('error', 'Payment config: ' + (d.error || 'save failed')); return }
+        }
       } else {
         const res = await fetch('/api/admin/events', {
           method: 'POST',
@@ -303,7 +338,17 @@ export default function AdminEventsPage() {
           body: JSON.stringify(formData),
         })
         if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Create failed'); return }
+        const data = await res.json()
         notify('success', 'Event created successfully')
+        // Save payment config if payment is enabled
+        if (formData.payment_enabled && data.event?.id) {
+          const payRes = await fetch(`/api/admin/payment-config/${data.event.id}`, {
+            method: 'PUT',
+            headers: authHeaders(),
+            body: JSON.stringify(formPaymentConfig),
+          })
+          if (!payRes.ok) { const d = await payRes.json(); notify('error', 'Payment config: ' + (d.error || 'save failed')); return }
+        }
       }
       setShowForm(false)
       fetchEvents()
@@ -388,6 +433,33 @@ export default function AdminEventsPage() {
     if (qrInputRef.current) {
       qrInputRef.current.value = ''
       qrInputRef.current.click()
+    }
+  }
+
+  const handleFormQRUpload = async (file: File) => {
+    setUploadingFormQR(true)
+    try {
+      const body = new FormData()
+      body.append('file', file)
+      body.append('bucket', 'event-assets')
+      body.append('folder', 'qr-codes')
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: authHeaders(),
+        body,
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Upload failed'); return }
+      const data = await res.json()
+      setFormPaymentConfig(p => ({ ...p, qr_code_url: data.url }))
+      notify('success', 'QR code uploaded')
+    } catch { notify('error', 'QR code upload failed') }
+    finally { setUploadingFormQR(false) }
+  }
+
+  const triggerFormQRUpload = () => {
+    if (formQrInputRef.current) {
+      formQrInputRef.current.value = ''
+      formQrInputRef.current.click()
     }
   }
 
@@ -609,6 +681,49 @@ export default function AdminEventsPage() {
                     </label>
                   </div>
                 </div>
+
+                {/* Payment Fields (shown only when payment is enabled) */}
+                {formData.payment_enabled && (
+                  <div style={{ gridColumn: '1 / -1', padding: 16, borderRadius: 8, border: '1px solid #333', background: '#151515' }}>
+                    <h4 style={{ color: '#fff', fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Payment Details</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                      <div>
+                        <label style={s.label}>UPI ID</label>
+                        <input value={formPaymentConfig.upi_id} onChange={(e) => setFormPaymentConfig(p => ({ ...p, upi_id: e.target.value }))} style={s.input} placeholder="e.g. rallyverse@upi" />
+                      </div>
+                      <div>
+                        <label style={s.label}>QR Code Image</label>
+                        <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 4 }}>
+                          <input ref={formQrInputRef} type="file" accept="image/png,image/jpeg,image/webp" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFormQRUpload(f) }} />
+                          <button onClick={triggerFormQRUpload} disabled={uploadingFormQR} style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8', ...(uploadingFormQR ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                            {uploadingFormQR ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Uploading...</> : <><Upload size={12} style={{ marginRight: 4 }} />Upload QR</>}
+                          </button>
+                          {formPaymentConfig.qr_code_url && (
+                            <span style={{ color: '#4ade80', fontSize: 12 }}>QR uploaded</span>
+                          )}
+                          {formPaymentConfig.qr_code_url && (
+                            <button onClick={() => setFormPaymentConfig(p => ({ ...p, qr_code_url: '' }))} style={{ ...s.btnSm, background: 'transparent', border: '1px solid rgba(255,68,68,0.3)', color: '#ff4444', fontSize: 11 }}>Remove</button>
+                          )}
+                        </div>
+                        {formPaymentConfig.qr_code_url && (
+                          <div style={{ marginTop: 8 }}>
+                            <img src={formPaymentConfig.qr_code_url} alt="QR Code" style={{ width: 120, height: 120, borderRadius: 8, objectFit: 'contain', border: '1px solid #333' }} />
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <label style={s.label}>Require UPI Transaction Reference Number</label>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          <label style={{ color: '#ccc', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                            <input type="checkbox" checked={formPaymentConfig.transaction_ref_required ?? true} onChange={(e) => setFormPaymentConfig(p => ({ ...p, transaction_ref_required: e.target.checked }))} />
+                            Require transaction reference ID during registration
+                          </label>
+                          <p style={{ color: '#666', fontSize: 11, margin: 0 }}>When enabled, participants must provide a UPI transaction reference number to complete registration.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Poster Upload */}
                 <div style={{ gridColumn: '1 / -1' }}>
