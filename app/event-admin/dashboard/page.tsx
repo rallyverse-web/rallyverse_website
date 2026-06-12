@@ -30,7 +30,18 @@ function statusBadge(status: string) {
     case 'Approved': return <Badge color="#4ade80" label="Approved" />
     case 'Rejected': return <Badge color="#ff4444" label="Rejected" />
     case 'Pending': return <Badge color="#facc15" label="Pending" />
+    case 'Pending Verification': return <Badge color="#facc15" label="Pending Verification" />
     default: return <Badge color="#888" label={status || '—'} />
+  }
+}
+
+function paymentStatusBadge(status: string | null) {
+  switch (status) {
+    case 'Completed': return <Badge color="#4ade80" label="Paid" />
+    case 'Pending Verification': return <Badge color="#facc15" label="Pending Verification" />
+    case 'Failed': return <Badge color="#ff4444" label="Failed" />
+    case 'Refunded': return <Badge color="#888" label="Refunded" />
+    default: return null
   }
 }
 
@@ -117,7 +128,10 @@ export default function EventAdminDashboard() {
       list = list.filter((r) =>
         r.full_name.toLowerCase().includes(q) ||
         r.email.toLowerCase().includes(q) ||
-        r.registration_id.toLowerCase().includes(q)
+        r.registration_id.toLowerCase().includes(q) ||
+        (r.payment_upi_id || '').toLowerCase().includes(q) ||
+        (r.transaction_name || '').toLowerCase().includes(q) ||
+        (r.transaction_reference || '').toLowerCase().includes(q)
       )
     }
     if (filterStatus !== 'all') {
@@ -238,11 +252,16 @@ export default function EventAdminDashboard() {
   }
 
   const downloadCSV = () => {
-    const headers = ['Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender', 'Format', 'Partner Name', 'Partner Phone', 'Status', 'Notes', 'Created At']
+    const headers = ['Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender', 'Format', 'Partner Name', 'Partner Phone', 'Payment Status', 'UPI ID Used', 'Transaction Name', 'Transaction Reference', 'Status', 'Notes', 'Created At']
     const rows = filtered.map((r) =>
       headers.map((h) => {
-        const key = h.toLowerCase().replace(/ /g, '_') as keyof Registration
-        let val = String(r[key] ?? '')
+        const key = h.toLowerCase().replace(/ /g, '_').replace(/_id_used/, '_upi_id') as keyof Registration
+        let val: string
+        if (key === 'payment_status') val = String(r.payment_status ?? '')
+        else if (key === 'transaction_name') val = String(r.transaction_name ?? '')
+        else if (key === 'transaction_reference') val = String(r.transaction_reference ?? '')
+        else if (key === 'payment_upi_id') val = String(r.payment_upi_id ?? '')
+        else val = String(r[key] ?? '')
         if (val.includes(',') || val.includes('"') || val.includes('\n')) val = `"${val.replace(/"/g, '""')}"`
         return val
       }).join(',')
@@ -326,7 +345,7 @@ export default function EventAdminDashboard() {
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
             <thead>
               <tr>
-                {['Registration ID', 'Name', 'Phone', 'Email', 'Format', 'Status', 'Created At', 'Actions'].map((h) => (
+                {['Registration ID', 'Name', 'Phone', 'Email', 'Format', 'Payment', 'Status', 'Created At', 'Actions'].map((h) => (
                   <th key={h} style={s.th}>{h}</th>
                 ))}
               </tr>
@@ -344,6 +363,7 @@ export default function EventAdminDashboard() {
                   <td style={s.td}>{reg.phone_number}</td>
                   <td style={{ ...s.td, fontSize: 12, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{reg.email}</td>
                   <td style={s.td}>{reg.format}</td>
+                  <td style={s.td}>{paymentStatusBadge(reg.payment_status)}</td>
                   <td style={s.td}>{statusBadge(reg.status)}</td>
                   <td style={{ ...s.td, fontSize: 12 }}>{new Date(reg.created_at).toLocaleDateString('en-IN')}</td>
                     <td style={{ ...s.td, textAlign: 'center' }}>
@@ -385,7 +405,11 @@ export default function EventAdminDashboard() {
                   ['City', selectedReg.city],
                   ['Gender', selectedReg.gender],
                   ['Format', selectedReg.format],
-                  ['Status', selectedReg.status],
+                  ['Registration Status', selectedReg.status],
+                  ['Payment Status', selectedReg.payment_status || '—'],
+                  ['UPI ID Used', selectedReg.payment_upi_id || '—'],
+                  ['Transaction Name', selectedReg.transaction_name || '—'],
+                  ['Transaction Ref', selectedReg.transaction_reference || '—'],
                   ['Registered', new Date(selectedReg.created_at).toLocaleString('en-IN')],
                 ].map(([label, value]) => (
                   <div key={label}>

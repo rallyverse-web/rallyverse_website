@@ -16,9 +16,10 @@ function getFallbackEvent(): EventWithFormats {
     date_label: CURRENT_EVENT.date,
     time_label: CURRENT_EVENT.time,
     is_date_confirmed: CURRENT_EVENT.isDateConfirmed,
-    registration_fee: CURRENT_EVENT.registrationFee,
-    payment_info: '',
-    capacity: 100,
+      registration_fee: CURRENT_EVENT.registrationFee,
+      payment_info: '',
+      payment_enabled: false,
+      capacity: 100,
     rally_points: 10,
     poster_url: null,
     image_url: null,
@@ -137,6 +138,8 @@ export async function createEvent(formData: EventFormData): Promise<EventWithFor
       is_date_confirmed: eventData.is_date_confirmed ?? true,
       registration_fee: eventData.registration_fee || null,
       payment_info: eventData.payment_info || null,
+      payment_enabled: (eventData as { payment_enabled?: boolean }).payment_enabled ?? false,
+      poster_url: (eventData as { poster_url?: string }).poster_url || null,
       capacity: eventData.capacity || null,
       rally_points: eventData.rally_points || 0,
       whatsapp_number: eventData.whatsapp_number || null,
@@ -184,6 +187,8 @@ export async function updateEvent(id: string, formData: Partial<EventFormData>):
   if (eventData.is_date_confirmed !== undefined) updatePayload.is_date_confirmed = eventData.is_date_confirmed
   if (eventData.registration_fee !== undefined) updatePayload.registration_fee = eventData.registration_fee
   if (eventData.payment_info !== undefined) updatePayload.payment_info = eventData.payment_info
+  if ((eventData as { payment_enabled?: boolean }).payment_enabled !== undefined) updatePayload.payment_enabled = (eventData as { payment_enabled?: boolean }).payment_enabled ?? false
+  if ((eventData as { poster_url?: string }).poster_url !== undefined) updatePayload.poster_url = (eventData as { poster_url?: string }).poster_url || null
   if (eventData.capacity !== undefined) updatePayload.capacity = eventData.capacity
   if (eventData.rally_points !== undefined) updatePayload.rally_points = eventData.rally_points
   if (eventData.whatsapp_number !== undefined) updatePayload.whatsapp_number = eventData.whatsapp_number

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     }
 
     const body = await req.json()
-    const { full_name, phone_number, email, city, gender, format, partner_name, partner_phone } = body
+    const { full_name, phone_number, email, city, gender, format, partner_name, partner_phone, payment_upi_id, transaction_name, transaction_reference } = body
 
     if (!full_name || !phone_number || !email || !city || !gender || !format) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -41,6 +41,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       return NextResponse.json({ error: 'Partner details required for doubles format' }, { status: 400 })
     }
 
+    if (payment_upi_id && !transaction_name) {
+      return NextResponse.json({ error: 'Transaction name is required when providing UPI ID' }, { status: 400 })
+    }
+
     const registration = await createRegistration({
       event_id: event.id,
       full_name,
@@ -51,6 +55,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       format,
       partner_name: partner_name || '',
       partner_phone: partner_phone || '',
+      payment_upi_id: payment_upi_id || '',
+      transaction_name: transaction_name || '',
+      transaction_reference: transaction_reference || '',
     })
 
     try {

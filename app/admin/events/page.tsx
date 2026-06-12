@@ -1,8 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAdminAuth } from '../AdminAuthContext'
-import { Plus, Edit, Trash2, Eye, Loader2, RefreshCw, Calendar, Users, CheckCircle, XCircle, Wallet, Shield, Copy } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, Loader2, RefreshCw, Calendar, Users, CheckCircle, XCircle, Wallet, Shield, Copy, Upload } from 'lucide-react'
 import type { EventWithFormats, EventFormData, AdminEventMetrics, EventStatus, EventPaymentConfigFormData, EventAdmin } from '@/lib/types/supabase'
 
 const FORMAT_OPTIONS = [
@@ -12,7 +12,8 @@ const FORMAT_OPTIONS = [
 const defaultForm: EventFormData = {
   name: '', slug: '', description: '', category: '', venue: '',
   event_date: '', date_label: '', time_label: '', is_date_confirmed: true,
-  registration_fee: 0, payment_info: '', capacity: 0, rally_points: 0,
+  registration_fee: 0, payment_info: '', payment_enabled: false, capacity: 0, rally_points: 0,
+  poster_url: '',
   whatsapp_number: '', whatsapp_group_link: '',
   featured: false,
   status: 'draft', formats: [],
@@ -73,10 +74,18 @@ export default function AdminEventsPage() {
   const [showBackfillConfirm, setShowBackfillConfirm] = useState(false)
   const [backfilling, setBackfilling] = useState(false)
 
+  /* Poster Upload */
+  const [uploadingPoster, setUploadingPoster] = useState(false)
+  const posterInputRef = useRef<HTMLInputElement>(null)
+
+  /* QR Upload */
+  const [uploadingQR, setUploadingQR] = useState(false)
+  const qrInputRef = useRef<HTMLInputElement>(null)
+
   /* Payment Config */
   const [paymentConfigTarget, setPaymentConfigTarget] = useState<string | null>(null)
   const [paymentConfig, setPaymentConfig] = useState<EventPaymentConfigFormData>({
-    upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '',
+    upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '', qr_code_url: '', payment_enabled: false,
   })
   const [savingPayment, setSavingPayment] = useState(false)
 
@@ -151,6 +160,8 @@ export default function AdminEventsPage() {
       is_date_confirmed: event.is_date_confirmed ?? true,
       registration_fee: event.registration_fee ?? 0,
       payment_info: event.payment_info || '',
+      payment_enabled: event.payment_enabled ?? false,
+      poster_url: event.poster_url || '',
       capacity: event.capacity ?? 0,
       rally_points: event.rally_points ?? 0,
       whatsapp_number: event.whatsapp_number || '',
@@ -173,12 +184,14 @@ export default function AdminEventsPage() {
             account_holder_name: data.config.account_holder_name || '',
             mobile_number: data.config.mobile_number || '',
             whatsapp_number: data.config.whatsapp_number || '',
+            qr_code_url: data.config.qr_code_url || '',
+            payment_enabled: data.config.payment_enabled ?? false,
           })
           return
         }
       }
     } catch {}
-    setPaymentConfig({ upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '' })
+    setPaymentConfig({ upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '', qr_code_url: '', payment_enabled: false })
   }
 
   const handleSavePaymentConfig = async () => {
@@ -322,6 +335,60 @@ export default function AdminEventsPage() {
       notify('success', 'Event published')
       fetchEvents()
     } catch { notify('error', 'Failed to publish event') }
+  }
+
+  const handlePosterUpload = async (file: File) => {
+    setUploadingPoster(true)
+    try {
+      const body = new FormData()
+      body.append('file', file)
+      body.append('bucket', 'event-assets')
+      body.append('folder', 'posters')
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: authHeaders(),
+        body,
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Upload failed'); return }
+      const data = await res.json()
+      updateForm('poster_url', data.url)
+      notify('success', 'Poster uploaded')
+    } catch { notify('error', 'Poster upload failed') }
+    finally { setUploadingPoster(false) }
+  }
+
+  const triggerPosterUpload = () => {
+    if (posterInputRef.current) {
+      posterInputRef.current.value = ''
+      posterInputRef.current.click()
+    }
+  }
+
+  const handleQRUpload = async (file: File) => {
+    setUploadingQR(true)
+    try {
+      const body = new FormData()
+      body.append('file', file)
+      body.append('bucket', 'event-assets')
+      body.append('folder', 'qr-codes')
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: authHeaders(),
+        body,
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Upload failed'); return }
+      const data = await res.json()
+      setPaymentConfig(p => ({ ...p, qr_code_url: data.url }))
+      notify('success', 'QR code uploaded')
+    } catch { notify('error', 'QR code upload failed') }
+    finally { setUploadingQR(false) }
+  }
+
+  const triggerQRUpload = () => {
+    if (qrInputRef.current) {
+      qrInputRef.current.value = ''
+      qrInputRef.current.click()
+    }
   }
 
   const handleBackfill = async () => {
@@ -539,6 +606,33 @@ export default function AdminEventsPage() {
                 </div>
 
                 <div>
+                  <label style={s.label}>Enable Online Payments</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 48 }}>
+                    <label style={{ color: '#ccc', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input type="checkbox" checked={formData.payment_enabled} onChange={(e) => updateForm('payment_enabled', e.target.checked)} />
+                      Collect payment details during registration
+                    </label>
+                  </div>
+                </div>
+
+                {/* Poster Upload */}
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label style={s.label}>Event Poster</label>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 4 }}>
+                    <input ref={posterInputRef} type="file" accept="image/png,image/jpeg,image/webp" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePosterUpload(f) }} />
+                    <button onClick={triggerPosterUpload} disabled={uploadingPoster} style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8', ...(uploadingPoster ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                      {uploadingPoster ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Uploading...</> : <><Upload size={12} style={{ marginRight: 4 }} />Upload Poster</>}
+                    </button>
+                    {formData.poster_url && (
+                      <span style={{ color: '#4ade80', fontSize: 12 }}>Poster uploaded</span>
+                    )}
+                    {formData.poster_url && (
+                      <button onClick={() => updateForm('poster_url', '')} style={{ ...s.btnSm, background: 'transparent', border: '1px solid rgba(255,68,68,0.3)', color: '#ff4444', fontSize: 11 }}>Remove</button>
+                    )}
+                  </div>
+                </div>
+
+                <div>
                   <label style={s.label}>Capacity</label>
                   <input type="number" value={formData.capacity} onChange={(e) => updateForm('capacity', Number(e.target.value))} style={s.input} />
                 </div>
@@ -643,6 +737,15 @@ export default function AdminEventsPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 14 }}>
                 <div>
+                  <label style={s.label}>Enable Online Payments</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 40 }}>
+                    <label style={{ color: '#ccc', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input type="checkbox" checked={paymentConfig.payment_enabled ?? false} onChange={(e) => setPaymentConfig(p => ({ ...p, payment_enabled: e.target.checked }))} />
+                      Collect payment details during registration
+                    </label>
+                  </div>
+                </div>
+                <div>
                   <label style={s.label}>UPI ID</label>
                   <input value={paymentConfig.upi_id} onChange={(e) => setPaymentConfig(p => ({ ...p, upi_id: e.target.value }))} style={s.input} placeholder="e.g. rallyverse@upi" />
                 </div>
@@ -657,6 +760,26 @@ export default function AdminEventsPage() {
                 <div>
                   <label style={s.label}>WhatsApp Verification Number</label>
                   <input value={paymentConfig.whatsapp_number} onChange={(e) => setPaymentConfig(p => ({ ...p, whatsapp_number: e.target.value }))} style={s.input} placeholder="e.g. 9876543210" />
+                </div>
+                <div>
+                  <label style={s.label}>QR Code Image</label>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 4 }}>
+                    <input ref={qrInputRef} type="file" accept="image/png,image/jpeg,image/webp" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleQRUpload(f) }} />
+                    <button onClick={triggerQRUpload} disabled={uploadingQR} style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8', ...(uploadingQR ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                      {uploadingQR ? <><Loader2 size={12} className="animate-spin" style={{ marginRight: 4 }} />Uploading...</> : <><Upload size={12} style={{ marginRight: 4 }} />Upload QR Code</>}
+                    </button>
+                    {paymentConfig.qr_code_url && (
+                      <span style={{ color: '#4ade80', fontSize: 12 }}>QR uploaded</span>
+                    )}
+                    {paymentConfig.qr_code_url && (
+                      <button onClick={() => setPaymentConfig(p => ({ ...p, qr_code_url: '' }))} style={{ ...s.btnSm, background: 'transparent', border: '1px solid rgba(255,68,68,0.3)', color: '#ff4444', fontSize: 11 }}>Remove</button>
+                    )}
+                  </div>
+                  {paymentConfig.qr_code_url && (
+                    <div style={{ marginTop: 8 }}>
+                      <img src={paymentConfig.qr_code_url} alt="QR Code" style={{ width: 120, height: 120, borderRadius: 8, objectFit: 'contain', border: '1px solid #333' }} />
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>

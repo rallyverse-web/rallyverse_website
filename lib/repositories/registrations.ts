@@ -18,21 +18,28 @@ export async function createRegistration(formData: RegistrationFormData): Promis
     throw new Error('DUPLICATE_REGISTRATION')
   }
 
+  const hasPaymentInfo = !!(formData.payment_upi_id || formData.transaction_name)
+  const insertData: Record<string, unknown> = {
+    event_id: formData.event_id,
+    registration_id: registrationId,
+    full_name: formData.full_name,
+    phone_number: formData.phone_number,
+    email: formData.email,
+    city: formData.city,
+    gender: formData.gender,
+    format: formData.format,
+    partner_name: formData.partner_name || null,
+    partner_phone: formData.partner_phone || null,
+    status: hasPaymentInfo ? ('Pending Verification' as RegistrationStatus) : ('Pending' as RegistrationStatus),
+    payment_status: hasPaymentInfo ? 'Pending Verification' : null,
+    payment_upi_id: formData.payment_upi_id || null,
+    transaction_name: formData.transaction_name || null,
+    transaction_reference: formData.transaction_reference || null,
+  }
+
   const { data, error } = await supabase
     .from('registrations')
-    .insert({
-      event_id: formData.event_id,
-      registration_id: registrationId,
-      full_name: formData.full_name,
-      phone_number: formData.phone_number,
-      email: formData.email,
-      city: formData.city,
-      gender: formData.gender,
-      format: formData.format,
-      partner_name: formData.partner_name || null,
-      partner_phone: formData.partner_phone || null,
-      status: 'Pending' as RegistrationStatus,
-    })
+    .insert(insertData)
     .select()
     .single()
 

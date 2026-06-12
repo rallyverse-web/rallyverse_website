@@ -20,6 +20,7 @@ export interface Event {
   payment_info: string | null
   capacity: number | null
   rally_points: number | null
+  payment_enabled: boolean | null
   poster_url: string | null
   image_url: string | null
   whatsapp_number: string | null
@@ -67,8 +68,10 @@ export interface EventFormData {
   is_date_confirmed: boolean
   registration_fee: number
   payment_info: string
+  payment_enabled: boolean
   capacity: number
   rally_points: number
+  poster_url?: string
   whatsapp_number: string
   whatsapp_group_link: string
   featured: boolean
@@ -90,7 +93,10 @@ export interface AdminEventMetrics {
 // ══════════════════════════════════════════════════════════════
 
 // ── Registration Status ──
-export type RegistrationStatus = 'Pending' | 'Approved' | 'Rejected'
+export type RegistrationStatus = 'Pending' | 'Pending Verification' | 'Approved' | 'Rejected'
+
+// ── Payment Status ──
+export type PaymentStatus = 'Pending Verification' | 'Completed' | 'Failed' | 'Refunded'
 
 // ── Registration ──
 export interface Registration {
@@ -111,6 +117,10 @@ export interface Registration {
   approved_at: string | null
   created_at: string
   updated_at: string | null
+  payment_status: string | null
+  payment_upi_id: string | null
+  transaction_name: string | null
+  transaction_reference: string | null
 }
 
 // ── Registration audit log ──
@@ -137,6 +147,9 @@ export interface RegistrationFormData {
   format: string
   partner_name: string
   partner_phone: string
+  payment_upi_id?: string
+  transaction_name?: string
+  transaction_reference?: string
 }
 
 // ── Event Payment Config ──
@@ -147,6 +160,8 @@ export interface EventPaymentConfig {
   account_holder_name: string
   mobile_number: string
   whatsapp_number: string
+  qr_code_url: string | null
+  payment_enabled: boolean | null
   created_at: string
   updated_at: string | null
 }
@@ -157,6 +172,8 @@ export interface EventPaymentConfigFormData {
   account_holder_name: string
   mobile_number: string
   whatsapp_number: string
+  qr_code_url?: string
+  payment_enabled?: boolean
 }
 
 // ── Event Admin (enhanced) ──

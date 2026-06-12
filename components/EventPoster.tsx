@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useTheme } from '@/lib/theme'
-import { getEventPosterPath, getEventPosterBwPath, PLACEHOLDER_POSTER } from '@/lib/assets'
+import { getEventPosterBwPath, PLACEHOLDER_POSTER, getEffectivePosterUrl } from '@/lib/assets'
 import type { EventWithFormats } from '@/lib/types/supabase'
 
 type PosterVariant = 'card' | 'full' | 'sidebar'
@@ -17,14 +17,14 @@ export default function EventPoster({ event, variant = 'card', priority = false 
   const { isColorTheme } = useTheme()
 
   const slug = event?.slug
-  const slugPoster = slug ? getEventPosterPath(slug) : null
-  const slugBwPoster = slug ? getEventPosterBwPath(slug) : null
 
   let src: string
-  if (slugPoster) {
-    src = isColorTheme ? slugPoster : (slugBwPoster ?? slugPoster)
-  } else if (event?.poster_url) {
-    src = isColorTheme ? event.poster_url : event.poster_url.replace('color_poster', 'bw_poster')
+  if (event?.poster_url) {
+    src = isColorTheme ? event.poster_url : (slug ? getEventPosterBwPath(slug) : event.poster_url)
+  } else if (slug) {
+    const posterPath = getEffectivePosterUrl(slug, null)
+    const bwPath = getEventPosterBwPath(slug)
+    src = isColorTheme ? posterPath : bwPath
   } else {
     src = PLACEHOLDER_POSTER
   }

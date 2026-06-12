@@ -25,6 +25,8 @@ export async function getPaymentConfig(eventId: string): Promise<EventPaymentCon
       account_holder_name: 'Aditya Gupta',
       mobile_number: '8951760369',
       whatsapp_number: '8951760369',
+      qr_code_url: null,
+      payment_enabled: true,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }
@@ -37,16 +39,21 @@ export async function upsertPaymentConfig(
   formData: EventPaymentConfigFormData
 ): Promise<EventPaymentConfig> {
   const supabase = await getSupabaseServerClient()
+  const upsertData: Record<string, unknown> = {
+    event_id: eventId,
+    upi_id: formData.upi_id,
+    account_holder_name: formData.account_holder_name,
+    mobile_number: formData.mobile_number,
+    whatsapp_number: formData.whatsapp_number,
+    updated_at: new Date().toISOString(),
+  }
+  if (formData.qr_code_url !== undefined) upsertData.qr_code_url = formData.qr_code_url
+  if (formData.payment_enabled !== undefined) upsertData.payment_enabled = formData.payment_enabled
+  upsertData.qr_code_url = formData.qr_code_url || null
+
   const { data, error } = await supabase
     .from('event_payment_config')
-    .upsert({
-      event_id: eventId,
-      upi_id: formData.upi_id,
-      account_holder_name: formData.account_holder_name,
-      mobile_number: formData.mobile_number,
-      whatsapp_number: formData.whatsapp_number,
-      updated_at: new Date().toISOString(),
-    })
+    .upsert(upsertData)
     .select()
     .single()
   if (error) throw error

@@ -43,6 +43,10 @@ function buildVariables(
     event_venue: event.venue || '',
     format: registration.format,
     registration_status: registration.status,
+    payment_status: registration.payment_status || '',
+    payment_upi_id: registration.payment_upi_id || '',
+    transaction_name: registration.transaction_name || '',
+    transaction_reference: registration.transaction_reference || '',
     support_email: settings?.support_email || 'support@rallyverse.social',
     whatsapp_number: event.whatsapp_number || '',
     event_whatsapp: event.whatsapp_number || '',
@@ -57,6 +61,7 @@ const REGISTRATION_RECEIVED_DEFAULT = {
 <p>We have received your registration for <strong>{{event_name}}</strong>.</p>
 <p><strong>Registration ID:</strong> {{registration_id}}<br />
 <strong>Current Status:</strong> {{registration_status}}<br />
+<strong>Payment Status:</strong> {{payment_status}}<br />
 <strong>Format:</strong> {{format}}</p>
 <p>We will review your registration and share the next update shortly.</p>
 <p>If you need help, contact <a href="mailto:{{support_email}}">{{support_email}}</a>.</p>
