@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getEventBySlug } from '@/lib/repositories/events'
+import { getEventBySlug, getEventWithPaymentConfig } from '@/lib/repositories/events'
 import { createRegistration } from '@/lib/repositories/registrations'
 import { checkRateLimit, getRateLimitKey } from '@/lib/rate-limiter'
 import { sendRegistrationReceivedEmail } from '@/lib/send-email-service'
@@ -43,6 +43,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
 
     if (payment_upi_id && !transaction_name) {
       return NextResponse.json({ error: 'Transaction name is required when providing UPI ID' }, { status: 400 })
+    }
+
+    const eventWithConfig = await getEventWithPaymentConfig(slug)
+    const paymentConfig = eventWithConfig?.payment_config
+    if (payment_upi_id && paymentConfig?.transaction_ref_required && !transaction_reference) {
+      return NextResponse.json({ error: 'Transaction reference ID is required' }, { status: 400 })
     }
 
     const registration = await createRegistration({

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CheckCircle, ArrowRight, ArrowLeft, Loader2, ExternalLink, MessageCircle, CreditCard, ChevronDown, ChevronUp } from 'lucide-react'
+import { CheckCircle, ArrowRight, ArrowLeft, Loader2, ExternalLink, MessageCircle, CreditCard } from 'lucide-react'
 import Link from 'next/link'
 import { trackPageView, trackEvent, trackWhatsappClick } from '@/lib/analytics'
 import { getQrCodeUrl } from '@/lib/assets'
@@ -43,7 +43,6 @@ export default function EventRegistrationClient({
   const [submitting, setSubmitting] = useState(false)
   const [registrationId, setRegistrationId] = useState('')
   const [regId, setRegId] = useState('')
-  const [showPaymentInfo, setShowPaymentInfo] = useState(false)
 
   const availableFormats = event.formats?.map((f) => f.format_name) || FORMAT_OPTIONS
   const isDoubles = formData.format.includes('Doubles')
@@ -76,6 +75,7 @@ export default function EventRegistrationClient({
       if (paymentEnabled && hasPayConfig) {
         if (!formData.payment_upi_id.trim()) e.payment_upi_id = 'UPI ID used for payment is required'
         if (!formData.transaction_name.trim()) e.transaction_name = 'Name appearing on transaction is required'
+        if (paymentConfig?.transaction_ref_required && !formData.transaction_reference.trim()) e.transaction_reference = 'Transaction reference ID is required'
       }
     }
     setErrors(e)
@@ -121,7 +121,7 @@ export default function EventRegistrationClient({
             </div>
             <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 700, margin: 0 }}>Registration Submitted</h1>
             <p style={{ color: '#888', fontSize: 14 }}>Registration ID: <strong style={{ color: '#4ade80' }}>{registrationId}</strong></p>
-            <p style={{ color: '#facc15', fontSize: 13 }}>Status: Pending Verification</p>
+            <p style={{ color: '#facc15', fontSize: 13 }}>Your registration has been submitted and is awaiting payment verification.</p>
 
             {paymentEnabled && hasPayConfig && (
               <div style={{ ...s.card, textAlign: 'left', width: '100%', maxWidth: 440 }}>
@@ -343,8 +343,9 @@ export default function EventRegistrationClient({
                 </div>
 
                 <div>
-                  <label style={s.label}>Transaction Reference ID <span style={{ color: '#666' }}>(optional)</span></label>
+                  <label style={s.label}>Transaction Reference ID {paymentConfig?.transaction_ref_required ? '*' : <span style={{ color: '#666' }}>(optional)</span>}</label>
                   <input value={formData.transaction_reference} onChange={(e) => updateField('transaction_reference', e.target.value)} style={s.input} placeholder="e.g. Txn123456 or UTR number" />
+                  {errors.transaction_reference && <p style={{ color: '#ff4444', fontSize: 12, marginTop: 4 }}>{errors.transaction_reference}</p>}
                 </div>
               </div>
             </div>
@@ -369,29 +370,17 @@ export default function EventRegistrationClient({
           )}
         </div>
 
-        {/* Payment Info Toggle (when payment not enabled) */}
+        {/* Standardized payment info shown when config exists but payments disabled */}
         {!paymentEnabled && hasPayConfig && (
-          <div style={{ marginTop: 24 }}>
-            <button
-              onClick={() => setShowPaymentInfo(!showPaymentInfo)}
-              style={{ ...s.btnSecondary, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
-            >
-              {showPaymentInfo ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              {showPaymentInfo ? 'Hide Payment Info' : 'Show Payment Info'}
-            </button>
-            {showPaymentInfo && (
-              <div style={{ ...s.card, marginTop: 12 }}>
-                <p style={{ color: '#facc15', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Payment Information</p>
-                <div style={{ display: 'grid', gap: 6, fontSize: 13, color: '#ccc' }}>
-                  <p><span style={{ color: '#888' }}>UPI ID:</span> {paymentConfig.upi_id}</p>
-                  <p><span style={{ color: '#888' }}>Account Holder:</span> {paymentConfig.account_holder_name}</p>
-                  <p><span style={{ color: '#888' }}>Amount:</span> {event.registration_fee ? `₹${event.registration_fee}` : 'Free'}</p>
-                </div>
-                <p style={{ color: '#888', fontSize: 12, marginTop: 12 }}>
-                  After completing payment, send the screenshot to the organizer via WhatsApp.
-                </p>
-              </div>
-            )}
+          <div style={{ marginTop: 24, ...s.card }}>
+            <p style={{ color: '#facc15', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Payment Information</p>
+            <div style={{ display: 'grid', gap: 6, fontSize: 13, color: '#ccc' }}>
+              <p><span style={{ color: '#888' }}>UPI ID:</span> {paymentConfig.upi_id}</p>
+              <p><span style={{ color: '#888' }}>Amount:</span> {event.registration_fee ? `₹${event.registration_fee}` : 'Free'}</p>
+            </div>
+            <p style={{ color: '#888', fontSize: 12, marginTop: 12 }}>
+              After completing payment, send the screenshot to the organizer via WhatsApp.
+            </p>
           </div>
         )}
       </div>

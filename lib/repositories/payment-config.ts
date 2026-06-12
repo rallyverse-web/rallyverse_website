@@ -27,6 +27,7 @@ export async function getPaymentConfig(eventId: string): Promise<EventPaymentCon
       whatsapp_number: '8951760369',
       qr_code_url: null,
       payment_enabled: true,
+      transaction_ref_required: true,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }
@@ -49,6 +50,7 @@ export async function upsertPaymentConfig(
   }
   if (formData.qr_code_url !== undefined) upsertData.qr_code_url = formData.qr_code_url
   if (formData.payment_enabled !== undefined) upsertData.payment_enabled = formData.payment_enabled
+  if (formData.transaction_ref_required !== undefined) upsertData.transaction_ref_required = formData.transaction_ref_required
   upsertData.qr_code_url = formData.qr_code_url || null
 
   const { data, error } = await supabase

@@ -38,3 +38,9 @@ comment on column registrations.payment_rejected_by is 'Event admin who rejected
 comment on column registrations.payment_rejected_at is 'When payment was rejected';
 comment on column registrations.payment_rejection_reason is 'Reason for payment rejection';
 comment on column registrations.payment_status is 'Tracks the payment verification state: pending_verification, verified, rejected';
+
+-- 3. Event payment config: add transaction_ref_required
+alter table if exists event_payment_config
+  add column if not exists transaction_ref_required boolean not null default true;
+
+comment on column event_payment_config.transaction_ref_required is 'Whether transaction reference ID is required during registration';

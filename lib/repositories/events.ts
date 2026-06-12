@@ -137,7 +137,6 @@ export async function createEvent(formData: EventFormData): Promise<EventWithFor
       time_label: eventData.time_label || null,
       is_date_confirmed: eventData.is_date_confirmed ?? true,
       registration_fee: eventData.registration_fee || null,
-      payment_info: eventData.payment_info || null,
       payment_enabled: (eventData as { payment_enabled?: boolean }).payment_enabled ?? false,
       poster_url: (eventData as { poster_url?: string }).poster_url || null,
       capacity: eventData.capacity || null,
@@ -186,7 +185,6 @@ export async function updateEvent(id: string, formData: Partial<EventFormData>):
   if (eventData.time_label !== undefined) updatePayload.time_label = eventData.time_label
   if (eventData.is_date_confirmed !== undefined) updatePayload.is_date_confirmed = eventData.is_date_confirmed
   if (eventData.registration_fee !== undefined) updatePayload.registration_fee = eventData.registration_fee
-  if (eventData.payment_info !== undefined) updatePayload.payment_info = eventData.payment_info
   if ((eventData as { payment_enabled?: boolean }).payment_enabled !== undefined) updatePayload.payment_enabled = (eventData as { payment_enabled?: boolean }).payment_enabled ?? false
   if ((eventData as { poster_url?: string }).poster_url !== undefined) updatePayload.poster_url = (eventData as { poster_url?: string }).poster_url || null
   if (eventData.capacity !== undefined) updatePayload.capacity = eventData.capacity

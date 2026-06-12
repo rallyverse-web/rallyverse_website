@@ -67,7 +67,6 @@ export interface EventFormData {
   time_label: string
   is_date_confirmed: boolean
   registration_fee: number
-  payment_info: string
   payment_enabled: boolean
   capacity: number
   rally_points: number
@@ -167,6 +166,7 @@ export interface EventPaymentConfig {
   whatsapp_number: string
   qr_code_url: string | null
   payment_enabled: boolean | null
+  transaction_ref_required: boolean | null
   created_at: string
   updated_at: string | null
 }
@@ -179,6 +179,7 @@ export interface EventPaymentConfigFormData {
   whatsapp_number: string
   qr_code_url?: string
   payment_enabled?: boolean
+  transaction_ref_required?: boolean
 }
 
 // ── Event Admin (enhanced) ──

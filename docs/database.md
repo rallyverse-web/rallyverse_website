@@ -34,7 +34,7 @@ Stores information about each sports event campaign.
 | `time_label` | `text` | - | Display-friendly time (e.g. 11am-7pm) |
 | `is_date_confirmed` | `boolean`| Default: `true` | False if date is tentative |
 | `registration_fee` | `integer` | - | Entry fee in INR (0 if free) |
-| `payment_info`| `text` | - | Short instructions for payments |
+| `payment_info`| `text` | - | Deprecated: No longer used in UI. Kept for backward compatibility. |
 | `capacity` | `integer` | - | Maximum player slots available |
 | `rally_points`| `integer` | Default: `0` | Loyalty points awarded |
 | `whatsapp_number` | `text` | - | Organizer WhatsApp contact number |
@@ -71,6 +71,9 @@ UPI and WhatsApp details for receiving offline payments per event.
 | `account_holder_name`| `text` | NOT NULL | Account holder name |
 | `mobile_number`| `text` | NOT NULL | Phone linked to UPI |
 | `whatsapp_number`| `text` | NOT NULL | Verification WhatsApp phone number |
+| `qr_code_url`| `text` | - | URL to QR code image in Supabase Storage |
+| `payment_enabled`| `boolean`| Default: `false` | Whether online payments are active |
+| `transaction_ref_required`| `boolean`| Default: `true` | Require transaction reference during registration |
 | `created_at` | `timestamptz`| Default: `now()` | - |
 | `updated_at` | `timestamptz`| Default: `now()` | - |
 
@@ -112,6 +115,15 @@ Stores submissions from players registering for events.
 | `notes` | `text` | - | Additional admin notes / remarks |
 | `approved_by`| `uuid` | Foreign Key (event_admins.id) | Approving admin |
 | `approved_at`| `timestamptz`| - | Timestamp of approval/rejection |
+| `payment_status`| `text` | Check: `pending_verification, verified, rejected` | Payment verification state |
+| `payment_upi_id`| `text` | - | UPI ID used by participant |
+| `transaction_name`| `text` | - | Name on transaction |
+| `transaction_reference`| `text` | - | Transaction reference/UTR number |
+| `payment_verified_by`| `text` | - | Admin who verified payment |
+| `payment_verified_at`| `timestamptz`| - | When payment was verified |
+| `payment_rejected_by`| `text` | - | Admin who rejected payment |
+| `payment_rejected_at`| `timestamptz`| - | When payment was rejected |
+| `payment_rejection_reason`| `text` | - | Reason for payment rejection |
 | `created_at` | `timestamptz`| Default: `now()` | Registration submission timestamp |
 | `updated_at` | `timestamptz`| Default: `now()` | Last modification timestamp |
 

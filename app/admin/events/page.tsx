@@ -12,7 +12,7 @@ const FORMAT_OPTIONS = [
 const defaultForm: EventFormData = {
   name: '', slug: '', description: '', category: '', venue: '',
   event_date: '', date_label: '', time_label: '', is_date_confirmed: true,
-  registration_fee: 0, payment_info: '', payment_enabled: false, capacity: 0, rally_points: 0,
+  registration_fee: 0, payment_enabled: false, capacity: 0, rally_points: 0,
   poster_url: '',
   whatsapp_number: '', whatsapp_group_link: '',
   featured: false,
@@ -85,7 +85,7 @@ export default function AdminEventsPage() {
   /* Payment Config */
   const [paymentConfigTarget, setPaymentConfigTarget] = useState<string | null>(null)
   const [paymentConfig, setPaymentConfig] = useState<EventPaymentConfigFormData>({
-    upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '', qr_code_url: '', payment_enabled: false,
+    upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '', qr_code_url: '', payment_enabled: false, transaction_ref_required: true,
   })
   const [savingPayment, setSavingPayment] = useState(false)
 
@@ -159,7 +159,6 @@ export default function AdminEventsPage() {
       time_label: event.time_label || '',
       is_date_confirmed: event.is_date_confirmed ?? true,
       registration_fee: event.registration_fee ?? 0,
-      payment_info: event.payment_info || '',
       payment_enabled: event.payment_enabled ?? false,
       poster_url: event.poster_url || '',
       capacity: event.capacity ?? 0,
@@ -186,12 +185,13 @@ export default function AdminEventsPage() {
             whatsapp_number: data.config.whatsapp_number || '',
             qr_code_url: data.config.qr_code_url || '',
             payment_enabled: data.config.payment_enabled ?? false,
+            transaction_ref_required: data.config.transaction_ref_required ?? true,
           })
           return
         }
       }
     } catch {}
-    setPaymentConfig({ upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '', qr_code_url: '', payment_enabled: false })
+    setPaymentConfig({ upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '', qr_code_url: '', payment_enabled: false, transaction_ref_required: true })
   }
 
   const handleSavePaymentConfig = async () => {
@@ -601,11 +601,6 @@ export default function AdminEventsPage() {
                 </div>
 
                 <div>
-                  <label style={s.label}>Payment Info</label>
-                  <input value={formData.payment_info} onChange={(e) => updateForm('payment_info', e.target.value)} style={s.input} placeholder="UPI ID, QR instructions, etc." />
-                </div>
-
-                <div>
                   <label style={s.label}>Enable Online Payments</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 48 }}>
                     <label style={{ color: '#ccc', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
@@ -737,29 +732,8 @@ export default function AdminEventsPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 14 }}>
                 <div>
-                  <label style={s.label}>Enable Online Payments</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 40 }}>
-                    <label style={{ color: '#ccc', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                      <input type="checkbox" checked={paymentConfig.payment_enabled ?? false} onChange={(e) => setPaymentConfig(p => ({ ...p, payment_enabled: e.target.checked }))} />
-                      Collect payment details during registration
-                    </label>
-                  </div>
-                </div>
-                <div>
                   <label style={s.label}>UPI ID</label>
                   <input value={paymentConfig.upi_id} onChange={(e) => setPaymentConfig(p => ({ ...p, upi_id: e.target.value }))} style={s.input} placeholder="e.g. rallyverse@upi" />
-                </div>
-                <div>
-                  <label style={s.label}>Account Holder Name</label>
-                  <input value={paymentConfig.account_holder_name} onChange={(e) => setPaymentConfig(p => ({ ...p, account_holder_name: e.target.value }))} style={s.input} placeholder="e.g. RallyVerse Sports" />
-                </div>
-                <div>
-                  <label style={s.label}>Mobile Number</label>
-                  <input value={paymentConfig.mobile_number} onChange={(e) => setPaymentConfig(p => ({ ...p, mobile_number: e.target.value }))} style={s.input} placeholder="e.g. 9876543210" />
-                </div>
-                <div>
-                  <label style={s.label}>WhatsApp Verification Number</label>
-                  <input value={paymentConfig.whatsapp_number} onChange={(e) => setPaymentConfig(p => ({ ...p, whatsapp_number: e.target.value }))} style={s.input} placeholder="e.g. 9876543210" />
                 </div>
                 <div>
                   <label style={s.label}>QR Code Image</label>
@@ -780,6 +754,15 @@ export default function AdminEventsPage() {
                       <img src={paymentConfig.qr_code_url} alt="QR Code" style={{ width: 120, height: 120, borderRadius: 8, objectFit: 'contain', border: '1px solid #333' }} />
                     </div>
                   )}
+                </div>
+                <div>
+                  <label style={s.label}>Transaction Reference Required</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 40 }}>
+                    <label style={{ color: '#ccc', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input type="checkbox" checked={paymentConfig.transaction_ref_required ?? true} onChange={(e) => setPaymentConfig(p => ({ ...p, transaction_ref_required: e.target.checked }))} />
+                      Require transaction reference ID during registration
+                    </label>
+                  </div>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>
