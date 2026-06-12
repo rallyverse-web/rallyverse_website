@@ -9,7 +9,10 @@ function authorize(req: NextRequest) {
 }
 
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp']
-const MAX_SIZE = 5 * 1024 * 1024 // 5MB
+
+function getMaxSize(folder: string): number {
+  return folder === 'screenshots' ? 10 * 1024 * 1024 : 5 * 1024 * 1024
+}
 
 export async function POST(req: NextRequest) {
   if (!authorize(req)) {
@@ -30,8 +33,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid file type. Allowed: PNG, JPG, JPEG, WEBP' }, { status: 400 })
     }
 
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: 'File too large. Max 5MB' }, { status: 400 })
+    const maxSize = getMaxSize(folder)
+    if (file.size > maxSize) {
+      return NextResponse.json({ error: `File too large. Max ${maxSize / (1024 * 1024)}MB` }, { status: 400 })
     }
 
     const cookieStore = await cookies()

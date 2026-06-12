@@ -120,6 +120,7 @@ export interface Registration {
   payment_upi_id: string | null
   transaction_name: string | null
   transaction_reference: string | null
+  payment_screenshot_url: string | null
   payment_verified_by: string | null
   payment_verified_at: string | null
   payment_rejected_by: string | null
@@ -154,6 +155,7 @@ export interface RegistrationFormData {
   payment_upi_id?: string
   transaction_name?: string
   transaction_reference?: string
+  payment_screenshot_url?: string
 }
 
 // ── Event Payment Config ──

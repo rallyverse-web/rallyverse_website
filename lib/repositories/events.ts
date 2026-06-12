@@ -92,6 +92,7 @@ export async function getFirstPublishedEvent(): Promise<EventWithFormats | null>
       .from('events')
       .select('*, formats:event_formats(*)')
       .eq('status', 'published')
+      .order('featured', { ascending: false, nullsFirst: false })
       .order('event_date', { ascending: true })
       .limit(1)
     if (error) throw error
@@ -310,6 +311,7 @@ export async function getAllPublishedEventsWithPaymentConfig(): Promise<EventWit
     .from('events')
     .select('*, formats:event_formats(*), payment_config:event_payment_config(*)')
     .eq('status', 'published')
+    .order('featured', { ascending: false, nullsFirst: false })
     .order('event_date', { ascending: true })
   if (error) throw error
   return (data ?? []).map((row) => {

@@ -80,6 +80,7 @@ export default function EventAdminDashboard() {
   const [paymentRejectReg, setPaymentRejectReg] = useState<Registration | null>(null)
   const [paymentRejectReason, setPaymentRejectReason] = useState('')
   const [paymentActionLoading, setPaymentActionLoading] = useState(false)
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null)
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
@@ -134,6 +135,7 @@ export default function EventAdminDashboard() {
         setConfirmDeleteId(null)
         setPaymentVerifyReg(null)
         setPaymentRejectReg(null)
+        setScreenshotUrl(null)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -310,16 +312,22 @@ export default function EventAdminDashboard() {
   }
 
   const downloadCSV = () => {
-    const headers = ['Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender', 'Format', 'Partner Name', 'Partner Phone', 'Payment Status', 'UPI ID Used', 'Transaction Name', 'Transaction Reference', 'Payment Verified At', 'Status', 'Notes', 'Created At']
+    const headers = ['Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender', 'Format', 'Partner Name', 'Partner Phone', 'Payment Status', 'UPI ID Used', 'Transaction Name', 'Transaction Reference', 'Payment Screenshot URL', 'Payment Verified At', 'Status', 'Notes', 'Created At']
+    const keyMap: Record<string, string> = {
+      'phone': 'phone_number',
+      'upi_id_used': 'payment_upi_id',
+    }
     const rows = filtered.map((r) =>
       headers.map((h) => {
-        const key = h.toLowerCase().replace(/ /g, '_').replace(/_id_used/, '_upi_id').replace(/_verified_at/, '_verified_at') as keyof Registration
+        const raw = h.toLowerCase().replace(/ /g, '_')
+        const key = (keyMap[raw] || raw) as keyof Registration
         let val: string
         if (key === 'payment_status') val = String(r.payment_status ?? '')
         else if (key === 'transaction_name') val = String(r.transaction_name ?? '')
         else if (key === 'transaction_reference') val = String(r.transaction_reference ?? '')
         else if (key === 'payment_upi_id') val = String(r.payment_upi_id ?? '')
         else if (key === 'payment_verified_at') val = r.payment_verified_at ? new Date(r.payment_verified_at).toLocaleString('en-IN') : ''
+        else if (key === 'payment_screenshot_url') val = r.payment_screenshot_url || ''
         else val = String(r[key] ?? '')
         if (val.includes(',') || val.includes('"') || val.includes('\n')) val = `"${val.replace(/"/g, '""')}"`
         return val
@@ -418,14 +426,14 @@ export default function EventAdminDashboard() {
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
           <thead>
             <tr>
-              {['Registration ID', 'Name', 'Phone', 'Email', 'Format', 'Payment', 'Status', 'Created At', 'Actions'].map((h) => (
+              {['Registration ID', 'Name', 'Phone', 'Email', 'Format', 'Payment', 'Status', 'Screenshot', 'Created At', 'Actions'].map((h) => (
                 <th key={h} style={s.th}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={9} style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No registrations found</td></tr>
+              <tr><td colSpan={10} style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No registrations found</td></tr>
             ) : filtered.map((reg) => (
               <tr key={reg.id} style={{ transition: 'background 0.15s' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#1a1a1a')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
                 <td style={s.td}><span style={{ color: '#888', fontSize: 11, fontFamily: 'monospace' }}>{reg.registration_id}</span></td>
@@ -438,6 +446,13 @@ export default function EventAdminDashboard() {
                 <td style={s.td}>{reg.format}</td>
                 <td style={s.td}>{paymentStatusBadge(reg.payment_status)}</td>
                 <td style={s.td}>{statusBadge(reg.status)}</td>
+                <td style={s.td}>
+                  {reg.payment_screenshot_url ? (
+                    <button style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8' }} onClick={() => setScreenshotUrl(reg.payment_screenshot_url!)}>View Screenshot</button>
+                  ) : (
+                    <span style={{ color: '#666', fontSize: 12 }}>—</span>
+                  )}
+                </td>
                 <td style={{ ...s.td, fontSize: 12 }}>{new Date(reg.created_at).toLocaleDateString('en-IN')}</td>
                 <td style={{ ...s.td, textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: 4, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -529,6 +544,17 @@ export default function EventAdminDashboard() {
                     <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Submitted At</p>
                     <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.created_at ? new Date(selectedReg.created_at).toLocaleString('en-IN') : '—'}</p>
                   </div>
+                  {selectedReg.payment_screenshot_url && (
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Payment Screenshot</p>
+                      <img
+                        src={selectedReg.payment_screenshot_url}
+                        alt="Payment screenshot"
+                        style={{ width: '100%', maxHeight: 200, objectFit: 'contain', borderRadius: 6, border: '1px solid #333', cursor: 'pointer', marginTop: 4 }}
+                        onClick={() => setScreenshotUrl(selectedReg.payment_screenshot_url!)}
+                      />
+                    </div>
+                  )}
                   {selectedReg.payment_verified_at && (
                     <div>
                       <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Verified At</p>
@@ -545,6 +571,52 @@ export default function EventAdminDashboard() {
                     <div style={{ gridColumn: '1 / -1' }}>
                       <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Rejection Reason</p>
                       <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.payment_rejection_reason}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Verification Timeline */}
+            {selectedReg.payment_status && (
+              <div style={{ borderTop: '1px solid #333', marginTop: 16, paddingTop: 16 }}>
+                <h4 style={{ color: '#fff', fontSize: 14, fontWeight: 600, margin: '0 0 12px' }}>Verification Timeline</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#4ade80', marginTop: 4, flexShrink: 0 }} />
+                    <div>
+                      <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>Registration Submitted</p>
+                      <p style={{ color: '#888', fontSize: 11, margin: 0 }}>{new Date(selectedReg.created_at).toLocaleString('en-IN')}</p>
+                    </div>
+                  </div>
+                  {selectedReg.payment_status === 'pending_verification' && (
+                    <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#facc15', marginTop: 4, flexShrink: 0 }} />
+                      <div>
+                        <p style={{ color: '#facc15', fontSize: 13, margin: 0 }}>Payment Pending Verification</p>
+                        <p style={{ color: '#888', fontSize: 11, margin: 0 }}>Awaiting organizer review</p>
+                      </div>
+                    </div>
+                  )}
+                  {selectedReg.payment_verified_at && (
+                    <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#4ade80', marginTop: 4, flexShrink: 0 }} />
+                      <div>
+                        <p style={{ color: '#4ade80', fontSize: 13, margin: 0 }}>Payment Verified</p>
+                        <p style={{ color: '#888', fontSize: 11, margin: 0 }}>{new Date(selectedReg.payment_verified_at).toLocaleString('en-IN')}</p>
+                      </div>
+                    </div>
+                  )}
+                  {selectedReg.payment_rejected_at && (
+                    <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ff4444', marginTop: 4, flexShrink: 0 }} />
+                      <div>
+                        <p style={{ color: '#ff4444', fontSize: 13, margin: 0 }}>Payment Rejected</p>
+                        <p style={{ color: '#888', fontSize: 11, margin: 0 }}>{new Date(selectedReg.payment_rejected_at).toLocaleString('en-IN')}</p>
+                        {selectedReg.payment_rejection_reason && (
+                          <p style={{ color: '#888', fontSize: 11, margin: '2px 0 0' }}>Reason: {selectedReg.payment_rejection_reason}</p>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -668,6 +740,20 @@ export default function EventAdminDashboard() {
               <button onClick={() => setConfirmDeleteId(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
               <button onClick={() => handleDeleteRegistration(confirmDeleteId)} style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700 }}>Delete</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Screenshot Zoom Modal */}
+      {screenshotUrl && (
+        <div style={s.overlay} onClick={() => setScreenshotUrl(null)}>
+          <div style={{ maxWidth: '90vw', maxHeight: '90vh' }} onClick={(e) => e.stopPropagation()}>
+            <img
+              src={screenshotUrl}
+              alt="Payment screenshot full view"
+              style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 8, cursor: 'zoom-out' }}
+              onClick={() => setScreenshotUrl(null)}
+            />
           </div>
         </div>
       )}

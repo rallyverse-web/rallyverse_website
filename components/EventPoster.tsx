@@ -40,6 +40,13 @@ export default function EventPoster({ event, variant = 'card', priority = false 
         priority={priority}
         loading={priority ? undefined : 'lazy'}
       />
+      {event?.featured && (
+        <span className="absolute top-2 right-2 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-body text-[10px] font-semibold uppercase tracking-wider z-10"
+          style={{ backgroundColor: 'rgba(250,204,21,0.9)', color: '#000' }}
+        >
+          Featured
+        </span>
+      )}
     </div>
   )
 }

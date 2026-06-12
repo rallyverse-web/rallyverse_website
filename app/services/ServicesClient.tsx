@@ -58,6 +58,7 @@ const pricingPlans = [
       'Review, approve/reject, and manage registrations',
       'Participant Email Communication & Updates',
       'Enhanced Event Visibility',
+      'Featured Event Promotion on Homepage',
       'One Custom Tournament Poster',
     ],
     footerInfo: 'Billed per event. Fully managed registration cycle.',

@@ -47,6 +47,7 @@ function buildVariables(
     payment_upi_id: registration.payment_upi_id || '',
     transaction_name: registration.transaction_name || '',
     transaction_reference: registration.transaction_reference || '',
+    payment_screenshot_url: registration.payment_screenshot_url || '',
     support_email: settings?.support_email || 'support@rallyverse.social',
     whatsapp_number: event.whatsapp_number || '',
     event_whatsapp: event.whatsapp_number || '',
@@ -140,8 +141,8 @@ export async function sendPaymentVerifiedEmail(
       status: sendSuccess ? 'sent' : 'failed',
       provider_message_id: messageId,
     })
-  } catch {
-    // Email logging should never block payment verification.
+  } catch (logErr) {
+    console.error('Failed to log payment verified email:', logErr)
   }
 
   return {
@@ -207,8 +208,8 @@ export async function sendPaymentRejectedEmail(
       status: sendSuccess ? 'sent' : 'failed',
       provider_message_id: messageId,
     })
-  } catch {
-    // Email logging should never block payment rejection.
+  } catch (logErr) {
+    console.error('Failed to log payment rejected email:', logErr)
   }
 
   return {
@@ -295,8 +296,8 @@ export async function sendSingleTemplatedEmail(
       status: sendSuccess ? 'sent' : 'failed',
       provider_message_id: messageId,
     })
-  } catch {
-    // Log creation failure must not mask email send result
+  } catch (logErr) {
+    console.error('Failed to log email send result:', logErr)
   }
 
   return {
@@ -361,8 +362,8 @@ export async function sendRegistrationReceivedEmail(
       status: sendSuccess ? 'sent' : 'failed',
       provider_message_id: messageId,
     })
-  } catch {
-    // Email logging should never block registration success.
+  } catch (logErr) {
+    console.error('Failed to log registration received email:', logErr)
   }
 
   return {

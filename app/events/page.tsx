@@ -71,6 +71,13 @@ function EventCard({ event }: { event: EventWithFormats }) {
           <h3 className="font-display text-[18px] uppercase" style={{ color: 'var(--text-primary)' }}>
             {event.name}
           </h3>
+          {event.featured && (
+            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-body text-[10px] font-semibold uppercase tracking-wider ml-auto"
+              style={{ backgroundColor: 'rgba(250,204,21,0.15)', color: '#facc15' }}
+            >
+              Featured
+            </span>
+          )}
         </div>
 
         <div className="mt-auto space-y-2 font-body text-sm" style={{ color: 'var(--text-muted)' }}>
@@ -138,9 +145,16 @@ export default async function EventsPage() {
                   {featuredEvent.category?.toUpperCase() || 'UPCOMING'} · {ADDRESS.city} {new Date(featuredEvent.event_date ?? '').getFullYear() || ''}
                 </p>
 
-                <h2 className="font-display text-[28px] leading-none uppercase sm:text-[36px] md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
-                  {featuredEvent.name}
-                </h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="font-display text-[28px] leading-none uppercase sm:text-[36px] md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
+                    {featuredEvent.name}
+                  </h2>
+                  <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 font-body text-[11px] font-semibold uppercase tracking-wider"
+                    style={{ backgroundColor: 'rgba(250,204,21,0.15)', color: '#facc15' }}
+                  >
+                    Featured
+                  </span>
+                </div>
                 {featuredEvent.category && (
                   <p className="font-display text-[18px] uppercase sm:text-[22px] mt-1" style={{ color: 'var(--accent-primary)' }}>
                     {categoryLabels[featuredEvent.category] || featuredEvent.category}
@@ -210,7 +224,7 @@ export default async function EventsPage() {
             </AnimatedSection>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {publishedEvents.map((ev) => (
+              {publishedEvents.slice(featuredEvent ? 1 : 0).map((ev) => (
                 <AnimatedSection key={ev.id}>
                   <EventCard event={ev} />
                 </AnimatedSection>

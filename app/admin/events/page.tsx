@@ -756,12 +756,13 @@ export default function AdminEventsPage() {
                   )}
                 </div>
                 <div>
-                  <label style={s.label}>Transaction Reference Required</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 40 }}>
+                  <label style={s.label}>Require UPI Transaction Reference Number</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     <label style={{ color: '#ccc', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                       <input type="checkbox" checked={paymentConfig.transaction_ref_required ?? true} onChange={(e) => setPaymentConfig(p => ({ ...p, transaction_ref_required: e.target.checked }))} />
                       Require transaction reference ID during registration
                     </label>
+                    <p style={{ color: '#666', fontSize: 11, margin: 0 }}>When enabled, participants must provide a UPI transaction reference number to complete registration.</p>
                   </div>
                 </div>
               </div>

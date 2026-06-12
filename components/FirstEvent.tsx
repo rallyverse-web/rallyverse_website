@@ -16,9 +16,18 @@ export default function FirstEvent({ event }: { event: EventWithFormats | null }
     <section id="events" className="py-20 md:py-28" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-10 px-6 md:grid-cols-2 md:gap-16 md:items-start">
         <AnimatedSection>
-          <p className="mb-5 font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-            EVENTS POWERED BY RALLYVERSE · {event.venue?.split(',').pop()?.trim() || 'BENGALURU'}
-          </p>
+          <div className="mb-5 flex items-center gap-3">
+            <p className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+              EVENTS POWERED BY RALLYVERSE · {event.venue?.split(',').pop()?.trim() || 'BENGALURU'}
+            </p>
+            {event.featured && (
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-body text-[10px] font-semibold uppercase tracking-wider"
+                style={{ backgroundColor: 'rgba(250,204,21,0.15)', color: '#facc15' }}
+              >
+                Featured
+              </span>
+            )}
+          </div>
 
           <div className="font-display text-[36px] leading-none uppercase sm:text-[48px] md:text-[88px]" style={{ color: 'var(--text-primary)' }}>
             EVENTS

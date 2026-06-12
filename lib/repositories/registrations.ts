@@ -35,6 +35,7 @@ export async function createRegistration(formData: RegistrationFormData): Promis
     payment_upi_id: formData.payment_upi_id || null,
     transaction_name: formData.transaction_name || null,
     transaction_reference: formData.transaction_reference || null,
+    payment_screenshot_url: formData.payment_screenshot_url || null,
   }
 
   const { data, error } = await supabase

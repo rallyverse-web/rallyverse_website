@@ -8,12 +8,49 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
+import { readFileSync, existsSync } from 'fs'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+// Load .env.local (preferred) or .env as fallback
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const envPaths = [
+  resolve(__dirname, '..', '.env.local'),
+  resolve(__dirname, '..', '.env'),
+]
+
+for (const envPath of envPaths) {
+  if (existsSync(envPath)) {
+    const content = readFileSync(envPath, 'utf-8')
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const eqIdx = trimmed.indexOf('=')
+      if (eqIdx === -1) continue
+      const key = trimmed.slice(0, eqIdx).trim()
+      let value = trimmed.slice(eqIdx + 1).trim()
+      // Strip surrounding quotes if present
+      if ((value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1)
+      }
+      if (!process.env[key]) {
+        process.env[key] = value
+      }
+    }
+    break
+  }
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (!supabaseUrl || !serviceKey) {
-  console.error('Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in environment')
+if (!supabaseUrl) {
+  console.error('Missing NEXT_PUBLIC_SUPABASE_URL in environment. Check that .env.local or .env exists with NEXT_PUBLIC_SUPABASE_URL set.')
+  process.exit(1)
+}
+if (!serviceKey) {
+  console.error('Missing SUPABASE_SERVICE_ROLE_KEY in environment. Check that .env.local or .env exists with SUPABASE_SERVICE_ROLE_KEY set.')
   process.exit(1)
 }
 
@@ -27,7 +64,7 @@ const buckets = [
     public: true,
     description: 'Event posters, QR codes, and other public assets',
     allowedMimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
-    fileSizeLimit: 5242880, // 5MB
+    fileSizeLimit: 10485760, // 10MB
   },
 ]
 

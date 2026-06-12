@@ -36,7 +36,7 @@ export default function EventRegistrationClient({
   const [formData, setFormData] = useState({
     full_name: '', phone_number: '', email: '', city: '', gender: '', format: '',
     partner_name: '', partner_phone: '',
-    payment_upi_id: '', transaction_name: '', transaction_reference: '',
+    payment_upi_id: '', transaction_name: '', transaction_reference: '', screenshot_url: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitError, setSubmitError] = useState('')
@@ -49,9 +49,46 @@ export default function EventRegistrationClient({
   const hasPayConfig = !!(paymentConfig?.upi_id)
   const paymentEnabled = event.payment_enabled || !!paymentConfig?.payment_enabled
 
+  const [uploadingScreenshot, setUploadingScreenshot] = useState(false)
+
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     setErrors((prev) => ({ ...prev, [field]: '' }))
+  }
+
+  const handleScreenshotUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      setErrors((prev) => ({ ...prev, screenshot_url: 'Only PNG, JPG, JPEG, WEBP files are allowed' }))
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, screenshot_url: 'File too large. Max 10MB' }))
+      return
+    }
+
+    setUploadingScreenshot(true)
+    setErrors((prev) => ({ ...prev, screenshot_url: '' }))
+
+    try {
+      const body = new FormData()
+      body.append('file', file)
+      body.append('folder', 'screenshots')
+
+      const res = await fetch('/api/upload', { method: 'POST', body })
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error || 'Upload failed')
+
+      updateField('screenshot_url', data.url)
+    } catch (err) {
+      setErrors((prev) => ({ ...prev, screenshot_url: err instanceof Error ? err.message : 'Upload failed' }))
+    } finally {
+      setUploadingScreenshot(false)
+    }
   }
 
   const validate = (s: number) => {
@@ -90,10 +127,12 @@ export default function EventRegistrationClient({
     setSubmitError('')
     setSubmitting(true)
     try {
+      const { screenshot_url, ...rest } = formData
+      const body = screenshot_url ? { ...rest, payment_screenshot_url: screenshot_url } : rest
       const res = await fetch(`/api/events/${event.slug}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(body),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Registration failed')
@@ -331,7 +370,7 @@ export default function EventRegistrationClient({
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <div>
-                  <label style={s.label}>UPI ID Used For Payment *</label>
+                  <label style={s.label}>Your UPI ID *</label>
                   <input value={formData.payment_upi_id} onChange={(e) => updateField('payment_upi_id', e.target.value)} style={s.input} placeholder="e.g. aditya@oksbi" />
                   {errors.payment_upi_id && <p style={{ color: '#ff4444', fontSize: 12, marginTop: 4 }}>{errors.payment_upi_id}</p>}
                 </div>
@@ -342,15 +381,44 @@ export default function EventRegistrationClient({
                   {errors.transaction_name && <p style={{ color: '#ff4444', fontSize: 12, marginTop: 4 }}>{errors.transaction_name}</p>}
                 </div>
 
-                <div>
-                  <label style={s.label}>Transaction Reference ID {paymentConfig?.transaction_ref_required ? '*' : <span style={{ color: '#666' }}>(optional)</span>}</label>
-                  <input value={formData.transaction_reference} onChange={(e) => updateField('transaction_reference', e.target.value)} style={s.input} placeholder="e.g. Txn123456 or UTR number" />
-                  {errors.transaction_reference && <p style={{ color: '#ff4444', fontSize: 12, marginTop: 4 }}>{errors.transaction_reference}</p>}
+                  <div>
+                    <label style={s.label}>Transaction Reference ID {paymentConfig?.transaction_ref_required ? '*' : <span style={{ color: '#666' }}>(optional)</span>}</label>
+                    <input value={formData.transaction_reference} onChange={(e) => updateField('transaction_reference', e.target.value)} style={s.input} placeholder="e.g. Txn123456 or UTR number" />
+                    {errors.transaction_reference && <p style={{ color: '#ff4444', fontSize: 12, marginTop: 4 }}>{errors.transaction_reference}</p>}
+                  </div>
+
+                  {/* Screenshot Upload */}
+                  <div style={{ borderTop: '1px solid #222', paddingTop: 16, marginTop: 8 }}>
+                    <h3 style={{ color: '#fff', fontSize: 15, fontWeight: 600, marginBottom: 8 }}>Payment Screenshot</h3>
+                    <p style={{ color: '#888', fontSize: 12, marginBottom: 12 }}>
+                      Upload a screenshot of the payment confirmation for organizer verification.
+                    </p>
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        onChange={handleScreenshotUpload}
+                        style={{ display: 'none' }}
+                        id="screenshot-upload"
+                      />
+                      <label htmlFor="screenshot-upload">
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 16px', borderRadius: 6, border: '1px solid #333', cursor: 'pointer', background: formData.screenshot_url ? 'rgba(74,222,128,0.1)' : 'transparent', color: formData.screenshot_url ? '#4ade80' : '#ccc', fontSize: 13 }}>
+                          {uploadingScreenshot ? (
+                            <><Loader2 size={16} className="animate-spin" /> Uploading...</>
+                          ) : formData.screenshot_url ? (
+                            <><CheckCircle size={16} /> Screenshot Uploaded</>
+                          ) : (
+                            'Upload Screenshot'
+                          )}
+                        </div>
+                      </label>
+                      {errors.screenshot_url && <p style={{ color: '#ff4444', fontSize: 12, marginTop: 4 }}>{errors.screenshot_url}</p>}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
           {step > 1 && (

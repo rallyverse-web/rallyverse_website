@@ -44,3 +44,9 @@ alter table if exists event_payment_config
   add column if not exists transaction_ref_required boolean not null default true;
 
 comment on column event_payment_config.transaction_ref_required is 'Whether transaction reference ID is required during registration';
+
+-- 4. Registrations: add payment screenshot URL
+alter table if exists registrations
+  add column if not exists payment_screenshot_url text;
+
+comment on column registrations.payment_screenshot_url is 'URL to payment screenshot uploaded by participant in Supabase Storage';

@@ -40,6 +40,7 @@ const DEFAULT_TEMPLATES: TemplateSpec[] = [
 
 <p><strong>Registration ID:</strong> {{registration_id}}<br />
 <strong>Current Status:</strong> {{registration_status}}<br />
+<strong>Payment Status:</strong> {{payment_status}}<br />
 <strong>Format:</strong> {{format}}</p>
 
 <p>We will review your registration and share the next update shortly.</p>
@@ -96,6 +97,38 @@ const DEFAULT_TEMPLATES: TemplateSpec[] = [
     content: `Hi {{participant_name}},
 
 <p>We have an important update regarding <strong>{{event_name}}</strong>.</p>
+
+<p>Regards,<br />RallyVerse</p>`,
+  },
+  {
+    template_type: 'payment_verified',
+    subject: 'Payment Verified — {{event_name}}',
+    content: `Hi {{participant_name}},
+
+<p>Your payment for <strong>{{event_name}}</strong> has been successfully verified.</p>
+
+<p><strong>Registration ID:</strong> {{registration_id}}<br />
+<strong>Payment Status:</strong> Verified</p>
+
+<p>Your registration is currently under review. We will notify you once it has been approved.</p>
+
+<p>If you need help, contact <a href="mailto:{{support_email}}">{{support_email}}</a>.</p>
+
+<p>Regards,<br />RallyVerse</p>`,
+  },
+  {
+    template_type: 'payment_rejected',
+    subject: 'Payment Verification Failed — {{event_name}}',
+    content: `Hi {{participant_name}},
+
+<p>We were unable to verify your payment for <strong>{{event_name}}</strong>.</p>
+
+<p><strong>Registration ID:</strong> {{registration_id}}<br />
+<strong>Reason:</strong> {{rejection_reason}}</p>
+
+<p>Please contact the organizer or submit updated payment information.</p>
+
+<p>If you need help, contact <a href="mailto:{{support_email}}">{{support_email}}</a>.</p>
 
 <p>Regards,<br />RallyVerse</p>`,
   },
