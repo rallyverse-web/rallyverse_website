@@ -41,6 +41,13 @@ UPDATE event_admins SET status = 'active' WHERE auth_user_id IS NOT NULL AND sta
 CREATE POLICY "Everyone can view events" ON public.events
   FOR SELECT USING (true);
 
+-- 6. RLS policy for event_admins — allows SELECT for all roles.
+--    The server client now uses createClient() directly (not createServerClient from @supabase/ssr)
+--    with the service role key, bypassing RLS. This policy is a safety net.
+ALTER TABLE event_admins ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Everyone can view event_admins" ON public.event_admins
+  FOR SELECT USING (true);
+
 -- ══════════════════════════════════════════════════════════════
 -- Manual Supabase Steps (run after migration):
 -- ══════════════════════════════════════════════════════════════

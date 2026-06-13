@@ -83,7 +83,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ eve
       admin = await createEventAdmin(eventId, { name: body.name, email: body.email }, authUserId ?? undefined)
       console.log('[ADMIN-CREATE] Step 4 - event_admins insert OK, id:', admin.id)
     } catch (insertErr) {
-      const msg = insertErr instanceof Error ? insertErr.message : String(insertErr)
+      const msg = insertErr instanceof Error ? insertErr.message : JSON.stringify(insertErr)
       console.error('[ADMIN-CREATE] Step 4 FAILED - event_admins insert threw:', msg, insertErr)
       return NextResponse.json({ error: `event_admins insert failed: ${msg}` }, { status: 500 })
     }
