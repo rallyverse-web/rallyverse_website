@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Users, Trophy, Megaphone, Handshake } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 
@@ -12,7 +13,7 @@ const services = [
   {
     icon: Trophy,
     title: 'Event Infrastructure',
-    desc: 'Power event pages, registration flows, payment management, attendance check-in, time slot registrations, and participant communication with RallyVerse infrastructure.',
+    desc: 'Power event pages, registration flows, payment management, attendance check-in, time slot registrations, participant communication, and sports event marketing with RallyVerse infrastructure.',
   },
   {
     icon: Megaphone,
@@ -77,6 +78,20 @@ export default function WhatWeDo() {
             )
           })}
         </div>
+
+        <AnimatedSection delay={0.3}>
+          <div className="mt-12 text-center">
+            <Link
+              href="/services"
+              className="font-body text-sm font-semibold transition-all duration-200 hover:underline"
+              style={{ color: 'var(--link-color)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--link-hover)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--link-color)'}
+            >
+              Explore all sports event services &rarr;
+            </Link>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   )

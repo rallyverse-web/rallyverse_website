@@ -66,5 +66,25 @@ export const faqs: FAQItem[] = [
     answer:
       `Email: ${CONTACT.email}  |  WhatsApp: ${WHATSAPP.businessNumber}  |  Location: ${ADDRESS_FULL}`,
   },
+  {
+    question: 'How can sports event marketing help increase tournament participation?',
+    answer:
+      'Sports event marketing helps tournament organisers reach the right participants through community-driven promotion, targeted outreach, and visibility across relevant channels. RallyVerse combines registration infrastructure with sports event marketing support to help organizers attract more players and fill event capacity.',
+  },
+  {
+    question: 'What does a sports marketing partner do for tournaments?',
+    answer:
+      'A sports marketing partner helps tournament organisers with participant outreach, event visibility, and community engagement. RallyVerse acts as a sports marketing partner by promoting events through its active player community, WhatsApp network, and digital channels — alongside providing the registration and payment infrastructure needed to manage participation.',
+  },
+  {
+    question: 'How does RallyVerse support badminton tournament organisers?',
+    answer:
+      'RallyVerse supports badminton tournament organisers with online registration systems, UPI and QR code payment collection, payment screenshot verification, attendance check-in, and participant communication tools. We also provide sports event marketing support to help badminton tournament organisers reach players through community channels and event promotion.',
+  },
+  {
+    question: 'What tools do sports event organisers need to manage registrations and payments?',
+    answer:
+      'Sports event organisers need online registration forms, approval workflows, payment collection via UPI or QR codes, payment verification, participant management, and communication tools. RallyVerse provides all of these through a single Event Admin Dashboard, along with attendance tracking and registration analytics.',
+  },
 ]
 

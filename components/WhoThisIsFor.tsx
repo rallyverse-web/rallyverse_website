@@ -53,7 +53,7 @@ export default function WhoThisIsFor() {
           </h2>
 
           <p className="mt-6 max-w-[680px] font-body text-[16px] leading-[1.85]" style={{ color: 'var(--text-muted)' }}>
-            We don&apos;t just consult on community. We own and operate one. RallyVerse bridges digital outreach with registration infrastructure, communication, and community growth.
+            We don&apos;t just consult on community. We own and operate one. RallyVerse bridges registration infrastructure, sports event marketing, and community growth for badminton tournaments, grassroots competitions, and community-driven sports events.
           </p>
         </motion.div>
 

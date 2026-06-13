@@ -256,6 +256,57 @@ export default function ServicesClient() {
           </div>
         </section>
 
+        {/* ── Sports Marketing for Tournaments and Events ─────── */}
+        <section className="mt-28">
+          <AnimatedSection>
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
+                <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                  SPORTS MARKETING
+                </span>
+                <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
+              </div>
+              <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
+                Sports Marketing for Tournaments and Events
+              </h2>
+              <p className="mt-4 max-w-2xl mx-auto font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                RallyVerse combines sports event marketing with registration infrastructure to help tournament organizers, academies, and sports communities reach participants and manage events efficiently.
+              </p>
+            </div>
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { icon: Megaphone, title: 'Community-Driven Promotion', desc: 'Promote your tournament through our active sports community, WhatsApp networks, and digital channels to reach the right participants.' },
+              { icon: Users, title: 'Participant Outreach', desc: 'Targeted outreach for badminton tournaments, grassroots events, and community sports programs using our player network and organizer connections.' },
+              { icon: BarChart3, title: 'Event Visibility', desc: 'Featured event placement on RallyVerse homepage and across platform channels increases visibility for tournament organisers and sports event marketers.' },
+              { icon: Trophy, title: 'Sports Event Marketing Support', desc: 'Marketing content assistance, promotional creatives, and strategic support to help sports event marketers maximize tournament participation.' },
+            ].map((item, i) => {
+              const Icon = item.icon
+              return (
+                <AnimatedSection key={item.title} delay={i * 0.1}>
+                  <div className="group rounded-xl p-8 transition-all duration-300 h-full flex flex-col justify-between"
+                    style={{
+                      backgroundColor: 'var(--card-bg)',
+                      borderLeft: '3px solid var(--accent-primary)',
+                      boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    <Icon size={36} className="mb-6 transition-transform duration-300 group-hover:scale-110" style={{ color: 'var(--accent-primary)' }} />
+                    <h3 className="font-display text-[22px] uppercase leading-tight font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+                      {item.title}
+                    </h3>
+                    <p className="font-body text-[14px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                      {item.desc}
+                    </p>
+                  </div>
+                </AnimatedSection>
+              )
+            })}
+          </div>
+        </section>
+
         {/* ── Pricing Section ────────────────────────────────── */}
         <section id="pricing" className="mt-28 scroll-mt-24">
           <AnimatedSection>
@@ -511,6 +562,9 @@ export default function ServicesClient() {
               </span>
             </div>
 
+            <p className="mb-4 text-center font-body text-sm leading-relaxed max-w-xl mx-auto" style={{ color: 'var(--text-muted)' }}>
+              Sports event infrastructure for registrations, payments, attendance tracking, communication, and analytics — built for tournament organisers and sports event marketers.
+            </p>
             <div className="mb-16 text-center font-display text-[28px] leading-none uppercase sm:text-[40px] md:text-[56px]" style={{ color: 'var(--text-primary)' }}>
               Built for Real Sports Events
             </div>

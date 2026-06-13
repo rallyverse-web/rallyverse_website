@@ -2,11 +2,11 @@ import type { Metadata } from 'next'
 import ServicesClient from './ServicesClient'
 
 export const metadata: Metadata = {
-  title: 'Services — RallyVerse | Sports Growth Solutions',
-  description: 'Discover sports growth solutions powered by RallyVerse. Registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
+  title: 'Sports Marketing & Event Registration Services for Tournament Organizers | RallyVerse',
+  description: 'Sports event marketing, registration management, payment verification, attendance check-in, and communication tools for badminton tournaments and sports events. Professional event infrastructure from RallyVerse.',
   openGraph: {
-    title: 'Services — RallyVerse | Sports Growth Solutions',
-    description: 'Discover sports growth solutions powered by RallyVerse. Registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
+    title: 'Sports Marketing & Event Registration Services for Tournament Organizers | RallyVerse',
+    description: 'Sports event marketing, registration management, payment verification, attendance check-in, and communication tools for badminton tournaments and sports events. Professional event infrastructure from RallyVerse.',
     url: 'https://rallyverse.social/services',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Services — RallyVerse | Sports Growth Solutions',
-    description: 'Discover sports growth solutions powered by RallyVerse. Registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
+    title: 'Sports Marketing & Event Registration Services for Tournament Organizers | RallyVerse',
+    description: 'Sports event marketing, registration management, payment verification, attendance check-in, and communication tools for badminton tournaments and sports events.',
     images: ['/og'],
   },
   alternates: {

@@ -22,17 +22,17 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://rallyverse.social'),
-  title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-  description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
+  title: 'Sports Marketing & Event Infrastructure for Tournament Organizers | RallyVerse',
+  description: 'RallyVerse provides sports event marketing, registration infrastructure, payment verification, and attendance tracking for tournament organizers, academies, and sports communities in Bengaluru.',
   twitter: {
     card: 'summary_large_image',
-    title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
+    title: 'Sports Marketing & Event Infrastructure for Tournament Organizers | RallyVerse',
+    description: 'Sports event marketing, registration infrastructure, payment verification, and attendance tracking for badminton tournament organisers, academies, and sports communities.',
     images: ['/og'],
   },
   openGraph: {
-    title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
+    title: 'Sports Marketing & Event Infrastructure for Tournament Organizers | RallyVerse',
+    description: 'Sports event marketing, registration infrastructure, payment verification, and attendance tracking for badminton tournament organisers, academies, and sports communities.',
     url: 'https://rallyverse.social',
     siteName: 'RallyVerse',
     locale: 'en_IN',

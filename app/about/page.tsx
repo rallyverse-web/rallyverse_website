@@ -4,11 +4,11 @@ import AnimatedSection from '@/components/AnimatedSection'
 import Flywheel from '@/components/Flywheel'
 
 export const metadata: Metadata = {
-  title: 'About — RallyVerse | Sports Growth Partner',
-  description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities, registration infrastructure, and sports visibility in Bengaluru.',
+  title: 'About RallyVerse — Sports Event Infrastructure & Marketing for Tournament Organizers',
+  description: 'Learn how RallyVerse supports sports event organisers, badminton tournament organizers, and sports communities with registration systems, payment management, attendance tracking, and sports event marketing in Bengaluru.',
   openGraph: {
-    title: 'About — RallyVerse | Sports Growth Partner',
-    description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities, registration infrastructure, and sports visibility in Bengaluru.',
+    title: 'About RallyVerse — Sports Event Infrastructure & Marketing for Tournament Organizers',
+    description: 'Learn how RallyVerse supports sports event organisers, badminton tournament organizers, and sports communities with registration systems, payment management, attendance tracking, and sports event marketing in Bengaluru.',
     url: 'https://rallyverse.social/about',
     siteName: 'RallyVerse',
     locale: 'en_IN',
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About — RallyVerse | Sports Growth Partner',
-    description: 'Learn about RallyVerse, our vision, values, and how we serve as a sports growth partner building active communities, registration infrastructure, and sports visibility in Bengaluru.',
+    title: 'About RallyVerse — Sports Event Infrastructure & Marketing for Tournament Organizers',
+    description: 'Learn how RallyVerse supports sports event organisers, badminton tournament organizers, and sports communities with registration systems, payment management, attendance tracking, and sports event marketing in Bengaluru.',
     images: ['/og'],
   },
   alternates: {

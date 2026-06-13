@@ -46,7 +46,7 @@ const differentiators = [
   {
     icon: Cpu,
     title: 'Event Infrastructure',
-    desc: 'Bespoke registration infrastructure, payment management, attendance check-in, email automations, and administrative dashboards.',
+    desc: 'Bespoke registration infrastructure, payment management, attendance check-in, email automations, and administrative dashboards. Explore our event services.',
   },
   {
     icon: Activity,
@@ -233,7 +233,7 @@ function PartnersPageClient() {
           <div className="flex items-center gap-3 mb-5">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--accent-primary)' }} />
             <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-              SPORTS GROWTH PARTNER
+              SPORTS MARKETING & OUTREACH PARTNER
             </span>
           </div>
 
@@ -242,7 +242,7 @@ function PartnersPageClient() {
           </h1>
 
           <p className="mt-6 max-w-xl font-body text-base md:text-lg leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-            Let&apos;s grow sports communities, events, and brands together. Join the ecosystem and elevate participation.
+            RallyVerse is a sports marketing and outreach partner for tournament organizers, academies, clubs, and sports communities. We combine sports event marketing with registration infrastructure to help you grow participation and manage events.
           </p>
 
           <button

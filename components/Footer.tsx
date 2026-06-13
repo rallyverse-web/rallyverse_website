@@ -56,7 +56,7 @@ export default function Footer() {
             className="mx-auto mb-8 max-w-xl text-base leading-relaxed"
             style={{ color: 'var(--text-muted)' }}
           >
-            RallyVerse is a sports growth partner helping communities, organizers, academies, and brands grow through sports.
+            RallyVerse is a sports marketing and event infrastructure partner helping communities, organizers, academies, and brands grow through technology and sports event marketing.
           </motion.p>
           <Link
             href="/partners"
@@ -97,7 +97,7 @@ export default function Footer() {
                 <ThemedLogo context="footer" />
               </Link>
               <p className="mb-3 max-w-[260px] text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                RallyVerse is a sports growth partner helping communities, organizers, academies, and brands grow through registration infrastructure, communication, analytics, and marketing.
+                RallyVerse is a sports marketing partner providing registration infrastructure, payment management, attendance tracking, and sports event marketing for tournament organizers, academies, and sports communities.
               </p>
             </div>
 
