@@ -35,6 +35,12 @@ UPDATE event_admins SET status = 'active' WHERE auth_user_id IS NOT NULL AND sta
 -- No schema change needed — approved_by, checked_in_by, payment_verified_by already store UUID
 -- Migration: For event admin actions, these will now store the auth_user_id instead of event_admin UUID
 
+-- 5. ⚠ RLS hotfix: events table has RLS enabled but no SELECT policy for anonymous users.
+--    The server uses SUPABASE_SERVICE_ROLE_KEY to bypass RLS, but if that key is missing
+--    from Vercel env, all event queries return empty. This policy ensures public visibility:
+CREATE POLICY "Everyone can view events" ON public.events
+  FOR SELECT USING (true);
+
 -- ══════════════════════════════════════════════════════════════
 -- Manual Supabase Steps (run after migration):
 -- ══════════════════════════════════════════════════════════════

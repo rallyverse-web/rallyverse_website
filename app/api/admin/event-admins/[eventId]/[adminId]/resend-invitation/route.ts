@@ -22,15 +22,17 @@ export async function POST(
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const recoverRes = await fetch(`${supabaseUrl}/auth/v1/recover`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY! },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${serviceKey}`, 'apikey': serviceKey },
       body: JSON.stringify({ email: ea.email }),
     })
 
     if (!recoverRes.ok) {
-      const errText = await recoverRes.text()
-      return NextResponse.json({ error: `Failed to send email: ${errText}` }, { status: 500 })
+      const errBody = await recoverRes.text()
+      console.error(`Password reset failed for ${ea.email}: ${errBody}`)
+      return NextResponse.json({ error: 'Could not send invitation email. Verify the Site URL in Supabase Auth settings and try again.' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true, message: `Password reset email sent to ${ea.email}` })
