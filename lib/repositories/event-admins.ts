@@ -13,21 +13,21 @@ export async function getEventAdmins(eventId: string): Promise<EventAdmin[]> {
   return (data ?? []) as EventAdmin[]
 }
 
-export async function createEventAdmin(eventId: string, formData: EventAdminFormData): Promise<{ admin: EventAdmin; access_token: string }> {
+export async function createEventAdmin(eventId: string, formData: EventAdminFormData, authUserId?: string): Promise<EventAdmin> {
   const supabase = await getSupabaseServerClient()
-  const token = uuidv4()
   const { data, error } = await supabase
     .from('event_admins')
     .insert({
       event_id: eventId,
       name: formData.name,
       email: formData.email,
-      access_token: token,
+      auth_user_id: authUserId ?? null,
+      access_token: uuidv4(),
     })
     .select('id, event_id, name, email, created_by, created_at, updated_at')
     .single()
   if (error) throw error
-  return { admin: data as EventAdmin, access_token: token }
+  return data as EventAdmin
 }
 
 export async function getEventAdminById(adminId: string): Promise<(EventAdmin & { access_token: string; event_id: string }) | null> {

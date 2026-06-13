@@ -253,8 +253,8 @@ export default function AdminEventsPage() {
       setEventAdmins(prev => [data.admin, ...prev])
       setNewAdminName('')
       setNewAdminEmail('')
-      setCreatedAdminToken(data.access_token)
-      notify('success', 'Admin added. Copy the token now — it will not be shown again.')
+      setCreatedAdminToken(data.admin.email)
+      notify('success', 'Invitation sent — they will receive a password reset email.')
       setTimeout(() => setCreatedAdminToken(null), 15000)
     } catch { notify('error', 'Failed to add admin') }
     finally { setSavingAdmin(false) }
@@ -883,14 +883,8 @@ export default function AdminEventsPage() {
 
               {createdAdminToken && (
                 <div style={{ marginBottom: 16, padding: 12, borderRadius: 6, background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)' }}>
-                  <p style={{ color: '#facc15', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Admin Created — Copy Access Token</p>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    <code style={{ flex: 1, fontSize: 11, color: '#4ade80', background: '#222', padding: '6px 10px', borderRadius: 4, overflow: 'hidden', textOverflow: 'ellipsis' }}>{createdAdminToken}</code>
-                    <button onClick={() => copyToClipboard(createdAdminToken)} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontSize: 11, fontWeight: 700 }}>
-                      {copiedToken === createdAdminToken ? <CheckCircle size={12} /> : <Copy size={12} />}
-                    </button>
-                  </div>
-                  <p style={{ color: '#888', fontSize: 11, marginTop: 4 }}>This token will not be shown again. Share it securely with the admin.</p>
+                  <p style={{ color: '#4ade80', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Invitation Sent ✓</p>
+                  <p style={{ color: '#ccc', fontSize: 12 }}>A password reset email has been sent to <strong>{createdAdminToken}</strong>. They can use it to set their own password and log in.</p>
                 </div>
               )}
 

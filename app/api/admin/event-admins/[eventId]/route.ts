@@ -28,8 +28,33 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ eve
   try {
     const { eventId } = await params
     const body = await req.json()
-    const result = await createEventAdmin(eventId, { name: body.name, email: body.email })
-    return NextResponse.json({ success: true, admin: result.admin, access_token: result.access_token })
+
+    // Create Supabase Auth user
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+    const tempPassword = crypto.randomUUID()
+    const authRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${serviceKey}`, 'apikey': serviceKey },
+      body: JSON.stringify({ email: body.email, password: tempPassword, email_confirm: true }),
+    })
+    if (!authRes.ok) {
+      const err = await authRes.text()
+      return NextResponse.json({ error: `Failed to create auth user: ${err}` }, { status: 500 })
+    }
+    const authUser = await authRes.json()
+
+    // Create event admin record linked to auth user
+    const admin = await createEventAdmin(eventId, { name: body.name, email: body.email }, authUser.id)
+
+    // Send password reset email so they can set their own password
+    await fetch(`${supabaseUrl}/auth/v1/recover`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': serviceKey },
+      body: JSON.stringify({ email: body.email }),
+    })
+
+    return NextResponse.json({ success: true, admin })
   } catch (error) {
     console.error('Failed to create event admin:', error)
     return NextResponse.json({ error: 'Failed to create event admin' }, { status: 500 })
