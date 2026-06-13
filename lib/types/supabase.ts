@@ -43,6 +43,9 @@ export interface EventFormat {
   created_at: string
 }
 
+// ── Event Admin Status ──
+export type EventAdminStatus = 'pending' | 'active' | 'disabled'
+
 // ── Event Admin (from event_admins table) ──
 export interface EventAdmin {
   id: string
@@ -52,6 +55,8 @@ export interface EventAdmin {
   created_by: string | null
   created_at: string
   updated_at: string | null
+  status: EventAdminStatus | null
+  last_login_at: string | null
 }
 
 // ── Composite: Event with its formats ──

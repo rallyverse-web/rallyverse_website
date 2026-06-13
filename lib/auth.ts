@@ -28,13 +28,14 @@ export async function requireEventAdmin(eventId?: string) {
   const dbClient = await getSupabaseServerClient()
   let query = dbClient
     .from('event_admins')
-    .select('id, event_id, name, email')
+    .select('id, event_id, name, email, status')
     .eq('auth_user_id', user.id)
     .maybeSingle()
 
   const { data: admin } = await query
   if (!admin || !admin.event_id) return null
   if (eventId && admin.event_id !== eventId) return null
+  if (admin.status === 'disabled') return null
 
   return { id: admin.id, event_id: admin.event_id, name: admin.name, email: admin.email }
 }
@@ -66,10 +67,10 @@ export async function getEventAdminFromRequest(req: NextRequest) {
   const dbClient = await getSupabaseServerClient()
   const { data: admin } = await dbClient
     .from('event_admins')
-    .select('id, event_id, name, email')
+    .select('id, event_id, name, email, status')
     .eq('auth_user_id', user.id)
     .maybeSingle()
 
-  if (!admin || !admin.event_id) return null
+  if (!admin || !admin.event_id || admin.status === 'disabled') return null
   return { id: admin.id, event_id: admin.event_id, name: admin.name, email: admin.email }
 }

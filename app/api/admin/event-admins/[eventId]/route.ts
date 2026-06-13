@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getEventAdmins, createEventAdmin, removeEventAdmin } from '@/lib/repositories/event-admins'
+import { getEventAdmins, createEventAdmin, removeEventAdmin, getEventAdminByEmail } from '@/lib/repositories/event-admins'
 import { requireAdmin } from '@/lib/auth'
 
 async function authorize(req: NextRequest) {
@@ -28,6 +28,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ eve
   try {
     const { eventId } = await params
     const body = await req.json()
+
+    // Duplicate check: same email across any event
+    const existing = await getEventAdminByEmail(body.email)
+    if (existing) {
+      return NextResponse.json({ error: 'This email is already assigned to an event admin account.' }, { status: 409 })
+    }
 
     // Create Supabase Auth user
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!

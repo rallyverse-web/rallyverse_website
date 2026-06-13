@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAuthClientFromRequest } from '@/lib/auth'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { updateLastLoginAt } from '@/lib/repositories/event-admins'
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
     const dbClient = await getSupabaseServerClient()
     const { data: admin } = await dbClient
       .from('event_admins')
-      .select('id, name, event_id')
+      .select('id, name, event_id, status')
       .eq('auth_user_id', user.id)
       .maybeSingle()
 
@@ -30,6 +31,13 @@ export async function POST(req: NextRequest) {
       await supabase.auth.signOut()
       return NextResponse.json({ error: 'No event admin access found for this account' }, { status: 403 })
     }
+
+    if (admin.status === 'disabled') {
+      await supabase.auth.signOut()
+      return NextResponse.json({ error: 'Your access has been revoked. Contact the main admin.' }, { status: 403 })
+    }
+
+    await updateLastLoginAt(admin.id)
 
     const response = NextResponse.json({
       success: true,

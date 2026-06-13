@@ -20,7 +20,18 @@ ALTER TABLE event_admins ADD COLUMN IF NOT EXISTS auth_user_id uuid references a
 
 CREATE INDEX IF NOT EXISTS idx_event_admins_auth_user_id ON event_admins(auth_user_id);
 
--- 3. Add auth_user_id to registration audit columns
+-- 3. Add status and last_login_at to event_admins
+ALTER TABLE event_admins ADD COLUMN IF NOT EXISTS status text not null default 'pending'
+  CHECK (status IN ('pending', 'active', 'disabled'));
+ALTER TABLE event_admins ADD COLUMN IF NOT EXISTS last_login_at timestamptz;
+
+CREATE INDEX IF NOT EXISTS idx_event_admins_status ON event_admins(status);
+CREATE INDEX IF NOT EXISTS idx_event_admins_email ON event_admins(email);
+
+-- Update existing admins with auth_user_id to active
+UPDATE event_admins SET status = 'active' WHERE auth_user_id IS NOT NULL AND status = 'pending';
+
+-- 4. Add auth_user_id to registration audit columns
 -- No schema change needed — approved_by, checked_in_by, payment_verified_by already store UUID
 -- Migration: For event admin actions, these will now store the auth_user_id instead of event_admin UUID
 
@@ -41,5 +52,6 @@ CREATE INDEX IF NOT EXISTS idx_event_admins_auth_user_id ON event_admins(auth_us
 --    RETURNING id;
 --    Then update event_admins:
 --    UPDATE event_admins SET auth_user_id = '<returned_id>' WHERE email = '<admin_email>';
+--    UPDATE event_admins SET status = 'active' WHERE auth_user_id IS NOT NULL;
 --
 -- 4. Remove ADMIN_PASSWORD from .env after verifying all flows work

@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAdminAuth } from '../AdminAuthContext'
-import { Plus, Edit, Trash2, Eye, Loader2, RefreshCw, Calendar, Users, CheckCircle, XCircle, Wallet, Shield, Copy, Upload } from 'lucide-react'
-import type { EventWithFormats, EventFormData, AdminEventMetrics, EventStatus, EventPaymentConfigFormData, EventAdmin } from '@/lib/types/supabase'
+import { Plus, Edit, Trash2, Eye, Loader2, RefreshCw, Calendar, Users, CheckCircle, XCircle, Wallet, Shield, Copy, Upload, Send, Ban, Check, Clock, LogIn } from 'lucide-react'
+import type { EventWithFormats, EventFormData, AdminEventMetrics, EventStatus, EventPaymentConfigFormData, EventAdmin, EventAdminStatus } from '@/lib/types/supabase'
 
 const FORMAT_OPTIONS = [
   "Men's Singles", "Women's Singles", "Men's Doubles", "Women's Doubles", "Mixed Doubles",
@@ -94,15 +94,12 @@ export default function AdminEventsPage() {
 
   const [adminTarget, setAdminTarget] = useState<string | null>(null)
   const [eventAdmins, setEventAdmins] = useState<EventAdmin[]>([])
-  const [createdAdminToken, setCreatedAdminToken] = useState<string | null>(null)
+  const [createdInvitedEmail, setCreatedInvitedEmail] = useState<string | null>(null)
   const [loadingAdmins, setLoadingAdmins] = useState(false)
   const [newAdminName, setNewAdminName] = useState('')
   const [newAdminEmail, setNewAdminEmail] = useState('')
   const [savingAdmin, setSavingAdmin] = useState(false)
-  const [copiedToken, setCopiedToken] = useState<string | null>(null)
-  const [visibleToken, setVisibleToken] = useState<Record<string, string | null>>({})
-  const [tokenLoading, setTokenLoading] = useState<Record<string, boolean>>({})
-  const [confirmRegen, setConfirmRegen] = useState<string | null>(null)
+  const [resendingEmail, setResendingEmail] = useState<string | null>(null)
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
@@ -131,7 +128,6 @@ export default function AdminEventsPage() {
         setShowForm(false)
         setPaymentConfigTarget(null)
         setAdminTarget(null)
-        setConfirmRegen(null)
         setConfirmDelete(null)
         setShowBackfillConfirm(false)
       }
@@ -253,9 +249,9 @@ export default function AdminEventsPage() {
       setEventAdmins(prev => [data.admin, ...prev])
       setNewAdminName('')
       setNewAdminEmail('')
-      setCreatedAdminToken(data.admin.email)
+      setCreatedInvitedEmail(data.admin.email)
       notify('success', 'Invitation sent — they will receive a password reset email.')
-      setTimeout(() => setCreatedAdminToken(null), 15000)
+      setTimeout(() => setCreatedInvitedEmail(null), 15000)
     } catch { notify('error', 'Failed to add admin') }
     finally { setSavingAdmin(false) }
   }
@@ -267,38 +263,36 @@ export default function AdminEventsPage() {
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to remove'); return }
       setEventAdmins(prev => prev.filter(a => a.id !== adminId))
-      setVisibleToken(prev => { const n = { ...prev }; delete n[adminId]; return n })
       notify('success', 'Admin removed')
     } catch { notify('error', 'Failed to remove admin') }
   }
 
-  const handleShowToken = async (adminId: string) => {
-    if (visibleToken[adminId]) { setVisibleToken(prev => ({ ...prev, [adminId]: null })); return }
-    setTokenLoading(prev => ({ ...prev, [adminId]: true }))
+  const handleDisableAdmin = async (adminId: string) => {
     try {
-      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}`)
-      if (res.ok) { const data = await res.json(); setVisibleToken(prev => ({ ...prev, [adminId]: data.admin.access_token })) }
-      else { notify('error', 'Failed to fetch token') }
-    } catch { notify('error', 'Failed to fetch token') }
-    finally { setTokenLoading(prev => ({ ...prev, [adminId]: false })) }
+      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}/disable`, { method: 'POST' })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to disable'); return }
+      setEventAdmins(prev => prev.map(a => a.id === adminId ? { ...a, status: 'disabled' as EventAdminStatus } : a))
+      notify('success', 'Admin access revoked')
+    } catch { notify('error', 'Failed to disable') }
   }
 
-  const handleRegenToken = async (adminId: string) => {
+  const handleEnableAdmin = async (adminId: string) => {
     try {
-      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}/regenerate`, {
-        method: 'POST',
-      })
-      if (res.ok) { const data = await res.json(); setVisibleToken(prev => ({ ...prev, [adminId]: data.access_token })); setConfirmRegen(null); notify('success', 'Token regenerated') }
-      else { const d = await res.json(); notify('error', d.error || 'Failed to regenerate') }
-    } catch { notify('error', 'Failed to regenerate') }
+      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}/enable`, { method: 'POST' })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to enable'); return }
+      setEventAdmins(prev => prev.map(a => a.id === adminId ? { ...a, status: 'active' as EventAdminStatus } : a))
+      notify('success', 'Admin access restored')
+    } catch { notify('error', 'Failed to enable') }
   }
 
-  const copyToClipboard = async (text: string) => {
+  const handleResendInvitation = async (adminId: string) => {
+    setResendingEmail(adminId)
     try {
-      await navigator.clipboard.writeText(text)
-      setCopiedToken(text)
-      setTimeout(() => setCopiedToken(null), 2000)
-    } catch {}
+      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}/resend-invitation`, { method: 'POST' })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to resend'); return }
+      notify('success', 'Password reset email sent')
+    } catch { notify('error', 'Failed to resend') }
+    finally { setResendingEmail(null) }
   }
 
   const handleSave = async () => {
@@ -881,10 +875,10 @@ export default function AdminEventsPage() {
                 <button onClick={() => { setAdminTarget(null); setEventAdmins([]) }} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 20 }}>&times;</button>
               </div>
 
-              {createdAdminToken && (
+              {createdInvitedEmail && (
                 <div style={{ marginBottom: 16, padding: 12, borderRadius: 6, background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)' }}>
                   <p style={{ color: '#4ade80', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Invitation Sent ✓</p>
-                  <p style={{ color: '#ccc', fontSize: 12 }}>A password reset email has been sent to <strong>{createdAdminToken}</strong>. They can use it to set their own password and log in.</p>
+                  <p style={{ color: '#ccc', fontSize: 12 }}>A password reset email has been sent to <strong>{createdInvitedEmail}</strong>. They can use it to set their own password and log in.</p>
                 </div>
               )}
 
@@ -904,49 +898,51 @@ export default function AdminEventsPage() {
                 <div style={{ color: '#666', fontSize: 13, padding: 20, textAlign: 'center' }}>No admins assigned yet</div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {eventAdmins.map((admin) => (
+                  {eventAdmins.map((admin) => {
+                    const statusColors: Record<string, string> = { pending: '#facc15', active: '#4ade80', disabled: '#ff4444' }
+                    const sc = statusColors[admin.status || 'pending'] || '#888'
+                    const lastLogin = admin.last_login_at ? new Date(admin.last_login_at).toLocaleString() : '—'
+                    return (
                     <div key={admin.id} style={{ padding: 12, borderRadius: 6, border: '1px solid #333', background: '#111' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div>
-                          <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, margin: 0 }}>{admin.name}</p>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                            <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, margin: 0 }}>{admin.name}</p>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: `${sc}20`, color: sc }}>
+                              {admin.status === 'pending' && <Clock size={11} />}
+                              {admin.status === 'active' && <CheckCircle size={11} />}
+                              {admin.status === 'disabled' && <Ban size={11} />}
+                              {(admin.status || 'Pending').charAt(0).toUpperCase() + (admin.status || 'Pending').slice(1)}
+                            </span>
+                          </div>
                           <p style={{ color: '#888', fontSize: 12, margin: '2px 0 0 0' }}>{admin.email}</p>
+                          <p style={{ color: '#666', fontSize: 11, margin: '4px 0 0 0' }}>Last login: {lastLogin}</p>
                         </div>
-                        <div style={{ display: 'flex', gap: 4 }}>
-                          <button onClick={() => handleShowToken(admin.id)} style={{ ...s.btnSm, background: '#88888820', color: '#ccc', fontSize: 11 }}>
-                            {tokenLoading[admin.id] ? <Loader2 size={11} className="animate-spin" /> : (visibleToken[admin.id] ? 'Hide' : 'Token')}
-                          </button>
-                          <button onClick={() => setConfirmRegen(admin.id)} style={{ ...s.btnSm, background: '#facc1520', color: '#facc15', fontSize: 11 }}>Regen</button>
+                        <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+                          {admin.status !== 'disabled' && (
+                            <button onClick={() => handleResendInvitation(admin.id)} disabled={resendingEmail === admin.id} style={{ ...s.btnSm, background: '#3b82f620', color: '#3b82f6', fontSize: 11 }} title="Resend invitation">
+                              {resendingEmail === admin.id ? <Loader2 size={11} className="animate-spin" /> : <Send size={11} />}
+                            </button>
+                          )}
+                          {admin.status === 'disabled' ? (
+                            <button onClick={() => handleEnableAdmin(admin.id)} style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', fontSize: 11 }} title="Enable admin">
+                              <Check size={11} />
+                            </button>
+                          ) : (
+                            <button onClick={() => handleDisableAdmin(admin.id)} style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444', fontSize: 11 }} title="Disable admin">
+                              <Ban size={11} />
+                            </button>
+                          )}
                           <button onClick={() => handleRemoveAdmin(admin.id)} style={{ ...s.btnSm, background: 'transparent', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }}>
                             <Trash2 size={12} />
                           </button>
                         </div>
                       </div>
-                      {visibleToken[admin.id] && (
-                        <div style={{ marginTop: 8, padding: '8px 10px', borderRadius: 4, background: '#222', display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <code style={{ flex: 1, fontSize: 11, color: '#4ade80', overflow: 'hidden', textOverflow: 'ellipsis' }}>{visibleToken[admin.id]}</code>
-                          <button onClick={() => copyToClipboard(visibleToken[admin.id]!)} style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontSize: 11, fontWeight: 700 }}>
-                            {copiedToken === visibleToken[admin.id] ? <CheckCircle size={11} /> : <Copy size={11} />}
-                          </button>
-                        </div>
-                      )}
                     </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
-            </div>
-          </div>
-        )}
-
-        {/* Regenerate Token Confirmation */}
-        {confirmRegen && (
-          <div style={s.overlay} onClick={() => setConfirmRegen(null)}>
-            <div style={{ ...s.modal, maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
-              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Regenerate Token</h3>
-              <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>This will invalidate the current token. The admin will need to log in again with the new token. Continue?</p>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                <button onClick={() => setConfirmRegen(null)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
-                <button onClick={() => handleRegenToken(confirmRegen)} style={{ ...s.btnSm, background: '#facc15', color: '#000', fontWeight: 700 }}>Regenerate</button>
-              </div>
             </div>
           </div>
         )}
