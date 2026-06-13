@@ -9,7 +9,7 @@ export const faqs: FAQItem[] = [
   {
     question: 'What is RallyVerse?',
     answer:
-      'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, community building, communication, and sports marketing. We build the systems that help communities grow.',
+      'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, payment management, attendance tracking, communication, and community building. We build the systems that help communities grow.',
   },
   {
     question: 'When and where is Rally Series 01 happening?',
@@ -24,17 +24,17 @@ export const faqs: FAQItem[] = [
   {
     question: 'What is the registration fee?',
     answer:
-      `The registration fee is \u20B9${CURRENT_EVENT.registrationFee} per team. This includes participation in the tournament and the registration workflow.`,
+      `The registration fee is \u20B9${CURRENT_EVENT.registrationFee} per team. This includes participation in the tournament, registration handling, payment verification, and participant communication.`,
   },
   {
     question: 'How do I register?',
     answer:
-      'Complete the registration form. Pay \u20B9799 using the QR code provided. Enter your payment details. Submit the form. Send your payment screenshot on WhatsApp for verification. Once verified, you\u2019ll receive a confirmation email.',
+      'Complete the registration form, pay using the QR code or UPI ID provided, upload your payment screenshot, and submit. Once your payment is verified by the organizer, you\u2019ll receive a confirmation email.',
   },
   {
     question: 'Why do I need to send a payment screenshot?',
     answer:
-      'Payment screenshots help us verify registrations quickly and accurately. After registering, send your screenshot to the official RallyVerse WhatsApp Business account.',
+      'Payment screenshots help organizers verify registrations quickly and accurately. Upload your screenshot during registration and the organizer will verify it through the admin dashboard.',
   },
   {
     question: 'Will both players receive confirmation emails?',

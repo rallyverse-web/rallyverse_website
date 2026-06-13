@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Users, Trophy, Megaphone, Handshake, CreditCard, LayoutDashboard, Mail, BarChart3, ShieldCheck, Check, ArrowRight } from 'lucide-react'
+import { Users, Trophy, Megaphone, Handshake, CreditCard, LayoutDashboard, Mail, BarChart3, ShieldCheck, UserCheck, Clock, Check, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
 import TrackPageView from '@/components/TrackPageView'
@@ -16,7 +16,7 @@ const services = [
   {
     icon: Trophy,
     title: 'Registration Management',
-    desc: 'Registrations, participant management, communication, and event visibility support.',
+    desc: 'Registrations, participant management, payment verification, attendance tracking, communication, and event visibility support.',
   },
   {
     icon: Megaphone,
@@ -49,17 +49,29 @@ const pricingPlans = [
   },
   {
     name: 'Organizer Pro',
-    price: '₹1,499',
-    desc: 'For organizers who want professional registration management.',
+    headline: 'Professional Event Infrastructure',
+    price: '₹2,499',
+    desc: 'Everything required to professionally manage registrations, payments, participant communication, and attendance from a single dashboard.',
     features: [
-      'Registrations through RallyVerse',
-      'Organizer Dashboard',
+      'RallyVerse Registration System',
+      'Dedicated Event Page',
+      'Event Admin Dashboard',
+      'Online Registration Management',
+      'Registration Approval Workflow',
+      'Participant Management',
+      'Participant Editing',
+      'UPI & QR Payment Collection',
+      'Payment Screenshot Uploads',
+      'Payment Verification Workflow',
+      'Attendance Check-In System',
+      'Time Slot Registrations',
       'Registration Analytics',
-      'Review, approve/reject, and manage registrations',
-      'Participant Email Communication & Updates',
-      'Enhanced Event Visibility',
-      'Featured Event Promotion on Homepage',
-      'One Custom Tournament Poster',
+      'Attendance Insights',
+      'CSV Export Tools',
+      'Featured Event Promotion on RallyVerse',
+      '50 Communication Emails Included',
+      'Unlimited System Emails Included',
+      'Dedicated Organizer Support',
     ],
     footerInfo: 'Billed per event. Fully managed registration cycle.',
     ctaText: 'Get Started',
@@ -68,18 +80,21 @@ const pricingPlans = [
   },
   {
     name: 'Growth Partner',
-    price: '₹4,999+',
-    desc: 'For organizers who want RallyVerse to help grow registrations and visibility.',
+    headline: 'Technology + Growth Support',
+    price: '₹5,999',
+    desc: 'Everything in Organizer Pro plus visibility, promotion, and community-driven participant growth support.',
     features: [
-      'RallyVerse Managed Marketing',
-      'Registration Acquisition Support',
-      'WhatsApp Promotions',
-      'Community Promotions',
-      'Unlimited Emails',
-      'Multiple Promotional Creatives',
-      'Advanced Content Creation',
-      'Dedicated Support',
-      'Priority Visibility',
+      'Everything in Organizer Pro',
+      'Community Marketing Support',
+      'Promotion Across RallyVerse Channels',
+      'Priority Homepage Visibility',
+      'Priority Featured Event Placement',
+      'Additional Event Creatives',
+      'Marketing Content Assistance',
+      'Dedicated Growth Support',
+      '100 Communication Emails Included',
+      'Unlimited System Emails Included',
+      'Priority Support',
     ],
     footerInfo: 'Custom service plans tailored to your community size.',
     ctaText: 'Book a Consultation',
@@ -92,7 +107,22 @@ const infrastructureFeatures = [
   {
     icon: CreditCard,
     name: 'Registration Management',
-    desc: 'Manage registrations, approvals, and participant data from one dashboard.',
+    desc: 'Online registrations, approval workflows, participant management, and editing from one dashboard.',
+  },
+  {
+    icon: ShieldCheck,
+    name: 'Payment Verification',
+    desc: 'Collect payments through UPI and QR codes, verify screenshots, and manage payment approvals from a centralized dashboard.',
+  },
+  {
+    icon: UserCheck,
+    name: 'Attendance Tracking',
+    desc: 'Track participant arrivals and manage event-day check-ins through the Event Admin Dashboard.',
+  },
+  {
+    icon: Clock,
+    name: 'Time Slot Registrations',
+    desc: 'Slot-based registrations with controlled participant allocation.',
   },
   {
     icon: LayoutDashboard,
@@ -106,18 +136,13 @@ const infrastructureFeatures = [
   },
   {
     icon: Mail,
-    name: 'Email Communication',
-    desc: 'Send templated participant emails, broadcasts, and updates with sent and failed logging.',
+    name: 'Participant Communication',
+    desc: 'Send participant updates and manage event communication through integrated email tools.',
   },
   {
     icon: BarChart3,
     name: 'Event Analytics',
-    desc: 'Track views, registrations, approval rates, email activity, and WhatsApp engagement.',
-  },
-  {
-    icon: ShieldCheck,
-    name: 'Registration Approvals',
-    desc: 'Review, approve, reject, and manage participant registrations from a centralized dashboard.',
+    desc: 'Registration insights, attendance insights, communication analytics, and CSV exports.',
   },
 ]
 
@@ -276,6 +301,11 @@ export default function ServicesClient() {
                       <h3 className="font-display text-[28px] uppercase" style={{ color: 'var(--text-primary)' }}>
                         {plan.name}
                       </h3>
+                      {plan.headline && (
+                        <p className="font-body text-[11px] uppercase tracking-widest mt-1" style={{ color: 'var(--accent-primary)' }}>
+                          {plan.headline}
+                        </p>
+                      )}
                       
                       <div className="my-5 flex items-baseline gap-1">
                         <span className="font-display text-[48px] leading-none" style={{ color: 'var(--text-primary)' }}>
@@ -324,6 +354,85 @@ export default function ServicesClient() {
                 </AnimatedSection>
               )
             })}
+          </div>
+        </section>
+
+        {/* ── Email Usage Clarification ──────────────────────── */}
+        <section className="mt-20">
+          <AnimatedSection>
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
+                <span className="font-body text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                  EMAIL USAGE
+                </span>
+                <div className="h-px w-8" style={{ backgroundColor: 'var(--accent-primary)' }} />
+              </div>
+              <h2 className="font-display text-[28px] uppercase sm:text-[36px] md:text-[48px]" style={{ color: 'var(--text-primary)' }}>
+                Email Quota & Credits
+              </h2>
+            </div>
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <AnimatedSection>
+              <div className="rounded-xl p-8 h-full flex flex-col" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-subtle)' }}>
+                <div className="font-display text-[18px] uppercase text-green-400 mb-2">System Emails</div>
+                <div className="font-body text-[12px] uppercase tracking-wider mb-4" style={{ color: 'var(--text-muted)' }}>Unlimited — Included</div>
+                <p className="font-body text-[13px] leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>
+                  These automated emails are free and do not count toward your package limit.
+                </p>
+                <ul className="space-y-2 text-[12px]">
+                  {['Registration Confirmation', 'Registration Approval', 'Registration Rejection', 'Payment Verification Updates', 'Payment Rejection Updates'].map(item => (
+                    <li key={item} className="flex items-start gap-2">
+                      <Check size={12} className="mt-0.5 shrink-0" style={{ color: 'var(--success-color)' }} />
+                      <span style={{ color: 'var(--text-primary)' }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.08}>
+              <div className="rounded-xl p-8 h-full flex flex-col" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-subtle)' }}>
+                <div className="font-display text-[18px] uppercase text-orange-400 mb-2">Communication Emails</div>
+                <div className="font-body text-[12px] uppercase tracking-wider mb-4" style={{ color: 'var(--text-muted)' }}>Counts Toward Package Limit</div>
+                <p className="font-body text-[13px] leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>
+                  These emails consume your package quota. Limits vary by plan.
+                </p>
+                <ul className="space-y-2 text-[12px]">
+                  {['Event Announcements', 'Event Reminders', 'Schedule Updates', 'Results Announcements', 'Organizer Broadcasts'].map(item => (
+                    <li key={item} className="flex items-start gap-2">
+                      <Check size={12} className="mt-0.5 shrink-0" style={{ color: 'var(--success-color)' }} />
+                      <span style={{ color: 'var(--text-primary)' }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-auto pt-4 space-y-1">
+                  <div className="flex justify-between text-[12px]">
+                    <span style={{ color: 'var(--text-muted)' }}>Organizer Pro</span>
+                    <span className="font-bold" style={{ color: 'var(--text-primary)' }}>50 Included</span>
+                  </div>
+                  <div className="flex justify-between text-[12px]">
+                    <span style={{ color: 'var(--text-muted)' }}>Growth Partner</span>
+                    <span className="font-bold" style={{ color: 'var(--text-primary)' }}>100 Included</span>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.15}>
+              <div className="rounded-xl p-8 h-full flex flex-col" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-subtle)' }}>
+                <div className="font-display text-[18px] uppercase text-blue-400 mb-2">Additional Credits</div>
+                <div className="font-body text-[12px] uppercase tracking-wider mb-4" style={{ color: 'var(--text-muted)' }}>Purchase When Needed</div>
+                <p className="font-body text-[13px] leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>
+                  Additional communication email credits can be purchased when required.
+                </p>
+                <p className="font-body text-[13px] leading-relaxed" style={{ color: 'var(--text-faint)' }}>
+                  Credit requests are reviewed and approved through the RallyVerse platform.
+                </p>
+              </div>
+            </AnimatedSection>
           </div>
         </section>
 
@@ -447,7 +556,7 @@ export default function ServicesClient() {
                 See RallyVerse In Action
               </h2>
               <p className="mt-4 max-w-lg mx-auto font-body text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                Explore the administrative software that coordinates matches, processes entries, and manages our active sports communities.
+                Explore the administrative software that processes registrations, verifies payments, tracks attendance, manages communication, and powers active sports communities.
               </p>
             </div>
           </AnimatedSection>
@@ -486,11 +595,12 @@ function MockupExplorer() {
   const [activeTab, setActiveTab] = useState(0)
 
   const tabs = [
-    { label: 'Event Admin Dashboard', desc: 'Registrations and approvals' },
-    { label: 'Registration Management', desc: 'Search, export, and status tools' },
+    { label: 'Registration Dashboard', desc: 'Registrations, approvals, and metrics' },
+    { label: 'Payment Verification', desc: 'UPI payments and screenshot review' },
+    { label: 'Attendance Check-In', desc: 'Event-day check-in and tracking' },
     { label: 'Participant Management', desc: 'Edit contact and category details' },
-    { label: 'Analytics', desc: 'Views, approvals, and email performance' },
-    { label: 'Email Communication', desc: 'Templates, preview, and logs' },
+    { label: 'Analytics', desc: 'Registration, attendance, and email insights' },
+    { label: 'Email Communication', desc: 'Automated emails and logs' },
   ]
 
   return (
@@ -537,11 +647,12 @@ function MockupExplorer() {
               <span className="w-3 h-3 rounded-full bg-green-500/80" />
             </div>
             <div className="font-body text-xs text-neutral-500 font-mono tracking-wider">
-              {activeTab === 0 && 'organizer-dash.rallyverse.social'}
-              {activeTab === 1 && 'registrations.rallyverse.social'}
-              {activeTab === 2 && 'participants.rallyverse.social'}
-              {activeTab === 3 && 'analytics.rallyverse.social'}
-              {activeTab === 4 && 'mail-system.rallyverse.social'}
+              {activeTab === 0 && 'dashboard.rallyverse.social'}
+              {activeTab === 1 && 'payments.rallyverse.social'}
+              {activeTab === 2 && 'check-in.rallyverse.social'}
+              {activeTab === 3 && 'participants.rallyverse.social'}
+              {activeTab === 4 && 'analytics.rallyverse.social'}
+              {activeTab === 5 && 'mail-system.rallyverse.social'}
             </div>
             <div className="w-12 h-2" />
           </div>
@@ -553,7 +664,7 @@ function MockupExplorer() {
                 <div className="flex justify-between items-center pb-4 border-b border-neutral-800">
                   <div>
                     <span className="text-neutral-500">SYSTEM:</span> <span className="text-green-500 font-bold">RALLY-SERIES-01</span>
-                    <h4 className="text-sm uppercase font-bold text-white mt-1">Organizer Dashboard</h4>
+                    <h4 className="text-sm uppercase font-bold text-white mt-1">Event Dashboard</h4>
                   </div>
                   <span className="px-2.5 py-1 text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 rounded-full font-bold">LIVE STATUS</span>
                 </div>
@@ -565,38 +676,38 @@ function MockupExplorer() {
                     <div className="text-lg font-bold text-white mt-1">154 / 160</div>
                   </div>
                   <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg">
-                    <span className="text-neutral-500 text-[10px] uppercase">Active Courts</span>
-                    <div className="text-lg font-bold text-white mt-1">8 Courts</div>
+                    <span className="text-neutral-500 text-[10px] uppercase">Payments Verified</span>
+                    <div className="text-lg font-bold text-white mt-1">142 / 154</div>
                   </div>
                   <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg">
-                    <span className="text-neutral-500 text-[10px] uppercase">Verification Rate</span>
-                    <div className="text-lg font-bold text-white mt-1">100%</div>
+                    <span className="text-neutral-500 text-[10px] uppercase">Checked In</span>
+                    <div className="text-lg font-bold text-white mt-1">98 / 154</div>
                   </div>
                 </div>
 
-                {/* Brackets preview */}
+                {/* Recent registrations */}
                 <div className="space-y-3">
-                  <div className="text-[10px] uppercase text-neutral-500 tracking-wider">Active Match Brackets (Men's Doubles)</div>
+                  <div className="text-[10px] uppercase text-neutral-500 tracking-wider">Recent Registrations</div>
                   
                   <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-between">
                     <div className="flex flex-col gap-1">
-                      <span className="text-white">Court 1: S. Kumar / A. Sharma</span>
-                      <span className="text-neutral-400">Court 1: M. Reddy / V. Rao</span>
+                      <span className="text-white">S. Kumar</span>
+                      <span className="text-neutral-400 text-[10px]">Men's Doubles</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-orange-500 font-bold">2nd Set (14-11)</span>
-                      <div className="text-[10px] text-neutral-500">1st Set: 21-18</div>
+                      <span className="text-green-500 font-bold text-[10px]">PAID &check;</span>
+                      <div className="text-[10px] text-neutral-500">Checked in</div>
                     </div>
                   </div>
 
                   <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-between">
                     <div className="flex flex-col gap-1">
-                      <span className="text-white">Court 2: N. Jain / R. Sharma</span>
-                      <span className="text-neutral-400">Court 2: D. Sen / K. Verma</span>
+                      <span className="text-white">N. Jain</span>
+                      <span className="text-neutral-400 text-[10px]">Mixed Doubles</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-yellow-500 font-bold">Warm-up</span>
-                      <div className="text-[10px] text-neutral-500">Scheduled: 11:30 AM</div>
+                      <span className="text-yellow-500 font-bold text-[10px]">PENDING</span>
+                      <div className="text-[10px] text-neutral-500">Awaiting verification</div>
                     </div>
                   </div>
                 </div>
@@ -607,45 +718,55 @@ function MockupExplorer() {
               <div className="space-y-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-center pb-4 border-b border-neutral-800">
                   <div>
-                    <span className="text-neutral-500">SETTINGS:</span> <span className="text-white">TICKET CONFIGURATION</span>
-                    <h4 className="text-sm uppercase font-bold text-white mt-1">Registration Settings</h4>
+                    <span className="text-neutral-500">PAYMENTS:</span> <span className="text-white">VERIFICATION QUEUE</span>
+                    <h4 className="text-sm uppercase font-bold text-white mt-1">Payment Verification</h4>
                   </div>
+                  <span className="px-2.5 py-1 text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-full font-bold">12 PENDING</span>
                 </div>
 
-                {/* Ticket pass layout */}
+                {/* Payment verification list */}
                 <div className="space-y-4">
-                  <div className="text-[10px] uppercase text-neutral-500 tracking-wider">Configured Pass Categories</div>
+                  <div className="text-[10px] uppercase text-neutral-500 tracking-wider">Pending Verifications</div>
                   
                   <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-lg flex flex-wrap justify-between items-center gap-4">
                     <div>
-                      <div className="text-white font-bold">Men's Doubles — Standard Entry</div>
-                      <div className="text-neutral-500 text-[10px] mt-1">Cap: 50 teams · Includes Custom Creatives</div>
+                      <div className="text-white font-bold">S. Kumar — Men's Doubles</div>
+                      <div className="text-neutral-500 text-[10px] mt-1">UPI Ref: rallysports@upi · ₹1,499</div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-white">₹1,499</span>
-                      <span className="px-2 py-0.5 text-[9px] bg-green-500/10 text-green-400 border border-green-500/20 rounded font-bold">48/50 SOLD</span>
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 text-[9px] bg-green-500/10 text-green-400 border border-green-500/20 rounded font-bold cursor-pointer">VERIFY</span>
+                      <span className="px-2 py-0.5 text-[9px] bg-red-500/10 text-red-400 border border-red-500/20 rounded font-bold cursor-pointer">REJECT</span>
                     </div>
                   </div>
 
                   <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-lg flex flex-wrap justify-between items-center gap-4">
                     <div>
-                      <div className="text-white font-bold">Mixed Doubles — Standard Entry</div>
-                      <div className="text-neutral-500 text-[10px] mt-1">Cap: 50 teams · Includes Custom Creatives</div>
+                      <div className="text-white font-bold">N. Jain — Mixed Doubles</div>
+                      <div className="text-neutral-500 text-[10px] mt-1">UPI Ref: njain@upi · ₹1,499</div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-white">₹1,499</span>
-                      <span className="px-2 py-0.5 text-[9px] bg-green-500/10 text-green-400 border border-green-500/20 rounded font-bold">32/50 SOLD</span>
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 text-[9px] bg-green-500/10 text-green-400 border border-green-500/20 rounded font-bold cursor-pointer">VERIFY</span>
+                      <span className="px-2 py-0.5 text-[9px] bg-red-500/10 text-red-400 border border-red-500/20 rounded font-bold cursor-pointer">REJECT</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-lg flex flex-wrap justify-between items-center gap-4">
+                    <div>
+                      <div className="text-white font-bold">R. Sharma — Men's Doubles</div>
+                      <div className="text-neutral-500 text-[10px] mt-1">UPI Ref: rsharma@upi · ₹1,499</div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 text-[9px] bg-green-500/10 text-green-400 border border-green-500/20 rounded font-bold cursor-pointer">VERIFY</span>
+                      <span className="px-2 py-0.5 text-[9px] bg-red-500/10 text-red-400 border border-red-500/20 rounded font-bold cursor-pointer">REJECT</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Discount Code */}
                 <div className="p-3 bg-neutral-900/50 border border-dashed border-neutral-800 rounded-lg flex justify-between items-center">
                   <div>
-                    <span className="text-orange-500 font-bold">RALLYSMASH</span>
-                    <span className="text-neutral-500 text-[10px] ml-2">(15% Promotional Discount)</span>
+                    <span className="text-neutral-400 text-[10px]">Screenshot uploaded for all pending</span>
                   </div>
-                  <div className="text-white font-bold">Used: 42 times</div>
+                  <div className="text-white font-bold text-[10px]">QR: UPI ID — rallysports@upi</div>
                 </div>
               </div>
             )}
@@ -654,7 +775,74 @@ function MockupExplorer() {
               <div className="space-y-4 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-center pb-4 border-b border-neutral-800">
                   <div>
-                    <span className="text-neutral-500">ROSTER:</span> <span className="text-white">LIVE ATHLETES REGISTRY</span>
+                    <span className="text-neutral-500">CHECK-IN:</span> <span className="text-white">EVENT DAY</span>
+                    <h4 className="text-sm uppercase font-bold text-white mt-1">Attendance Check-In</h4>
+                  </div>
+                  <span className="px-2 py-1 text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full font-bold">98 CHECKED IN</span>
+                </div>
+
+                {/* Check-in stats */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg">
+                    <span className="text-neutral-500 text-[10px] uppercase">Total Registered</span>
+                    <div className="text-lg font-bold text-white mt-1">154</div>
+                  </div>
+                  <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg">
+                    <span className="text-neutral-500 text-[10px] uppercase">Checked In</span>
+                    <div className="text-lg font-bold text-green-400 mt-1">98</div>
+                  </div>
+                  <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg">
+                    <span className="text-neutral-500 text-[10px] uppercase">Not Yet Arrived</span>
+                    <div className="text-lg font-bold text-yellow-400 mt-1">56</div>
+                  </div>
+                </div>
+
+                {/* Check-in roster */}
+                <div className="flex-1 overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-neutral-800 text-[10px] text-neutral-500">
+                        <th className="pb-2">PARTICIPANT</th>
+                        <th className="pb-2">CATEGORY</th>
+                        <th className="pb-2">PAYMENT</th>
+                        <th className="pb-2 text-right">CHECK-IN</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-neutral-900 text-neutral-300">
+                      <tr>
+                        <td className="py-2.5 font-bold text-white">S. Kumar</td>
+                        <td className="py-2.5 text-neutral-400">Men's Doubles</td>
+                        <td className="py-2.5"><span className="text-green-500 font-bold">● VERIFIED</span></td>
+                        <td className="py-2.5 text-right"><span className="px-2 py-0.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded text-[9px] font-bold">IN</span></td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 font-bold text-white">Nirmal Jain</td>
+                        <td className="py-2.5 text-neutral-400">Mixed Doubles</td>
+                        <td className="py-2.5"><span className="text-green-500 font-bold">● VERIFIED</span></td>
+                        <td className="py-2.5 text-right"><span className="px-2 py-0.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded text-[9px] font-bold">IN</span></td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 font-bold text-white">Rohan Sharma</td>
+                        <td className="py-2.5 text-neutral-400">Men's Doubles</td>
+                        <td className="py-2.5"><span className="text-green-500 font-bold">● VERIFIED</span></td>
+                        <td className="py-2.5 text-right"><span className="px-2 py-0.5 bg-neutral-800 text-neutral-500 border border-neutral-700/50 rounded text-[9px]">PENDING</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="text-[10px] text-neutral-500 flex justify-between">
+                  <span>Check-in opens: 07:00 AM</span>
+                  <span>Last check-in: 2 min ago</span>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 3 && (
+              <div className="space-y-4 flex-1 flex flex-col justify-between">
+                <div className="flex justify-between items-center pb-4 border-b border-neutral-800">
+                  <div>
+                    <span className="text-neutral-500">ROSTER:</span> <span className="text-white">PARTICIPANTS</span>
                     <h4 className="text-sm uppercase font-bold text-white mt-1">Participant Management</h4>
                   </div>
                   <div className="p-2 bg-neutral-900 border border-neutral-800 rounded flex items-center gap-2">
@@ -700,33 +888,38 @@ function MockupExplorer() {
                     </tbody>
                   </table>
                 </div>
+
+                <div className="flex justify-between text-[10px] text-neutral-500">
+                  <span>Export CSV available</span>
+                  <span>154 total participants</span>
+                </div>
               </div>
             )}
 
-            {activeTab === 3 && (
+            {activeTab === 4 && (
               <div className="space-y-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-center pb-4 border-b border-neutral-800">
                   <div>
-                    <span className="text-neutral-500">METRICS:</span> <span className="text-white">CONVERSIONS & REGISTRATIONS</span>
+                    <span className="text-neutral-500">METRICS:</span> <span className="text-white">INSIGHTS</span>
                     <h4 className="text-sm uppercase font-bold text-white mt-1">Analytics Dashboard</h4>
                   </div>
                 </div>
 
-                {/* Conversion metrics */}
+                {/* Key metrics */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-lg">
-                    <span className="text-neutral-500 text-[10px] uppercase">Event Revenue</span>
-                    <div className="text-xl font-bold text-white mt-1">₹1,19,920</div>
+                    <span className="text-neutral-500 text-[10px] uppercase">Registrations</span>
+                    <div className="text-xl font-bold text-white mt-1">154 / 160</div>
                   </div>
                   <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-lg">
-                    <span className="text-neutral-500 text-[10px] uppercase">Sign-up Velocity</span>
-                    <div className="text-xl font-bold text-white mt-1">8.2 / day</div>
+                    <span className="text-neutral-500 text-[10px] uppercase">Attendance Rate</span>
+                    <div className="text-xl font-bold text-white mt-1">63.6%</div>
                   </div>
                 </div>
 
-                {/* CSS progress chart */}
+                {/* Registration progress */}
                 <div className="space-y-2">
-                  <div className="text-[10px] uppercase text-neutral-500 tracking-wider">Registration Ramp-up Timeline</div>
+                  <div className="text-[10px] uppercase text-neutral-500 tracking-wider">Registration Fill Rate</div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-3">
                       <span className="w-12 text-[9px] text-neutral-500">WEEK 1</span>
@@ -752,47 +945,60 @@ function MockupExplorer() {
                   </div>
                 </div>
 
-                {/* Referral listing */}
+                {/* Source breakdown */}
                 <div className="text-[10px] text-neutral-500 flex justify-between font-mono">
-                  <span>Source: WhatsApp (64%)</span>
-                  <span>Instagram (22%)</span>
-                  <span>Direct/Organic (14%)</span>
+                  <span>Email Sent: 124</span>
+                  <span>Opened: 89 (71.7%)</span>
+                  <span>CSV Export Available</span>
                 </div>
               </div>
             )}
 
-            {activeTab === 4 && (
+            {activeTab === 5 && (
               <div className="space-y-4 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-center pb-3 border-b border-neutral-800">
                   <div>
-                    <span className="text-neutral-500">PREVIEW:</span> <span className="text-white">TRANSACTIONAL CONFIRMATION MAIL</span>
+                    <span className="text-neutral-500">MAIL SYSTEM:</span> <span className="text-white">COMMUNICATION LOG</span>
                     <h4 className="text-sm uppercase font-bold text-white mt-1">Email Communication</h4>
                   </div>
                   <span className="px-2 py-0.5 text-[9px] bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded font-bold font-mono">AUTO-TRIGGER</span>
                 </div>
 
-                {/* Mock email container */}
+                {/* Email types */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg text-center">
+                    <div className="text-green-400 font-bold text-lg">124</div>
+                    <div className="text-[9px] text-neutral-500">Registration Emails</div>
+                  </div>
+                  <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg text-center">
+                    <div className="text-green-400 font-bold text-lg">98</div>
+                    <div className="text-[9px] text-neutral-500">Approval Notifications</div>
+                  </div>
+                  <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg text-center">
+                    <div className="text-yellow-400 font-bold text-lg">3</div>
+                    <div className="text-[9px] text-neutral-500">Rejection Notifications</div>
+                  </div>
+                </div>
+
+                {/* Mock email preview */}
                 <div className="flex-1 p-4 bg-[#16161A] border border-neutral-800 rounded-lg flex flex-col gap-3 font-sans text-neutral-300">
                   <div className="text-[11px] font-mono space-y-1 pb-3 border-b border-neutral-800/60">
                     <div><span className="text-neutral-500">From:</span> RallyVerse &lt;registrations@rallyverse.social&gt;</div>
                     <div><span className="text-neutral-500">To:</span> player@email.com</div>
-                    <div><span className="text-neutral-500">Subject:</span> Rally Series 01 — Registration Confirmed! 🏸</div>
+                    <div><span className="text-neutral-500">Subject:</span> Rally Series 01 — Registration Confirmed</div>
                   </div>
 
                   <div className="text-[12px] space-y-3 font-sans leading-relaxed">
                     <p className="font-bold text-white">Hi Player,</p>
                     <p>
-                      Your registration and payment for <strong className="text-orange-400">Rally Series 01 — Bengaluru Badminton</strong> has been successfully approved and verified!
+                      Your registration and payment for <strong className="text-orange-400">Rally Series 01</strong> has been approved and verified.
                     </p>
                     <div className="p-3 bg-neutral-900 border border-neutral-800 rounded font-mono text-[11px] space-y-1">
-                      <div>Event: Rally Series 01 — Badminton</div>
-                      <div>Venue: A2V Badminton Academy, Bengaluru</div>
+                      <div>Event: Rally Series 01 — Bengaluru</div>
+                      <div>Venue: Sports Arena, Bengaluru</div>
                       <div>Date & Time: 5 July 2026, 11:00 AM</div>
                       <div className="text-green-400">Pass Code: RV-8951-XM</div>
                     </div>
-                    <p className="text-[11px] text-neutral-500">
-                      Show your Pass Code at the check-in desk on game day. Brackets will be updated live.
-                    </p>
                   </div>
                 </div>
               </div>

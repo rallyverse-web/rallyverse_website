@@ -23,16 +23,16 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://rallyverse.social'),
   title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-  description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, communication, analytics, and sports marketing.',
+  description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
   twitter: {
     card: 'summary_large_image',
     title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, communication, analytics, and sports marketing.',
+    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
     images: ['/og'],
   },
   openGraph: {
     title: 'RallyVerse — Rallying Communities Through Sports | Sports Growth Partner',
-    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, communication, analytics, and sports marketing.',
+    description: 'RallyVerse is a sports growth partner that helps sports communities, organizers, academies, and brands grow through registration infrastructure, payment management, attendance tracking, communication, analytics, and community building.',
     url: 'https://rallyverse.social',
     siteName: 'RallyVerse',
     locale: 'en_IN',

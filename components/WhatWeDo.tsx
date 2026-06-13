@@ -12,7 +12,7 @@ const services = [
   {
     icon: Trophy,
     title: 'Event Infrastructure',
-    desc: 'Power event pages, registration flows, participant management, and communication with RallyVerse infrastructure.',
+    desc: 'Power event pages, registration flows, payment management, attendance check-in, time slot registrations, and participant communication with RallyVerse infrastructure.',
   },
   {
     icon: Megaphone,

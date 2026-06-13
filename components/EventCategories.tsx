@@ -1,18 +1,33 @@
 'use client'
 
-import { CreditCard, LayoutDashboard, Users, Mail, BarChart3, ShieldCheck } from 'lucide-react'
+import { CreditCard, LayoutDashboard, Users, Mail, BarChart3, ShieldCheck, UserCheck, Clock } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 
 const infrastructureFeatures = [
   {
     icon: CreditCard,
     name: 'Registration Management',
-    desc: 'Manage registrations, approvals, and participant data from one centralized dashboard.',
+    desc: 'Online registrations, approval workflows, participant management, and editing from one dashboard.',
+  },
+  {
+    icon: ShieldCheck,
+    name: 'Payment Management',
+    desc: 'UPI payments, QR code payments, payment verification workflow, and payment screenshot verification.',
+  },
+  {
+    icon: UserCheck,
+    name: 'Attendance Tracking',
+    desc: 'Event-day participant check-in, attendance tracking, and arrival monitoring.',
+  },
+  {
+    icon: Clock,
+    name: 'Time Slot Registrations',
+    desc: 'Slot-based registrations with controlled participant allocation.',
   },
   {
     icon: LayoutDashboard,
     name: 'Organizer Dashboard',
-    desc: 'Configure event pages, approvals, communication, and visibility from one place.',
+    desc: 'Configure event pages, manage registrations, oversee communication, and control visibility.',
   },
   {
     icon: Users,
@@ -22,17 +37,12 @@ const infrastructureFeatures = [
   {
     icon: Mail,
     name: 'Email Communication',
-    desc: 'Automated custom-branded confirmations, updates, and participant communication.',
+    desc: 'Automated registration emails, approval notifications, rejection notifications, and organizer communication tools.',
   },
   {
     icon: BarChart3,
     name: 'Event Analytics',
-    desc: 'Track registration pacing, approvals, communication, revenue, and engagement trends.',
-  },
-  {
-    icon: ShieldCheck,
-    name: 'Registration Approvals',
-    desc: 'Review, approve, reject, and manage participant registrations from a centralized dashboard.',
+    desc: 'Registration insights, attendance insights, communication analytics, and CSV exports.',
   },
 ]
 

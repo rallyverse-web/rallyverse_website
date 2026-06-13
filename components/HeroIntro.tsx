@@ -116,7 +116,7 @@ export default function HeroIntro() {
               />
             </div>
             <p className="font-body text-sm md:text-base mt-4 max-w-2xl leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              RallyVerse helps sports organizers, communities, academies, and brands grow through registration infrastructure, community building, communication, and sports marketing.
+              RallyVerse helps sports organizers, communities, academies, and brands grow through registration infrastructure, payment management, attendance tracking, communication, and community building.
             </p>
           </div>
         </motion.div>

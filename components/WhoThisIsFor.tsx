@@ -13,12 +13,12 @@ const differentiators = [
   {
     icon: Trophy,
     title: 'We Build Event Infrastructure',
-    desc: "From registration flows to approval tools, we build the systems that keep tournaments, leagues, and sports events moving.",
+    desc: "From registration flows and payment verification to attendance tracking and communication tools, we build the systems that keep tournaments, leagues, and sports events moving.",
   },
   {
     icon: Cpu,
     title: 'We Built Our Own Infrastructure',
-    desc: "We designed and built our own registration, admin dashboard, and participant management system from the ground up.",
+    desc: "We designed and built our own registration, payment verification, attendance tracking, email communication, and participant management system from the ground up.",
   },
   {
     icon: HeartHandshake,

@@ -28,7 +28,7 @@ const targets = [
   {
     icon: CalendarDays,
     title: 'Event Organizers',
-    desc: 'Registrations, promotions, and organizer tools.',
+    desc: 'Registrations, payment verification, attendance tracking, promotions, and organizer tools.',
   },
   {
     icon: Briefcase,
@@ -46,7 +46,7 @@ const differentiators = [
   {
     icon: Cpu,
     title: 'Event Infrastructure',
-    desc: 'Bespoke registration infrastructure, email automations, and administrative dashboards.',
+    desc: 'Bespoke registration infrastructure, payment management, attendance check-in, email automations, and administrative dashboards.',
   },
   {
     icon: Activity,
