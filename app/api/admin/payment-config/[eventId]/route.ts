@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { upsertPaymentConfig, getPaymentConfig } from '@/lib/repositories/payment-config'
+import { requireAdmin } from '@/lib/auth'
 
-function authorize(req: NextRequest) {
-  const auth = req.headers.get('authorization')
-  const token = auth?.replace('Bearer ', '')
-  return token === process.env.ADMIN_PASSWORD
+async function authorize(req: NextRequest) {
+  const admin = await requireAdmin()
+  return admin !== null
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
-  if (!authorize(req)) {
+  if (!await authorize(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ even
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
-  if (!authorize(req)) {
+  if (!await authorize(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {

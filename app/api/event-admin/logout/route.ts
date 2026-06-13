@@ -1,13 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { createAuthClientFromRequest } from '@/lib/auth'
 
-export async function POST() {
-  const response = NextResponse.json({ success: true })
-  response.cookies.set('event_admin_token', '', {
-    httpOnly: true,
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 0,
-  })
-  return response
+export async function POST(req: NextRequest) {
+  const supabase = createAuthClientFromRequest(req)
+  await supabase.auth.signOut()
+  return NextResponse.json({ success: true })
 }

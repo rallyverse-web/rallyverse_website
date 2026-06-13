@@ -1,8 +1,8 @@
 'use client'
 
 import { AdminAuthProvider, useAdminAuth } from './AdminAuthContext'
-import { useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import Link from 'next/link'
 import {
   ShieldAlert,
@@ -18,35 +18,6 @@ import {
   Briefcase
 } from 'lucide-react'
 
-// Styles
-const s = {
-  input: {
-    width: '100%',
-    height: 48,
-    padding: '0 16px',
-    borderRadius: 8,
-    border: '1px solid #222',
-    background: '#111',
-    color: '#fff',
-    fontSize: 14,
-    outline: 'none',
-    transition: 'border-color 0.2s',
-  } as React.CSSProperties,
-  btn: {
-    height: 44,
-    padding: '0 24px',
-    borderRadius: 8,
-    border: 'none',
-    background: 'var(--rallyverse-gradient)',
-    color: '#000',
-    fontSize: 14,
-    fontWeight: 700,
-    cursor: 'pointer',
-    transition: 'opacity 0.2s',
-  } as React.CSSProperties,
-  btnDisabled: (b: React.CSSProperties) => ({ ...b, opacity: 0.6, cursor: 'not-allowed' }) as React.CSSProperties,
-}
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <AdminAuthProvider>
@@ -56,24 +27,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 }
 
 function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
-  const { token, setToken, loading } = useAdminAuth()
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, loading, logout } = useAdminAuth()
   const pathname = usePathname()
+  const router = useRouter()
+  const isLoginPage = pathname === '/admin/login'
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    if (password.trim() === '') {
-      setError('Password cannot be empty')
-      return
+  useEffect(() => {
+    if (!loading && !user && !isLoginPage) {
+      router.push('/admin/login')
     }
-    // Set the token
-    setToken(password)
-  }
+  }, [loading, user, isLoginPage, router])
 
-  // Handle Loading State
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050505' }}>
@@ -82,33 +46,11 @@ function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // Handle Login State
-  if (!token) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050505', padding: 24 }}>
-        <form onSubmit={handleLogin} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <ShieldAlert size={48} style={{ color: 'var(--accent-primary)', margin: '0 auto 16px' }} />
-            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 28, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Founder Control Panel
-            </h1>
-            <p style={{ color: '#666', fontSize: 13, marginTop: 6 }}>Authenticate using the system admin password</p>
-          </div>
-          <input
-            type="password"
-            placeholder="Enter admin password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={s.input}
-            autoFocus
-          />
-          {error && <p style={{ color: '#ff4444', fontSize: 13, margin: 0 }}>{error}</p>}
-          <button type="submit" style={password ? s.btn : s.btnDisabled(s.btn)} disabled={!password}>
-            Sign In
-          </button>
-        </form>
-      </div>
-    )
+  if (!user) {
+    if (isLoginPage) {
+      return <>{children}</>
+    }
+    return null
   }
 
   // Navigation Items
@@ -128,9 +70,14 @@ function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
     return pathname.startsWith(href)
   }
 
+  const handleSignOut = async () => {
+    await logout()
+    router.push('/admin/login')
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#050505', color: '#fff' }}>
-      
+
       {/* Sticky Header Navbar */}
       <header
         style={{
@@ -149,7 +96,6 @@ function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
           padding: '0 24px',
         }}
       >
-        {/* Brand/Logo */}
         <Link href="/admin" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'inherit' }}>
           <ShieldAlert size={20} style={{ color: 'var(--accent-primary)' }} />
           <span style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 20, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
@@ -157,7 +103,6 @@ function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
           </span>
         </Link>
 
-        {/* Desktop Navigation Links */}
         <nav style={{ alignItems: 'center', gap: 8 }} className="hidden md:flex">
           {navItems.map((item) => {
             const active = isActive(item.href)
@@ -199,13 +144,15 @@ function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        {/* Header Right Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          {user?.email && (
+            <span style={{ color: '#888', fontSize: 12 }} className="hidden sm:inline">
+              {user.email}
+            </span>
+          )}
           <button
-            onClick={() => {
-              setToken('')
-              setMobileMenuOpen(false)
-            }}
+            onClick={handleSignOut}
+            className="hidden sm:flex"
             style={{
               alignItems: 'center',
               gap: 6,
@@ -230,15 +177,14 @@ function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
               e.currentTarget.style.borderColor = '#222'
               e.currentTarget.style.background = 'transparent'
             }}
-            className="hidden sm:flex"
           >
             <LogOut size={14} />
             Sign Out
           </button>
 
-          {/* Mobile Menu Toggle */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {}}
+            className="md:hidden"
             style={{
               background: 'none',
               border: 'none',
@@ -246,93 +192,16 @@ function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
               cursor: 'pointer',
               padding: 4,
             }}
-            className="md:hidden"
             aria-label="Toggle Navigation Menu"
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            <Menu size={24} />
           </button>
         </div>
       </header>
 
-      {/* Mobile Drawer Navigation Menu */}
-      {mobileMenuOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 64,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: '#0d0d0d',
-            borderTop: '1px solid #1a1a1a',
-            zIndex: 35,
-            padding: '24px 16px',
-            flexDirection: 'column',
-            gap: 16,
-          }}
-          className="flex md:hidden"
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {navItems.map((item) => {
-              const active = isActive(item.href)
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    padding: '14px 16px',
-                    borderRadius: 8,
-                    fontSize: 15,
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    color: active ? '#fff' : '#888',
-                    background: active ? '#1a1a1a' : 'transparent',
-                    border: active ? '1px solid #222' : '1px solid transparent',
-                  }}
-                >
-                  {item.icon}
-                  {item.label}
-                </Link>
-              )
-            })}
-          </div>
-          <div style={{ marginTop: 'auto', paddingTop: 24, borderTop: '1px solid #1a1a1a' }}>
-            <button
-              onClick={() => {
-                setToken('')
-                setMobileMenuOpen(false)
-              }}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                height: 48,
-                borderRadius: 8,
-                border: '1px solid rgba(255, 68, 68, 0.3)',
-                background: 'rgba(255, 68, 68, 0.05)',
-                color: '#ff4444',
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              <LogOut size={16} />
-              Sign Out
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Main Page Content Wrapper Container */}
       <main
         style={{
-          paddingTop: 96, // 64px header + 32px spacing
+          paddingTop: 96,
           paddingBottom: 40,
           paddingLeft: 24,
           paddingRight: 24,

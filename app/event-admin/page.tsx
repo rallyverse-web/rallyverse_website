@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { Shield, Loader2 } from 'lucide-react'
 
 export default function EventAdminLoginPage() {
-  const [token, setToken] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -18,10 +19,11 @@ export default function EventAdminLoginPage() {
       const res = await fetch('/api/event-admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: token.trim() }),
+        body: JSON.stringify({ email: email.trim(), password }),
       })
-      if (res.status === 401) {
-        setError('Invalid access token')
+      if (res.status === 401 || res.status === 403) {
+        const data = await res.json()
+        setError(data.error || 'Invalid credentials')
         return
       }
       if (!res.ok) {
@@ -47,21 +49,30 @@ export default function EventAdminLoginPage() {
         <div style={{ textAlign: 'center', marginBottom: 8 }}>
           <Shield size={40} style={{ color: '#4ade80', margin: '0 auto 12px' }} />
           <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Event Admin</h1>
-          <p style={{ color: '#888', fontSize: 13, marginTop: 4 }}>Enter your access token to manage registrations.</p>
+          <p style={{ color: '#888', fontSize: 13, marginTop: 4 }}>Sign in with your credentials to manage registrations.</p>
         </div>
         <input
-          type="text"
-          placeholder="Paste your access token"
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           style={s.input}
           autoFocus
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={s.input}
+          required
         />
         {error && <p style={{ color: '#ff4444', fontSize: 13 }}>{error}</p>}
-        <button type="submit" disabled={loading || !token.trim()} style={{ ...s.btn, ...((loading || !token.trim()) ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
-          {loading ? <><Loader2 size={16} className="animate-spin" style={{ marginRight: 6, verticalAlign: 'middle' }} />Verifying...</> : 'Sign In'}
+        <button type="submit" disabled={loading || !email.trim() || !password} style={{ ...s.btn, ...((loading || !email.trim() || !password) ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+          {loading ? <><Loader2 size={16} className="animate-spin" style={{ marginRight: 6, verticalAlign: 'middle' }} />Signing in...</> : 'Sign In'}
         </button>
-        <a href="/admin" style={{ color: '#555', fontSize: 12, textAlign: 'center', textDecoration: 'none', marginTop: 8 }}>Founder? Sign in here &rarr;</a>
+        <a href="/admin/login" style={{ color: '#555', fontSize: 12, textAlign: 'center', textDecoration: 'none', marginTop: 8 }}>Founder? Sign in here &rarr;</a>
       </form>
     </div>
   )

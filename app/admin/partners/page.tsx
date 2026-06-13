@@ -206,7 +206,7 @@ interface PartnerEnquiry {
 }
 
 export default function AdminPartnersCRMPage() {
-  const { token, logout } = useAdminAuth()
+  const { user, logout } = useAdminAuth()
   const [loading, setLoading] = useState(false)
   const [enquiries, setEnquiries] = useState<PartnerEnquiry[]>([])
   const [metrics, setMetrics] = useState({
@@ -220,7 +220,6 @@ export default function AdminPartnersCRMPage() {
     conversion_rate: 0,
   })
 
-  // Filter States
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('')
   const [filterOrgType, setFilterOrgType] = useState('')
@@ -229,13 +228,11 @@ export default function AdminPartnersCRMPage() {
   const [filterDateEnd, setFilterDateEnd] = useState('')
   const [showDeleted, setShowDeleted] = useState(false)
 
-  // Modal States
   const [selectedEnquiry, setSelectedEnquiry] = useState<PartnerEnquiry | null>(null)
   const [editingEnquiry, setEditingEnquiry] = useState<PartnerEnquiry | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
-  // Internal Notes Sub-States (inside Detail View)
   const [newNoteText, setNewNoteText] = useState('')
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
   const [editingNoteText, setEditingNoteText] = useState('')
@@ -245,14 +242,8 @@ export default function AdminPartnersCRMPage() {
     setTimeout(() => setNotification(null), 5000)
   }
 
-  const authHeaders = useCallback(() => ({
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  }), [token])
-
-  // Fetch enquiries with active filters
   const fetchData = useCallback(async () => {
-    if (!token) return
+    if (!user) return
     setLoading(true)
     try {
       const params = new URLSearchParams()
@@ -264,9 +255,7 @@ export default function AdminPartnersCRMPage() {
       if (filterDateEnd) params.append('date_end', filterDateEnd)
       if (showDeleted) params.append('show_deleted', 'true')
 
-      const res = await fetch(`/api/admin/partner-enquiries?${params.toString()}`, {
-        headers: authHeaders(),
-      })
+      const res = await fetch(`/api/admin/partner-enquiries?${params.toString()}`)
 
       if (res.status === 401) {
         logout()
@@ -286,11 +275,11 @@ export default function AdminPartnersCRMPage() {
     } finally {
       setLoading(false)
     }
-  }, [authHeaders, logout, token, search, filterStatus, filterOrgType, filterService, filterDateStart, filterDateEnd, showDeleted])
+  }, [logout, user, search, filterStatus, filterOrgType, filterService, filterDateStart, filterDateEnd, showDeleted])
 
   useEffect(() => {
-    if (token) fetchData()
-  }, [token, fetchData])
+    if (user) fetchData()
+  }, [user, fetchData])
 
   // Keyboard accessibility
   useEffect(() => {
@@ -322,7 +311,6 @@ export default function AdminPartnersCRMPage() {
     try {
       const res = await fetch('/api/admin/partner-enquiries', {
         method: 'PUT',
-        headers: authHeaders(),
         body: JSON.stringify({ id, is_deleted: !currentDeletedState }),
       })
 
@@ -347,7 +335,6 @@ export default function AdminPartnersCRMPage() {
     try {
       const res = await fetch('/api/admin/partner-enquiries', {
         method: 'PUT',
-        headers: authHeaders(),
         body: JSON.stringify({ id, status: newStatus }),
       })
 
@@ -371,7 +358,6 @@ export default function AdminPartnersCRMPage() {
     try {
       const res = await fetch('/api/admin/partner-enquiries', {
         method: 'PUT',
-        headers: authHeaders(),
         body: JSON.stringify({
           id: editingEnquiry.id,
           name: editingEnquiry.name,
@@ -415,7 +401,6 @@ export default function AdminPartnersCRMPage() {
     try {
       const res = await fetch('/api/admin/partner-enquiries', {
         method: 'PUT',
-        headers: authHeaders(),
         body: JSON.stringify({
           id: selectedEnquiry.id,
           internal_notes: updatedNotesList,
@@ -454,7 +439,6 @@ export default function AdminPartnersCRMPage() {
     try {
       const res = await fetch('/api/admin/partner-enquiries', {
         method: 'PUT',
-        headers: authHeaders(),
         body: JSON.stringify({
           id: selectedEnquiry.id,
           internal_notes: updatedNotesList,
@@ -486,7 +470,6 @@ export default function AdminPartnersCRMPage() {
     try {
       const res = await fetch('/api/admin/partner-enquiries', {
         method: 'PUT',
-        headers: authHeaders(),
         body: JSON.stringify({
           id: selectedEnquiry.id,
           internal_notes: updatedNotesList,

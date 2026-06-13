@@ -1,52 +1,44 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
+import { getSupabaseClient } from '@/lib/supabase/client'
+import type { User } from '@supabase/supabase-js'
 
 type AdminAuthContextType = {
-  token: string
-  setToken: (token: string) => void
+  user: User | null
   loading: boolean
-  logout: () => void
+  logout: () => Promise<void>
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined)
 
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setTokenState] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(true)
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('rallyverse-admin-token')
-      if (saved) {
-        setTokenState(saved)
-      }
-    } catch (e) {
-      console.error('Failed to load admin token', e)
-    } finally {
+    const supabase = getSupabaseClient()
+
+    const init = async () => {
+      const { data } = await supabase.auth.getSession()
+      setUser(data.session?.user ?? null)
       setLoading(false)
     }
+    init()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session: { user: User } | null) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
-  const setToken = (newToken: string) => {
-    setTokenState(newToken)
-    try {
-      if (newToken) {
-        localStorage.setItem('rallyverse-admin-token', newToken)
-      } else {
-        localStorage.removeItem('rallyverse-admin-token')
-      }
-    } catch (e) {
-      console.error('Failed to save admin token', e)
-    }
-  }
-
-  const logout = () => {
-    setToken('')
+  const logout = async () => {
+    await getSupabaseClient().auth.signOut()
   }
 
   return (
-    <AdminAuthContext.Provider value={{ token, setToken, loading, logout }}>
+    <AdminAuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AdminAuthContext.Provider>
   )

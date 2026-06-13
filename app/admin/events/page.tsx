@@ -58,7 +58,7 @@ function MetricCard({ icon, label, value, color }: { icon: React.ReactNode; labe
 }
 
 export default function AdminEventsPage() {
-  const { token, logout } = useAdminAuth()
+  const { user, logout } = useAdminAuth()
 
   const [events, setEvents] = useState<EventWithFormats[]>([])
   const [metrics, setMetrics] = useState<AdminEventMetrics | null>(null)
@@ -74,29 +74,24 @@ export default function AdminEventsPage() {
   const [showBackfillConfirm, setShowBackfillConfirm] = useState(false)
   const [backfilling, setBackfilling] = useState(false)
 
-  /* Poster Upload */
   const [uploadingPoster, setUploadingPoster] = useState(false)
   const posterInputRef = useRef<HTMLInputElement>(null)
 
-  /* QR Upload */
   const [uploadingQR, setUploadingQR] = useState(false)
   const qrInputRef = useRef<HTMLInputElement>(null)
   const [uploadingFormQR, setUploadingFormQR] = useState(false)
   const formQrInputRef = useRef<HTMLInputElement>(null)
 
-  /* Payment Config */
   const [paymentConfigTarget, setPaymentConfigTarget] = useState<string | null>(null)
   const [paymentConfig, setPaymentConfig] = useState<EventPaymentConfigFormData>({
     upi_id: '', account_holder_name: '', mobile_number: '', whatsapp_number: '', qr_code_url: '', payment_enabled: false, transaction_ref_required: true,
   })
   const [savingPayment, setSavingPayment] = useState(false)
 
-  /* Form-level payment config (for inline fields in create/edit modal) */
   const [formPaymentConfig, setFormPaymentConfig] = useState<Partial<EventPaymentConfigFormData>>({
     upi_id: '', qr_code_url: '', transaction_ref_required: true,
   })
 
-  /* Event Admins */
   const [adminTarget, setAdminTarget] = useState<string | null>(null)
   const [eventAdmins, setEventAdmins] = useState<EventAdmin[]>([])
   const [createdAdminToken, setCreatedAdminToken] = useState<string | null>(null)
@@ -114,13 +109,11 @@ export default function AdminEventsPage() {
     setTimeout(() => setNotification(null), 5000)
   }
 
-  const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
-
   const fetchEvents = useCallback(async () => {
-    if (!token) return
+    if (!user) return
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/events', { headers: authHeaders() })
+      const res = await fetch('/api/admin/events')
       if (res.status === 401) { logout(); return }
       if (!res.ok) { notify('error', 'Failed to load events'); return }
       const data = await res.json()
@@ -128,9 +121,9 @@ export default function AdminEventsPage() {
       setMetrics(data.metrics || null)
     } catch { notify('error', 'Failed to connect to server') }
     finally { setLoading(false) }
-  }, [authHeaders, logout, token])
+  }, [logout, user])
 
-  useEffect(() => { if (token) fetchEvents() }, [token, fetchEvents])
+  useEffect(() => { if (user) fetchEvents() }, [user, fetchEvents])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -179,7 +172,7 @@ export default function AdminEventsPage() {
     })
     // Load existing payment config for this event
     try {
-      const res = await fetch(`/api/admin/payment-config/${event.id}`, { headers: authHeaders() })
+      const res = await fetch(`/api/admin/payment-config/${event.id}`)
       if (res.ok) {
         const data = await res.json()
         if (data.config) {
@@ -200,7 +193,7 @@ export default function AdminEventsPage() {
 
   const fetchPaymentConfig = async (eventId: string) => {
     try {
-      const res = await fetch(`/api/admin/payment-config/${eventId}`, { headers: authHeaders() })
+      const res = await fetch(`/api/admin/payment-config/${eventId}`)
       if (res.ok) {
         const data = await res.json()
         if (data.config) {
@@ -226,7 +219,6 @@ export default function AdminEventsPage() {
     try {
       const res = await fetch(`/api/admin/payment-config/${paymentConfigTarget}`, {
         method: 'PUT',
-        headers: authHeaders(),
         body: JSON.stringify(paymentConfig),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to save'); return }
@@ -239,7 +231,7 @@ export default function AdminEventsPage() {
   const fetchAdmins = async (eventId: string) => {
     setLoadingAdmins(true)
     try {
-      const res = await fetch(`/api/admin/event-admins/${eventId}`, { headers: authHeaders() })
+      const res = await fetch(`/api/admin/event-admins/${eventId}`)
       if (res.ok) {
         const data = await res.json()
         setEventAdmins(data.admins || [])
@@ -254,7 +246,6 @@ export default function AdminEventsPage() {
     try {
       const res = await fetch(`/api/admin/event-admins/${adminTarget}`, {
         method: 'POST',
-        headers: authHeaders(),
         body: JSON.stringify({ name: newAdminName, email: newAdminEmail }),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to add admin'); return }
@@ -273,7 +264,6 @@ export default function AdminEventsPage() {
     try {
       const res = await fetch(`/api/admin/event-admins/${adminTarget}?adminId=${adminId}`, {
         method: 'DELETE',
-        headers: authHeaders(),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to remove'); return }
       setEventAdmins(prev => prev.filter(a => a.id !== adminId))
@@ -286,7 +276,7 @@ export default function AdminEventsPage() {
     if (visibleToken[adminId]) { setVisibleToken(prev => ({ ...prev, [adminId]: null })); return }
     setTokenLoading(prev => ({ ...prev, [adminId]: true }))
     try {
-      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}`, { headers: authHeaders() })
+      const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}`)
       if (res.ok) { const data = await res.json(); setVisibleToken(prev => ({ ...prev, [adminId]: data.admin.access_token })) }
       else { notify('error', 'Failed to fetch token') }
     } catch { notify('error', 'Failed to fetch token') }
@@ -296,7 +286,7 @@ export default function AdminEventsPage() {
   const handleRegenToken = async (adminId: string) => {
     try {
       const res = await fetch(`/api/admin/event-admins/${adminTarget}/${adminId}/regenerate`, {
-        method: 'POST', headers: authHeaders(),
+        method: 'POST',
       })
       if (res.ok) { const data = await res.json(); setVisibleToken(prev => ({ ...prev, [adminId]: data.access_token })); setConfirmRegen(null); notify('success', 'Token regenerated') }
       else { const d = await res.json(); notify('error', d.error || 'Failed to regenerate') }
@@ -317,8 +307,7 @@ export default function AdminEventsPage() {
       if (editingId) {
         const res = await fetch('/api/admin/events', {
           method: 'PUT',
-          headers: authHeaders(),
-          body: JSON.stringify({ id: editingId, ...formData }),
+            body: JSON.stringify({ id: editingId, ...formData }),
         })
         if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Update failed'); return }
         notify('success', 'Event updated successfully')
@@ -326,16 +315,14 @@ export default function AdminEventsPage() {
         if (formData.payment_enabled) {
           const payRes = await fetch(`/api/admin/payment-config/${editingId}`, {
             method: 'PUT',
-            headers: authHeaders(),
-            body: JSON.stringify(formPaymentConfig),
+                body: JSON.stringify(formPaymentConfig),
           })
           if (!payRes.ok) { const d = await payRes.json(); notify('error', 'Payment config: ' + (d.error || 'save failed')); return }
         }
       } else {
         const res = await fetch('/api/admin/events', {
           method: 'POST',
-          headers: authHeaders(),
-          body: JSON.stringify(formData),
+            body: JSON.stringify(formData),
         })
         if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Create failed'); return }
         const data = await res.json()
@@ -344,8 +331,7 @@ export default function AdminEventsPage() {
         if (formData.payment_enabled && data.event?.id) {
           const payRes = await fetch(`/api/admin/payment-config/${data.event.id}`, {
             method: 'PUT',
-            headers: authHeaders(),
-            body: JSON.stringify(formPaymentConfig),
+                body: JSON.stringify(formPaymentConfig),
           })
           if (!payRes.ok) { const d = await payRes.json(); notify('error', 'Payment config: ' + (d.error || 'save failed')); return }
         }
@@ -360,7 +346,6 @@ export default function AdminEventsPage() {
     try {
       const res = await fetch(`/api/admin/events?id=${id}`, {
         method: 'DELETE',
-        headers: authHeaders(),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Delete failed'); return }
       notify('success', 'Event deleted')
@@ -373,7 +358,6 @@ export default function AdminEventsPage() {
     try {
       const res = await fetch('/api/admin/events', {
         method: 'PATCH',
-        headers: authHeaders(),
         body: JSON.stringify({ id, action: 'publish' }),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Publish failed'); return }
@@ -391,7 +375,6 @@ export default function AdminEventsPage() {
       body.append('folder', 'posters')
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
-        headers: authHeaders(),
         body,
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Upload failed'); return }
@@ -418,7 +401,6 @@ export default function AdminEventsPage() {
       body.append('folder', 'qr-codes')
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
-        headers: authHeaders(),
         body,
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Upload failed'); return }
@@ -445,7 +427,6 @@ export default function AdminEventsPage() {
       body.append('folder', 'qr-codes')
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
-        headers: authHeaders(),
         body,
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Upload failed'); return }
@@ -468,7 +449,7 @@ export default function AdminEventsPage() {
     setShowBackfillConfirm(false)
     try {
       const res = await fetch('/api/admin/seed-defaults', {
-        method: 'POST', headers: authHeaders(),
+        method: 'POST',
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Backfill failed'); return }
       const data = await res.json()

@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/auth'
 
 // Authorize admin request
-function authorize(req: NextRequest) {
-  const auth = req.headers.get('authorization')
-  const token = auth?.replace('Bearer ', '')
-  return token === process.env.ADMIN_PASSWORD
+async function authorize(req: NextRequest) {
+  const admin = await requireAdmin()
+  return admin !== null
 }
 
 // GET: List partner enquiries with filters & metrics
 export async function GET(req: NextRequest) {
-  if (!authorize(req)) {
+  if (!await authorize(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -106,7 +106,7 @@ export async function GET(req: NextRequest) {
 
 // PUT: Update partner enquiry details / status / notes / is_deleted
 export async function PUT(req: NextRequest) {
-  if (!authorize(req)) {
+  if (!await authorize(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

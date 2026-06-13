@@ -34,7 +34,7 @@ type Tab = 'templates' | 'test-email' | 'send-email' | 'logs'
 
 export default function AdminCommunicationPage() {
   const router = useRouter()
-  const { token, logout } = useAdminAuth()
+  const { user, logout } = useAdminAuth()
   const [activeTab, setActiveTab] = useState<Tab>('templates')
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [events, setEvents] = useState<Array<{ id: string; name: string }>>([])
@@ -44,19 +44,19 @@ export default function AdminCommunicationPage() {
     setTimeout(() => setNotification(null), 5000)
   }
 
-  const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
+
 
   // ─── Events ───
   const fetchEvents = useCallback(async () => {
-    if (!token) return
+    if (!user) return
     try {
-      const res = await fetch('/api/admin/events', { headers: authHeaders() })
+      const res = await fetch('/api/admin/events')
       if (res.status === 401) { logout(); return }
       if (res.ok) { const d = await res.json(); setEvents(d.events || []) }
     } catch {}
-  }, [authHeaders, logout, token])
+  }, [logout, user])
 
-  useEffect(() => { if (token) fetchEvents() }, [token, fetchEvents])
+  useEffect(() => { if (user) fetchEvents() }, [user, fetchEvents])
 
   // ─── Templates ───
   const [templates, setTemplates] = useState<EmailTemplate[]>([])
@@ -72,18 +72,18 @@ export default function AdminCommunicationPage() {
   const fetchTemplates = useCallback(async () => {
     if (!selectedEventId) return
     try {
-      const res = await fetch(`/api/admin/email-templates/${selectedEventId}`, { headers: authHeaders() })
+      const res = await fetch(`/api/admin/email-templates/${selectedEventId}`)
       if (res.ok) { const d = await res.json(); setTemplates(d.templates || []) }
     } catch {}
-  }, [selectedEventId, authHeaders])
+  }, [selectedEventId])
 
   const fetchSettings = useCallback(async () => {
     if (!selectedEventId) return
     try {
-      const res = await fetch(`/api/admin/email-settings/${selectedEventId}`, { headers: authHeaders() })
+      const res = await fetch(`/api/admin/email-settings/${selectedEventId}`)
       if (res.ok) { const d = await res.json(); setSettings(d.settings || null) }
     } catch {}
-  }, [selectedEventId, authHeaders])
+  }, [selectedEventId])
 
   useEffect(() => { fetchTemplates(); fetchSettings() }, [fetchTemplates, fetchSettings])
 
@@ -104,7 +104,7 @@ export default function AdminCommunicationPage() {
     setSavingTemplate(true)
     try {
       const res = await fetch(`/api/admin/email-templates/${selectedEventId}`, {
-        method: 'POST', headers: authHeaders(),
+        method: 'POST',
         body: JSON.stringify(templateForm),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed'); return }
@@ -121,7 +121,7 @@ export default function AdminCommunicationPage() {
     setSavingTemplate(true)
     try {
       const res = await fetch(`/api/admin/email-templates/${selectedEventId}/${editingTemplate}`, {
-        method: 'PUT', headers: authHeaders(),
+        method: 'PUT',
         body: JSON.stringify(templateForm),
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed'); return }
@@ -137,7 +137,7 @@ export default function AdminCommunicationPage() {
   const handleDeleteTemplate = async (id: string) => {
     try {
       const res = await fetch(`/api/admin/email-templates/${selectedEventId}/${id}`, {
-        method: 'DELETE', headers: authHeaders(),
+        method: 'DELETE',
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed'); return }
       notify('success', 'Template deleted')
@@ -148,7 +148,7 @@ export default function AdminCommunicationPage() {
   const handleDuplicateTemplate = async (id: string) => {
     try {
       const res = await fetch(`/api/admin/email-templates/${id}/duplicate`, {
-        method: 'POST', headers: authHeaders(),
+        method: 'POST',
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed'); return }
       notify('success', 'Template duplicated')
@@ -177,7 +177,7 @@ export default function AdminCommunicationPage() {
         whatsapp_number: '+91 89517 60369',
       }
       const res = await fetch(`/api/admin/email-templates/${tpl.id}/preview`, {
-        method: 'POST', headers: authHeaders(),
+        method: 'POST',
         body: JSON.stringify({ variables: mockVars }),
       })
       if (res.ok) { const d = await res.json(); setPreviewResult({ subject: d.subject, content: d.content }) }
@@ -197,7 +197,7 @@ export default function AdminCommunicationPage() {
     setSendingTest(true)
     try {
       const res = await fetch('/api/admin/test-email', {
-        method: 'POST', headers: authHeaders(),
+        method: 'POST',
         body: JSON.stringify({
           event_id: testEmailEventId,
           template_id: testTemplateId,
@@ -229,7 +229,7 @@ export default function AdminCommunicationPage() {
     try {
       const params = new URLSearchParams({ eventId: sendEmailEventId, audience: sendAudience })
       if (sendFormat) params.set('format', sendFormat)
-      const res = await fetch(`/api/admin/send-email?${params}`, { headers: authHeaders() })
+      const res = await fetch(`/api/admin/send-email?${params}`)
       if (res.ok) { const d = await res.json(); setSendCount(d.count) }
     } catch {}
     finally { setLoadingCount(false) }
@@ -240,7 +240,7 @@ export default function AdminCommunicationPage() {
     setSending(true)
     try {
       const res = await fetch('/api/admin/send-email', {
-        method: 'POST', headers: authHeaders(),
+        method: 'POST',
         body: JSON.stringify({
           event_id: sendEmailEventId,
           template_type: sendTemplateType,
@@ -275,13 +275,13 @@ export default function AdminCommunicationPage() {
       if (logFilterStatus) params.set('status', logFilterStatus)
       if (logFilterDateFrom) params.set('dateFrom', logFilterDateFrom)
       if (logFilterDateTo) params.set('dateTo', logFilterDateTo)
-      const res = await fetch(`/api/admin/email-logs?${params}`, { headers: authHeaders() })
+      const res = await fetch(`/api/admin/email-logs?${params}`)
       if (res.ok) { const d = await res.json(); setLogs(d.logs || []) }
     } catch {}
     finally { setLoadingLogs(false) }
-  }, [logsEventId, logFilterTemplateType, logFilterStatus, logFilterDateFrom, logFilterDateTo, authHeaders])
+  }, [logsEventId, logFilterTemplateType, logFilterStatus, logFilterDateFrom, logFilterDateTo])
 
-  useEffect(() => { if (token) fetchLogs() }, [fetchLogs, token])
+  useEffect(() => { if (user) fetchLogs() }, [fetchLogs, user])
 
   const downloadLogsCSV = () => {
     if (logs.length === 0) return

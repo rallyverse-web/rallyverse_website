@@ -133,7 +133,7 @@ const s = {
 }
 
 export default function AdminPage() {
-  const { token, logout } = useAdminAuth()
+  const { user, logout } = useAdminAuth()
   const [eventsData, setEventsData] = useState<EventSummary[]>([])
   const [loading, setLoading] = useState(false)
   const [lastSync, setLastSync] = useState('')
@@ -156,13 +156,11 @@ export default function AdminPage() {
     setTimeout(() => setNotification(null), 5000)
   }
 
-  const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
-
   const fetchData = useCallback(async () => {
-    if (!token) return
+    if (!user) return
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/all-registrations', { headers: authHeaders() })
+      const res = await fetch('/api/admin/all-registrations')
       if (res.status === 401) {
         logout()
         return
@@ -174,8 +172,7 @@ export default function AdminPage() {
       const data = await res.json()
       setEventsData(data.events || [])
 
-      // Fetch partner enquiries metrics
-      const partnerRes = await fetch('/api/admin/partner-enquiries', { headers: authHeaders() })
+      const partnerRes = await fetch('/api/admin/partner-enquiries')
       if (partnerRes.ok) {
         const partnerData = await partnerRes.json()
         if (partnerData.metrics) {
@@ -189,10 +186,9 @@ export default function AdminPage() {
         }
       }
 
-      // Fetch email credit requests
       try {
         setCreditRequestsLoading(true)
-        const crRes = await fetch('/api/admin/email-credit-requests', { headers: authHeaders() })
+        const crRes = await fetch('/api/admin/email-credit-requests')
         if (crRes.ok) {
           const crData = await crRes.json()
           setCreditRequests(crData.requests || [])
@@ -205,11 +201,11 @@ export default function AdminPage() {
     } finally {
       setLoading(false)
     }
-  }, [authHeaders, logout, token])
+  }, [logout, user])
 
   useEffect(() => {
-    if (token) fetchData()
-  }, [token, fetchData])
+    if (user) fetchData()
+  }, [user, fetchData])
 
   const globalMetrics = useMemo<GlobalMetrics>(() => {
     let totalRegistrations = 0
@@ -610,7 +606,7 @@ export default function AdminPage() {
                               onClick={async () => {
                                 setApprovingId(cr.id)
                                 try {
-                                  const res = await fetch(`/api/admin/email-credit-requests/${cr.id}/approve`, { method: 'PUT', headers: authHeaders() })
+                                  const res = await fetch(`/api/admin/email-credit-requests/${cr.id}/approve`)
                                   if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to approve'); return }
                                   notify('success', 'Request approved — credits added')
                                   fetchData()
@@ -661,7 +657,6 @@ export default function AdminPage() {
                     try {
                       const res = await fetch(`/api/admin/email-credit-requests/${rejectModal.id}/reject`, {
                         method: 'PUT',
-                        headers: authHeaders(),
                         body: JSON.stringify({ admin_notes: rejectNotes || null }),
                       })
                       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to reject'); return }

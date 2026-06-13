@@ -1,28 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getEventAdminByToken } from '@/lib/repositories/event-admins'
+import { createAuthClientFromRequest } from '@/lib/auth'
+import { getSupabaseServerClient } from '@/lib/supabase/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const { token } = await req.json()
-    if (!token) {
-      return NextResponse.json({ error: 'Token is required' }, { status: 400 })
+    const { email, password } = await req.json()
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
-    const admin = await getEventAdminByToken(token)
-    if (!admin) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+
+    const supabase = createAuthClientFromRequest(req)
+    const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    })
+
+    if (signInError || !user) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+    }
+
+    const dbClient = await getSupabaseServerClient()
+    const { data: admin } = await dbClient
+      .from('event_admins')
+      .select('id, name, event_id')
+      .eq('auth_user_id', user.id)
+      .maybeSingle()
+
+    if (!admin || !admin.event_id) {
+      await supabase.auth.signOut()
+      return NextResponse.json({ error: 'No event admin access found for this account' }, { status: 403 })
     }
 
     const response = NextResponse.json({
       success: true,
       admin: { id: admin.id, name: admin.name, event_id: admin.event_id },
-    })
-
-    response.cookies.set('event_admin_token', token, {
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-      maxAge: 60 * 60 * 24,
     })
 
     return response

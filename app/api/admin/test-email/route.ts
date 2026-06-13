@@ -4,15 +4,15 @@ import { getEmailSettings } from '@/lib/repositories/email-settings'
 import { renderEmailTemplate } from '@/lib/template-renderer'
 import { sendEmail } from '@/lib/resend-service'
 import { createEmailLog } from '@/lib/repositories/email-logs'
+import { requireAdmin } from '@/lib/auth'
 
-function authorize(req: NextRequest) {
-  const auth = req.headers.get('authorization')
-  const token = auth?.replace('Bearer ', '')
-  return token === process.env.ADMIN_PASSWORD
+async function authorize(req: NextRequest) {
+  const admin = await requireAdmin()
+  return admin !== null
 }
 
 export async function POST(req: NextRequest) {
-  if (!authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!await authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const { event_id, template_id, recipient_email, variables } = await req.json()
 

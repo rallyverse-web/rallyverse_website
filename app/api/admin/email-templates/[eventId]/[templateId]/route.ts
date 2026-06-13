@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { updateTemplate, deleteTemplate, getTemplateById } from '@/lib/repositories/email-templates'
+import { requireAdmin } from '@/lib/auth'
 
-function authorize(req: NextRequest) {
-  const auth = req.headers.get('authorization')
-  const token = auth?.replace('Bearer ', '')
-  return token === process.env.ADMIN_PASSWORD
+async function authorize(req: NextRequest) {
+  const admin = await requireAdmin()
+  return admin !== null
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ eventId: string; templateId: string }> }) {
-  if (!authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!await authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const { templateId } = await params
     const body = await req.json()
@@ -21,7 +21,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ even
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ eventId: string; templateId: string }> }) {
-  if (!authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!await authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const { templateId } = await params
     await deleteTemplate(templateId)

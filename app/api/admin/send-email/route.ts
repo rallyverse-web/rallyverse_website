@@ -3,17 +3,17 @@ import { getRegistrationsByEventId } from '@/lib/repositories/registrations'
 import { getEventById } from '@/lib/repositories/events'
 import { sendBulkTemplatedEmails } from '@/lib/send-email-service'
 import type { EmailTemplateType } from '@/lib/types/supabase'
+import { requireAdmin } from '@/lib/auth'
 
 type Audience = 'all' | 'approved' | 'pending' | 'rejected'
 
-function authorize(req: NextRequest) {
-  const auth = req.headers.get('authorization')
-  const token = auth?.replace('Bearer ', '')
-  return token === process.env.ADMIN_PASSWORD
+async function authorize(req: NextRequest) {
+  const admin = await requireAdmin()
+  return admin !== null
 }
 
 export async function POST(req: NextRequest) {
-  if (!authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!await authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
     const { event_id, template_type, audience, format, include_whatsapp } = await req.json()
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!await authorize(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
     const eventId = req.nextUrl.searchParams.get('eventId')

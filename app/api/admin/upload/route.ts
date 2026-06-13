@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { requireAdmin } from '@/lib/auth'
 
-function authorize(req: NextRequest) {
-  const auth = req.headers.get('authorization')
-  const token = auth?.replace('Bearer ', '')
-  return token === process.env.ADMIN_PASSWORD
+async function authorize(req: NextRequest) {
+  const admin = await requireAdmin()
+  return admin !== null
 }
 
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp']
@@ -15,7 +15,7 @@ function getMaxSize(folder: string): number {
 }
 
 export async function POST(req: NextRequest) {
-  if (!authorize(req)) {
+  if (!await authorize(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

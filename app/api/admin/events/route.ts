@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAllEvents, createEvent, updateEvent, deleteEvent, publishEvent, getAdminEventMetrics } from '@/lib/repositories/events'
+import { requireAdmin } from '@/lib/auth'
 
-function authorize(req: NextRequest) {
-  const auth = req.headers.get('authorization')
-  const token = auth?.replace('Bearer ', '')
-  if (token !== process.env.ADMIN_PASSWORD) {
-    return false
-  }
-  return true
+async function authorize(req: NextRequest) {
+  const admin = await requireAdmin()
+  return admin !== null
 }
 
 export async function GET(req: NextRequest) {
-  if (!authorize(req)) {
+  const admin = await authorize(req)
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
@@ -26,7 +24,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!authorize(req)) {
+  const admin = await authorize(req)
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
@@ -41,7 +40,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  if (!authorize(req)) {
+  const admin = await authorize(req)
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
@@ -60,7 +60,8 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  if (!authorize(req)) {
+  const admin = await authorize(req)
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
@@ -79,7 +80,8 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!authorize(req)) {
+  const admin = await authorize(req)
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {

@@ -34,7 +34,7 @@ function statusBadge(status: string) {
 }
 
 export default function AdminRegistrationsPage() {
-  const { token, logout } = useAdminAuth()
+  const { user, logout } = useAdminAuth()
   const [loading, setLoading] = useState(false)
   const [eventData, setEventData] = useState<Array<{ event: { id: string; name: string; slug: string; status: string }; registrations: Registration[]; metrics: { total: number; pending: number; approved: number; rejected: number } }>>([])
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null)
@@ -48,22 +48,20 @@ export default function AdminRegistrationsPage() {
     setTimeout(() => setNotification(null), 5000)
   }
 
-  const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
-
   const fetchData = useCallback(async () => {
-    if (!token) return
+    if (!user) return
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/all-registrations', { headers: authHeaders() })
+      const res = await fetch('/api/admin/all-registrations')
       if (res.status === 401) { logout(); return }
       if (!res.ok) { notify('error', 'Failed to load data'); return }
       const data = await res.json()
       setEventData(data.events || [])
     } catch { notify('error', 'Failed to connect') }
     finally { setLoading(false) }
-  }, [authHeaders, logout, token])
+  }, [logout, user])
 
-  useEffect(() => { if (token) fetchData() }, [token, fetchData])
+  useEffect(() => { if (user) fetchData() }, [user, fetchData])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -111,7 +109,7 @@ export default function AdminRegistrationsPage() {
   const handleDeleteRegistration = async (regId: string) => {
     try {
       const res = await fetch(`/api/admin/registrations/${regId}`, {
-        method: 'DELETE', headers: authHeaders(),
+        method: 'DELETE',
       })
       if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to delete'); return }
       notify('success', 'Registration deleted')

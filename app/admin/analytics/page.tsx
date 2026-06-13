@@ -52,7 +52,7 @@ interface EventAnalyticsItem { event_id: string; event_name: string; event_slug:
 interface Trends { registrations_over_time: { date: string; count: number }[]; approvals_over_time: { date: string; count: number }[]; emails_over_time: { date: string; count: number }[]; views_over_time: { date: string; count: number }[] }
 
 export default function AdminAnalyticsPage() {
-  const { token, logout } = useAdminAuth()
+  const { user, logout } = useAdminAuth()
   const [loading, setLoading] = useState(false)
   const [overview, setOverview] = useState<Overview | null>(null)
   const [events, setEvents] = useState<EventAnalyticsItem[]>([])
@@ -65,13 +65,11 @@ export default function AdminAnalyticsPage() {
     setTimeout(() => setNotification(null), 5000)
   }
 
-  const authHeaders = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token])
-
   const fetchData = useCallback(async () => {
-    if (!token) return
+    if (!user) return
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/analytics', { headers: authHeaders() })
+      const res = await fetch('/api/admin/analytics')
       if (res.status === 401) { logout(); return }
       if (!res.ok) { notify('error', 'Failed to load'); return }
       const d = await res.json()
@@ -80,9 +78,9 @@ export default function AdminAnalyticsPage() {
       setTrends(d.trends)
     } catch { notify('error', 'Failed to load analytics') }
     finally { setLoading(false) }
-  }, [authHeaders, logout, token])
+  }, [logout, user])
 
-  useEffect(() => { if (token) fetchData() }, [token, fetchData])
+  useEffect(() => { if (user) fetchData() }, [user, fetchData])
 
   const sortedEvents = [...events].sort((a, b) => {
     if (sortBy === 'views') return b.views - a.views

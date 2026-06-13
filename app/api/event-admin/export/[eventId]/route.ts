@@ -1,21 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getRegistrationsByEventId } from '@/lib/repositories/registrations'
-import { getEventAdminByToken } from '@/lib/repositories/event-admins'
-
-async function authorize(req: NextRequest, eventId: string) {
-  const auth = req.headers.get('authorization')
-  const token = auth?.replace('Bearer ', '')
-  if (!token) return null
-  const admin = await getEventAdminByToken(token)
-  if (!admin || admin.event_id !== eventId) return null
-  return admin
-}
+import { getAdminFromRequest } from '@/lib/event-admin-auth'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
   try {
     const { eventId } = await params
-    const admin = await authorize(req, eventId)
-    if (!admin) {
+    const admin = await getAdminFromRequest(req)
+    if (!admin || admin.event_id !== eventId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
