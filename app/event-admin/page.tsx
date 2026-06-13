@@ -3,12 +3,17 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Shield, Loader2 } from 'lucide-react'
+import { getSupabaseClient } from '@/lib/supabase/client'
 
 export default function EventAdminLoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showForgot, setShowForgot] = useState(false)
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [forgotSent, setForgotSent] = useState(false)
+  const [forgotLoading, setForgotLoading] = useState(false)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -36,6 +41,86 @@ export default function EventAdminLoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setForgotLoading(true)
+    try {
+      const supabase = getSupabaseClient()
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      })
+      if (resetError) {
+        setError(resetError.message)
+        return
+      }
+      setForgotSent(true)
+    } catch {
+      setError('Failed to send reset email')
+    } finally {
+      setForgotLoading(false)
+    }
+  }
+
+  if (showForgot) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', padding: 24 }}>
+        <form onSubmit={handleForgotPassword} style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ textAlign: 'center', marginBottom: 8 }}>
+            <h1 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 24, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>Reset Password</h1>
+            <p style={{ color: '#888', fontSize: 13, marginTop: 4 }}>
+              {forgotSent ? 'Check your email for the reset link' : 'Enter your email to receive a password reset link'}
+            </p>
+          </div>
+          {!forgotSent ? (
+            <>
+              <input
+                type="email"
+                placeholder="Email address"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                style={{ width: '100%', height: 48, padding: '0 16px', borderRadius: 6, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 14, outline: 'none' }}
+                autoFocus
+                required
+              />
+              {error && <p style={{ color: '#ff4444', fontSize: 13 }}>{error}</p>}
+              <button
+                type="submit"
+                disabled={forgotLoading || !forgotEmail.trim()}
+                style={{
+                  height: 44, padding: '0 24px', borderRadius: 6, border: 'none',
+                  background: 'var(--rallyverse-gradient)', color: '#fff', fontSize: 14, fontWeight: 700,
+                  cursor: forgotLoading || !forgotEmail.trim() ? 'not-allowed' : 'pointer',
+                  opacity: forgotLoading || !forgotEmail.trim() ? 0.6 : 1,
+                }}
+              >
+                {forgotLoading ? <><Loader2 size={16} className="animate-spin" style={{ marginRight: 6, verticalAlign: 'middle' }} />Sending...</> : 'Send Reset Link'}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowForgot(false); setError(''); setForgotSent(false) }}
+                style={{ background: 'none', border: 'none', color: '#666', fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                Back to Sign In
+              </button>
+            </>
+          ) : (
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ color: '#4ade80', fontSize: 14, marginBottom: 16 }}>Password reset email sent to {forgotEmail}</p>
+              <button
+                type="button"
+                onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail('') }}
+                style={{ background: 'none', border: 'none', color: '#4ade80', fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                Back to Sign In
+              </button>
+            </div>
+          )}
+        </form>
+      </div>
+    )
   }
 
   const s = {
@@ -68,6 +153,15 @@ export default function EventAdminLoginPage() {
           style={s.input}
           required
         />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -8 }}>
+          <button
+            type="button"
+            onClick={() => { setShowForgot(true); setForgotEmail(email) }}
+            style={{ background: 'none', border: 'none', color: '#666', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+          >
+            Forgot Password?
+          </button>
+        </div>
         {error && <p style={{ color: '#ff4444', fontSize: 13 }}>{error}</p>}
         <button type="submit" disabled={loading || !email.trim() || !password} style={{ ...s.btn, ...((loading || !email.trim() || !password) ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
           {loading ? <><Loader2 size={16} className="animate-spin" style={{ marginRight: 6, verticalAlign: 'middle' }} />Signing in...</> : 'Sign In'}

@@ -32,7 +32,7 @@ export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false)
 
   // Hide on admin routes
-  if (pathname && (pathname.startsWith('/admin') || pathname.startsWith('/event-admin'))) {
+  if (pathname && (pathname.startsWith('/admin') || pathname.startsWith('/event-admin') || pathname.startsWith('/auth'))) {
     return null
   }
 

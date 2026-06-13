@@ -26,7 +26,7 @@ const contactItems = [
 
 export default function Footer() {
   const pathname = usePathname()
-  if (pathname && (pathname.startsWith('/admin') || pathname.startsWith('/event-admin'))) {
+  if (pathname && (pathname.startsWith('/admin') || pathname.startsWith('/event-admin') || pathname.startsWith('/auth'))) {
     return null
   }
   return (
