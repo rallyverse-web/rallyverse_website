@@ -24,7 +24,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     }
 
     const body = await req.json()
-    const { full_name, phone_number, email, city, gender, format, partner_name, partner_phone, payment_upi_id, transaction_name, transaction_reference, payment_screenshot_url } = body
+    const { full_name, phone_number, email, city, gender, format, time_slot, partner_name, partner_phone, payment_upi_id, transaction_name, transaction_reference, payment_screenshot_url } = body
 
     if (!full_name || !phone_number || !email || !city || !gender || !format) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -91,6 +91,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       city,
       gender,
       format,
+      time_slot: time_slot || '',
       partner_name: partner_name || '',
       partner_phone: partner_phone || '',
       payment_upi_id: payment_upi_id || '',

@@ -3,6 +3,7 @@ import { getEmailSettings } from '@/lib/repositories/email-settings'
 import { renderEmailTemplate } from '@/lib/template-renderer'
 import { sendEmail } from '@/lib/resend-service'
 import { createEmailLog } from '@/lib/repositories/email-logs'
+import { checkEmailQuota, incrementEmailsSent } from '@/lib/email-quota'
 import type { EmailTemplate, EventEmailSettings, EventWithFormats, Registration, EmailTemplateType } from '@/lib/types/supabase'
 
 export interface BulkSendRecipient {
@@ -101,6 +102,13 @@ export async function sendPaymentVerifiedEmail(
   const template = templates.find(t => t.template_type === 'payment_verified')
   const variables = buildVariables(registration, event, settings)
 
+  // Check quota
+  const quota = await checkEmailQuota(eventId, 1)
+  if (!quota.allowed) {
+    try { await createEmailLog({ event_id: eventId, template_id: template?.id || null, recipient_email: registration.email, subject: 'Payment Verified — (blocked)', sent_by: sentBy, status: 'failed', provider_message_id: '' }) } catch {}
+    return { registrationId: registration.registration_id, recipientEmail: registration.email, success: false, error: quota.message }
+  }
+
   let subject = ''
   let sendSuccess = false
   let messageId = ''
@@ -145,6 +153,11 @@ export async function sendPaymentVerifiedEmail(
     console.error('Failed to log payment verified email:', logErr)
   }
 
+  // Track usage on success
+  if (sendSuccess) {
+    await incrementEmailsSent(eventId, 1).catch(e => console.error('Failed to increment quota:', e))
+  }
+
   return {
     registrationId: registration.registration_id,
     recipientEmail: registration.email,
@@ -167,6 +180,13 @@ export async function sendPaymentRejectedEmail(
   const variables = buildVariables(registration, event, settings, {
     rejection_reason: reason || '',
   })
+
+  // Check quota
+  const quota = await checkEmailQuota(eventId, 1)
+  if (!quota.allowed) {
+    try { await createEmailLog({ event_id: eventId, template_id: template?.id || null, recipient_email: registration.email, subject: 'Payment Rejected — (blocked)', sent_by: sentBy, status: 'failed', provider_message_id: '' }) } catch {}
+    return { registrationId: registration.registration_id, recipientEmail: registration.email, success: false, error: quota.message }
+  }
 
   let subject = ''
   let sendSuccess = false
@@ -212,6 +232,11 @@ export async function sendPaymentRejectedEmail(
     console.error('Failed to log payment rejected email:', logErr)
   }
 
+  // Track usage on success
+  if (sendSuccess) {
+    await incrementEmailsSent(eventId, 1).catch(e => console.error('Failed to increment quota:', e))
+  }
+
   return {
     registrationId: registration.registration_id,
     recipientEmail: registration.email,
@@ -247,6 +272,13 @@ export async function sendSingleTemplatedEmail(
       success: false,
       error: err instanceof Error ? err.message : 'Template not found',
     }
+  }
+
+  // Check quota
+  const quota = await checkEmailQuota(eventId, 1)
+  if (!quota.allowed) {
+    try { await createEmailLog({ event_id: eventId, template_id: template.id, recipient_email: registration.email, subject: template.subject + ' (blocked)', sent_by: sentBy, status: 'failed', provider_message_id: '' }) } catch {}
+    return { registrationId: registration.registration_id, recipientEmail: registration.email, success: false, error: quota.message }
   }
 
   let sendSuccess = false
@@ -300,6 +332,11 @@ export async function sendSingleTemplatedEmail(
     console.error('Failed to log email send result:', logErr)
   }
 
+  // Track usage on success
+  if (sendSuccess) {
+    await incrementEmailsSent(eventId, 1).catch(e => console.error('Failed to increment quota:', e))
+  }
+
   return {
     registrationId: registration.registration_id,
     recipientEmail: registration.email,
@@ -321,6 +358,14 @@ export async function sendRegistrationReceivedEmail(
   const variables = buildVariables(registration, event, settings, {
     registration_status: registration.status,
   })
+
+  // Check quota (non-blocking — registration proceeds regardless)
+  const quota = await checkEmailQuota(eventId, 1)
+  if (!quota.allowed) {
+    console.error('Registration received email blocked:', quota.message)
+    try { await createEmailLog({ event_id: eventId, template_id: template?.id || null, recipient_email: registration.email, subject: 'Registration Received — (blocked)', sent_by: sentBy, status: 'failed', provider_message_id: '' }) } catch {}
+    return { registrationId: registration.registration_id, recipientEmail: registration.email, success: false, error: quota.message }
+  }
 
   let subject = ''
   let sendSuccess = false
@@ -366,6 +411,11 @@ export async function sendRegistrationReceivedEmail(
     console.error('Failed to log registration received email:', logErr)
   }
 
+  // Track usage on success
+  if (sendSuccess) {
+    await incrementEmailsSent(eventId, 1).catch(e => console.error('Failed to increment quota:', e))
+  }
+
   return {
     registrationId: registration.registration_id,
     recipientEmail: registration.email,
@@ -391,6 +441,17 @@ export async function sendBulkTemplatedEmails(
 
   const event = recipients.length > 0 ? recipients[0].event : null
   if (!event) return { total: 0, sent: 0, failed: 0, results: [] }
+
+  // Check quota for total recipients upfront
+  const quota = await checkEmailQuota(eventId, recipients.length)
+  if (!quota.allowed) {
+    return { total: recipients.length, sent: 0, failed: recipients.length, results: recipients.map(r => ({
+      registrationId: r.registration.registration_id,
+      recipientEmail: r.registration.email,
+      success: false,
+      error: quota.message,
+    })) }
+  }
 
   const settings = await getEmailSettings(eventId)
 

@@ -22,9 +22,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ even
     const registrations = await getRegistrationsByEventId(eventId)
     const headers = [
       'Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender',
-      'Format', 'Partner Name', 'Partner Phone', 'Payment Status',
+      'Format', 'Time Slot', 'Partner Name', 'Partner Phone', 'Payment Status',
       'UPI ID Used', 'Transaction Name', 'Transaction Reference',
-      'Payment Screenshot URL', 'Payment Verified At', 'Status', 'Notes', 'Created At',
+      'Payment Screenshot URL', 'Payment Verified At', 'Status',
+      'Checked In', 'Checked In At', 'Checked In By',
+      'Notes', 'Created At',
     ]
 
     const rows = registrations.map((r) => [
@@ -35,6 +37,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ even
       r.city,
       r.gender,
       r.format,
+      r.time_slot || '',
       r.partner_name || '',
       r.partner_phone || '',
       r.payment_status || '',
@@ -44,6 +47,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ even
       r.payment_screenshot_url || '',
       r.payment_verified_at ? new Date(r.payment_verified_at).toISOString() : '',
       r.status,
+      r.checked_in ? 'Yes' : 'No',
+      r.checked_in_at ? new Date(r.checked_in_at).toISOString() : '',
+      r.checked_in_by || '',
       r.notes || '',
       r.created_at,
     ])

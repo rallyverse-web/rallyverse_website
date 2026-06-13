@@ -65,7 +65,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ even
       return NextResponse.json({ error: 'registrationId and updates are required' }, { status: 400 })
     }
 
-    const { full_name, email, phone_number, format, partner_name, partner_phone } = updates as Record<string, string | null | undefined>
+    const { full_name, email, phone_number, format, time_slot, partner_name, partner_phone } = updates as Record<string, string | null | undefined>
     if (full_name !== undefined && !String(full_name).trim()) {
       return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 })
     }

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { BarChart3, Loader2, Users, CheckCircle, XCircle, Clock, Search, Download, RefreshCw, Trash2, Mail, CreditCard } from 'lucide-react'
+import { BarChart3, Loader2, Users, CheckCircle, XCircle, Clock, Search, Download, RefreshCw, Trash2, Mail, CreditCard, UserCheck } from 'lucide-react'
 import type { Registration } from '@/lib/types/supabase'
 
 const s = {
@@ -64,6 +64,7 @@ export default function EventAdminDashboard() {
     email: '',
     phone_number: '',
     format: '',
+    time_slot: '',
     partner_name: '',
     partner_phone: '',
   })
@@ -81,6 +82,19 @@ export default function EventAdminDashboard() {
   const [paymentRejectReason, setPaymentRejectReason] = useState('')
   const [paymentActionLoading, setPaymentActionLoading] = useState(false)
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null)
+  const [filterAttendance, setFilterAttendance] = useState('all')
+  const [emailQuota, setEmailQuota] = useState<{ email_limit: number; emails_sent: number; additional_email_credits: number; effective_limit: number; remaining: number; percentage_used: number } | null>(null)
+  const [emailQuotaLoading, setEmailQuotaLoading] = useState(false)
+  const [checkInLoading, setCheckInLoading] = useState<string | null>(null)
+  const [showCreditRequestModal, setShowCreditRequestModal] = useState(false)
+  const [creditRequests, setCreditRequests] = useState<any[]>([])
+  const [selectedPackage, setSelectedPackage] = useState<'50' | '100' | null>(null)
+  const [requestTxnName, setRequestTxnName] = useState('')
+  const [requestTxnRef, setRequestTxnRef] = useState('')
+  const [requestScreenshotUrl, setRequestScreenshotUrl] = useState('')
+  const [submittingRequest, setSubmittingRequest] = useState(false)
+  const [paymentInfo, setPaymentInfo] = useState<{ upi_id: string; account_holder_name: string; qr_code_url: string | null; payment_instructions: string | null } | null>(null)
+  const [uploadingRequestScreenshot, setUploadingRequestScreenshot] = useState(false)
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
@@ -119,6 +133,30 @@ export default function EventAdminDashboard() {
         const logData = await logRes.json()
         setEmailLogs((logData.logs || []).map((log: { created_at: string; status: 'sent' | 'failed' }) => ({ created_at: log.created_at, status: log.status })))
       }
+      // Fetch email quota
+      try {
+        const quotaRes = await fetch(`/api/event-admin/email-quota/${meData.admin.event_id}`)
+        if (quotaRes.ok) {
+          const quotaData = await quotaRes.json()
+          setEmailQuota(quotaData)
+        }
+      } catch {}
+      // Fetch credit requests
+      try {
+        const crRes = await fetch('/api/event-admin/email-credits/requests')
+        if (crRes.ok) {
+          const crData = await crRes.json()
+          setCreditRequests(crData.requests || [])
+        }
+      } catch {}
+      // Fetch payment info
+      try {
+        const piRes = await fetch('/api/event-admin/email-credits/payment-info')
+        if (piRes.ok) {
+          const piData = await piRes.json()
+          if (piData.config) setPaymentInfo(piData.config)
+        }
+      } catch {}
     } catch {
       notify('error', 'Failed to load data')
     } finally {
@@ -162,8 +200,18 @@ export default function EventAdminDashboard() {
     if (filterPaymentStatus !== 'all') {
       list = list.filter((r) => r.payment_status === filterPaymentStatus)
     }
+    if (filterAttendance !== 'all') {
+      list = list.filter((r) => filterAttendance === 'checked_in' ? r.checked_in : !r.checked_in)
+    }
     return list
-  }, [registrations, search, filterStatus, filterPaymentStatus])
+  }, [registrations, search, filterStatus, filterPaymentStatus, filterAttendance])
+
+  const attendanceMetrics = useMemo(() => {
+    const approved = registrations.filter(r => r.status === 'Approved')
+    const total = approved.length
+    const checked = approved.filter(r => r.checked_in).length
+    return { total_approved: total, checked_in: checked, not_checked_in: total - checked, attendance_rate: total > 0 ? (checked / total) * 100 : 0 }
+  }, [registrations])
 
   const handleVerifyPayment = async (reg: Registration, sendEmail = false) => {
     setPaymentActionLoading(true)
@@ -246,6 +294,61 @@ export default function EventAdminDashboard() {
     } catch { notify('error', 'Failed to delete registration') }
   }
 
+  const handleCheckIn = async (regId: string) => {
+    setCheckInLoading(regId)
+    try {
+      const res = await fetch('/api/event-admin/check-in', {
+        method: 'POST',
+        body: JSON.stringify({ registration_id: regId, action: 'check_in' }),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to check in'); return }
+      notify('success', 'Checked in successfully')
+      fetchData()
+    } catch { notify('error', 'Failed to check in') }
+    finally { setCheckInLoading(null) }
+  }
+
+  const handleUndoCheckIn = async (regId: string) => {
+    setCheckInLoading(regId)
+    try {
+      const res = await fetch('/api/event-admin/check-in', {
+        method: 'POST',
+        body: JSON.stringify({ registration_id: regId, action: 'undo' }),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to undo check-in'); return }
+      notify('success', 'Check-in undone')
+      fetchData()
+    } catch { notify('error', 'Failed to undo check-in') }
+    finally { setCheckInLoading(null) }
+  }
+
+  const handleSubmitCreditRequest = async () => {
+    if (!selectedPackage) { notify('error', 'Select a package'); return }
+    if (!requestTxnName.trim()) { notify('error', 'Transaction name is required'); return }
+    if (!requestTxnRef.trim()) { notify('error', 'Transaction reference is required'); return }
+    setSubmittingRequest(true)
+    try {
+      const res = await fetch('/api/event-admin/email-credits/request', {
+        method: 'POST',
+        body: JSON.stringify({
+          package_type: selectedPackage,
+          transaction_name: requestTxnName.trim(),
+          transaction_reference: requestTxnRef.trim(),
+          payment_screenshot_url: requestScreenshotUrl || null,
+        }),
+      })
+      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to submit request'); return }
+      notify('success', 'Credit request submitted. Awaiting approval.')
+      setShowCreditRequestModal(false)
+      setSelectedPackage(null)
+      setRequestTxnName('')
+      setRequestTxnRef('')
+      setRequestScreenshotUrl('')
+      fetchData()
+    } catch { notify('error', 'Failed to submit request') }
+    finally { setSubmittingRequest(false) }
+  }
+
   const openEdit = (reg: Registration) => {
     setEditingReg(reg)
     setEditForm({
@@ -253,6 +356,7 @@ export default function EventAdminDashboard() {
       email: reg.email,
       phone_number: reg.phone_number,
       format: reg.format,
+      time_slot: reg.time_slot || '',
       partner_name: reg.partner_name || '',
       partner_phone: reg.partner_phone || '',
     })
@@ -290,6 +394,7 @@ export default function EventAdminDashboard() {
             email: editForm.email,
             phone_number: editForm.phone_number,
             format: editForm.format,
+            time_slot: editForm.time_slot || null,
             partner_name: editForm.format.includes('Doubles') ? editForm.partner_name : null,
             partner_phone: editForm.format.includes('Doubles') ? editForm.partner_phone : null,
           },
@@ -312,7 +417,7 @@ export default function EventAdminDashboard() {
   }
 
   const downloadCSV = () => {
-    const headers = ['Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender', 'Format', 'Partner Name', 'Partner Phone', 'Payment Status', 'UPI ID Used', 'Transaction Name', 'Transaction Reference', 'Payment Screenshot URL', 'Payment Verified At', 'Status', 'Notes', 'Created At']
+    const headers = ['Registration ID', 'Full Name', 'Phone', 'Email', 'City', 'Gender', 'Format', 'Time Slot', 'Partner Name', 'Partner Phone', 'Payment Status', 'UPI ID Used', 'Transaction Name', 'Transaction Reference', 'Payment Screenshot URL', 'Payment Verified At', 'Status', 'Notes', 'Created At']
     const keyMap: Record<string, string> = {
       'phone': 'phone_number',
       'upi_id_used': 'payment_upi_id',
@@ -383,9 +488,53 @@ export default function EventAdminDashboard() {
         <div style={s.card}><Clock size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Pending</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.pending}</p></div>
         <div style={s.card}><CheckCircle size={18} color="#4ade80" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Approved</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.approved}</p></div>
         <div style={s.card}><XCircle size={18} color="#ff4444" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Rejected</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{metrics.rejected}</p></div>
-        <div style={s.card}><Mail size={18} color="#38bdf8" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Emails Sent</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.sent}</p></div>
-        <div style={s.card}><BarChart3 size={18} color="#a78bfa" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Total Emails</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.total}</p></div>
-        <div style={s.card}><RefreshCw size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>This Month</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{emailUsage.monthly}</p></div>
+      </div>
+
+      {/* Attendance Metrics */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 24 }}>
+        <div style={{ ...s.card, border: '1px solid rgba(74,222,128,0.2)' }}><Users size={18} color="#4ade80" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Approved</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{attendanceMetrics.total_approved}</p></div>
+        <div style={{ ...s.card, border: '1px solid rgba(56,189,248,0.2)' }}><CheckCircle size={18} color="#38bdf8" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Checked In</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{attendanceMetrics.checked_in}</p></div>
+        <div style={{ ...s.card, border: '1px solid rgba(250,204,21,0.2)' }}><Clock size={18} color="#facc15" /><p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Remaining</p><p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{attendanceMetrics.not_checked_in}</p></div>
+        <div style={{ ...s.card, border: '1px solid rgba(168,85,247,0.2)' }}>
+          <BarChart3 size={18} color="#a78bfa" />
+          <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: '6px 0 4px' }}>Attendance Rate</p>
+          <p style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: 0 }}>{attendanceMetrics.total_approved > 0 ? `${Math.round(attendanceMetrics.attendance_rate)}%` : 'N/A'}</p>
+          {attendanceMetrics.total_approved > 0 && (
+            <div style={{ marginTop: 8, width: '100%', height: 4, background: '#222', borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ width: `${attendanceMetrics.attendance_rate}%`, height: '100%', background: attendanceMetrics.attendance_rate >= 80 ? '#4ade80' : attendanceMetrics.attendance_rate >= 50 ? '#facc15' : '#ff4444', borderRadius: 2 }} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Email Quota Card */}
+      <div style={{ marginBottom: 24 }}>
+        {emailQuota && (
+          <div style={{ ...s.card, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Mail size={18} color="#38bdf8" />
+              <div>
+                <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', margin: 0, fontWeight: 600 }}>Email Quota</p>
+                <p style={{ margin: '2px 0 0', color: '#fff', fontSize: 13 }}>Used: {emailQuota.emails_sent} / {emailQuota.effective_limit} ({Math.round(emailQuota.percentage_used)}%)</p>
+              </div>
+            </div>
+            <div style={{ flex: 1, maxWidth: 200, height: 6, background: '#222', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ width: `${Math.min(emailQuota.percentage_used, 100)}%`, height: '100%', background: emailQuota.percentage_used < 60 ? '#4ade80' : emailQuota.percentage_used < 85 ? '#facc15' : '#ff4444', borderRadius: 3, transition: 'width 0.3s' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ color: '#888', fontSize: 12 }}>Base: {emailQuota.email_limit} | Additional: +{emailQuota.additional_email_credits}</span>
+              <span style={{ color: emailQuota.remaining > 0 ? '#4ade80' : '#ff4444', fontSize: 13, fontWeight: 600 }}>{emailQuota.remaining} remaining</span>
+              <button onClick={async () => { setShowCreditRequestModal(true); try { const r = await fetch('/api/event-admin/email-credits/payment-info'); if (r.ok) { const d = await r.json(); if (d.config) setPaymentInfo(d.config) } } catch {} }} style={{ ...s.btnSm, background: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)', color: '#38bdf8', fontSize: 11, cursor: 'pointer' }}>
+                Request Additional Email Credits
+              </button>
+              {creditRequests.filter(r => r.status === 'Pending').length > 0 && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#facc15', fontSize: 11 }}>
+                  <Clock size={12} /> {creditRequests.filter(r => r.status === 'Pending').length} pending
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Payment Metrics */}
@@ -414,6 +563,11 @@ export default function EventAdminDashboard() {
           <option value="verified">Verified</option>
           <option value="rejected">Rejected</option>
         </select>
+        <select value={filterAttendance} onChange={(e) => setFilterAttendance(e.target.value)} style={{ height: 36, padding: '0 10px', borderRadius: 4, border: '1px solid #333', background: '#111', color: '#fff', fontSize: 13, outline: 'none', cursor: 'pointer' }}>
+          <option value="all">All Attendance</option>
+          <option value="checked_in">Checked In</option>
+          <option value="not_checked_in">Not Checked In</option>
+        </select>
         <span style={{ color: '#666', fontSize: 12 }}>{filtered.length} registration{filtered.length !== 1 ? 's' : ''}</span>
         <button onClick={fetchData} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: 4 }} title="Refresh"><RefreshCw size={16} /></button>
         <button onClick={downloadCSV} style={{ ...s.btn, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'transparent', border: '1px solid #333', fontSize: 13 }}>
@@ -426,14 +580,14 @@ export default function EventAdminDashboard() {
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
           <thead>
             <tr>
-              {['Registration ID', 'Name', 'Phone', 'Email', 'Format', 'Payment', 'Status', 'Screenshot', 'Created At', 'Actions'].map((h) => (
+              {['Registration ID', 'Name', 'Phone', 'Email', 'Format', 'Time', 'Payment', 'Status', 'Attendance', 'Screenshot', 'Created At', 'Actions'].map((h) => (
                 <th key={h} style={s.th}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
-              <tr><td colSpan={10} style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No registrations found</td></tr>
+              {filtered.length === 0 ? (
+                <tr><td colSpan={12} style={{ padding: 40, textAlign: 'center', color: '#666', fontSize: 14 }}>No registrations found</td></tr>
             ) : filtered.map((reg) => (
               <tr key={reg.id} style={{ transition: 'background 0.15s' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#1a1a1a')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
                 <td style={s.td}><span style={{ color: '#888', fontSize: 11, fontFamily: 'monospace' }}>{reg.registration_id}</span></td>
@@ -444,8 +598,24 @@ export default function EventAdminDashboard() {
                 <td style={s.td}>{reg.phone_number}</td>
                 <td style={{ ...s.td, fontSize: 12, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{reg.email}</td>
                 <td style={s.td}>{reg.format}</td>
+                <td style={s.td}><span style={{ color: reg.time_slot ? '#38bdf8' : '#555', fontSize: 12 }}>{reg.time_slot || '—'}</span></td>
                 <td style={s.td}>{paymentStatusBadge(reg.payment_status)}</td>
                 <td style={s.td}>{statusBadge(reg.status)}</td>
+                <td style={s.td}>
+                  {reg.status === 'Approved' ? (
+                    reg.checked_in ? (
+                      <span style={{ color: '#4ade80', fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <CheckCircle size={12} color="#4ade80" /> Checked In
+                      </span>
+                    ) : (
+                      <span style={{ color: '#888', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <Clock size={12} /> Not Checked In
+                      </span>
+                    )
+                  ) : (
+                    <span style={{ color: '#555', fontSize: 12 }}>—</span>
+                  )}
+                </td>
                 <td style={s.td}>
                   {reg.payment_screenshot_url ? (
                     <button style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8' }} onClick={() => setScreenshotUrl(reg.payment_screenshot_url!)}>View Screenshot</button>
@@ -458,6 +628,16 @@ export default function EventAdminDashboard() {
                   <div style={{ display: 'flex', gap: 4, justifyContent: 'center', flexWrap: 'wrap' }}>
                     <button style={{ ...s.btnSm, background: '#88888820', color: '#ccc' }} onClick={() => { setSelectedReg(reg); setApprovalNotes(reg.notes || '') }}>View</button>
                     <button style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8' }} onClick={() => openEdit(reg)}>Edit</button>
+                    {reg.status === 'Approved' && !reg.checked_in && (
+                      <button style={{ ...s.btnSm, background: '#4ade8020', color: '#4ade80', ...(checkInLoading === reg.id ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleCheckIn(reg.id)} disabled={checkInLoading === reg.id} title="Check In">
+                        {checkInLoading === reg.id ? <Loader2 size={11} className="animate-spin" /> : <><UserCheck size={11} /> Check In</>}
+                      </button>
+                    )}
+                    {reg.status === 'Approved' && reg.checked_in && (
+                      <button style={{ ...s.btnSm, background: 'transparent', border: '1px solid rgba(255,68,68,0.3)', color: '#ff4444', ...(checkInLoading === reg.id ? { opacity: 0.5, cursor: 'not-allowed' } : {}) }} onClick={() => handleUndoCheckIn(reg.id)} disabled={checkInLoading === reg.id} title="Undo Check In">
+                        {checkInLoading === reg.id ? <Loader2 size={11} className="animate-spin" /> : 'Undo'}
+                      </button>
+                    )}
                     {reg.payment_status === 'pending_verification' && (
                       <>
                         <button style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700 }} onClick={() => { setPaymentVerifyReg(reg); setSendEmailCheck(true) }}>Verify Pay</button>
@@ -499,6 +679,7 @@ export default function EventAdminDashboard() {
                 ['City', selectedReg.city],
                 ['Gender', selectedReg.gender],
                 ['Format', selectedReg.format],
+                ['Time Slot', selectedReg.time_slot || '—'],
                 ['Registration Status', selectedReg.status],
                 ['Registered', new Date(selectedReg.created_at).toLocaleString('en-IN')],
               ].map(([label, value]) => (
@@ -578,6 +759,28 @@ export default function EventAdminDashboard() {
             )}
 
             {/* Verification Timeline */}
+            <div style={{ borderTop: '1px solid #333', marginTop: 16, paddingTop: 16 }}>
+              <h4 style={{ color: '#fff', fontSize: 14, fontWeight: 600, margin: '0 0 12px' }}>Check-In Information</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Checked In</p>
+                  <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{selectedReg.checked_in ? <span style={{ color: '#4ade80', fontWeight: 600 }}>Yes</span> : <span style={{ color: '#888' }}>No</span>}</p>
+                </div>
+                {selectedReg.checked_in_at && (
+                  <div>
+                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Checked In At</p>
+                    <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{new Date(selectedReg.checked_in_at).toLocaleString('en-IN')}</p>
+                  </div>
+                )}
+                {selectedReg.checked_in_by && (
+                  <div>
+                    <p style={{ color: '#888', fontSize: 11, margin: '0 0 2px' }}>Checked In By</p>
+                    <p style={{ color: '#ccc', margin: 0, fontFamily: 'monospace', fontSize: 11 }}>{selectedReg.checked_in_by}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {selectedReg.payment_status && (
               <div style={{ borderTop: '1px solid #333', marginTop: 16, paddingTop: 16 }}>
                 <h4 style={{ color: '#fff', fontSize: 14, fontWeight: 600, margin: '0 0 12px' }}>Verification Timeline</h4>
@@ -744,6 +947,142 @@ export default function EventAdminDashboard() {
         </div>
       )}
 
+      {/* Email Credit Requests Section */}
+      {creditRequests.length > 0 && (
+        <div style={{ marginBottom: 24 }}>
+          <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Email Credit Requests</h3>
+          <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid #222', background: '#111' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500 }}>
+              <thead>
+                <tr>
+                  <th style={s.th}>Package</th>
+                  <th style={s.th}>Credits</th>
+                  <th style={s.th}>Amount</th>
+                  <th style={s.th}>Status</th>
+                  <th style={s.th}>Submitted</th>
+                  <th style={s.th}>Admin Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {creditRequests.map((cr: any) => (
+                  <tr key={cr.id} style={{ transition: 'background 0.15s' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#1a1a1a')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+                    <td style={s.td}>{cr.package_type === '50' ? '+50 Emails' : '+100 Emails'}</td>
+                    <td style={s.td}>{cr.email_credits}</td>
+                    <td style={s.td}>₹{cr.amount}</td>
+                    <td style={s.td}>
+                      <span style={{
+                        display: 'inline-block', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 700,
+                        background: cr.status === 'Approved' ? 'rgba(74,222,128,0.1)' : cr.status === 'Rejected' ? 'rgba(255,68,68,0.1)' : 'rgba(250,204,21,0.1)',
+                        color: cr.status === 'Approved' ? '#4ade80' : cr.status === 'Rejected' ? '#ff4444' : '#facc15',
+                      }}>{cr.status}</span>
+                    </td>
+                    <td style={{ ...s.td, fontSize: 12 }}>{new Date(cr.created_at).toLocaleDateString('en-IN')}</td>
+                    <td style={s.td}>{cr.admin_notes || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Credit Request Modal */}
+      {showCreditRequestModal && (
+        <div style={s.overlay} onClick={() => setShowCreditRequestModal(false)}>
+          <div style={{ ...s.modal, maxWidth: 520 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, margin: 0 }}>Request Additional Email Credits</h3>
+              <button onClick={() => setShowCreditRequestModal(false)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 18 }}>✕</button>
+            </div>
+            <p style={{ color: '#888', fontSize: 12, marginBottom: 16 }}>Complete payment and submit your request. Credits will be added after admin approval.</p>
+
+            {/* Package Selection */}
+            <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', marginBottom: 8, fontWeight: 600 }}>Select Package</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
+              {[
+                { type: '50' as const, label: '+50 Emails', price: '₹250' },
+                { type: '100' as const, label: '+100 Emails', price: '₹500' },
+              ].map((pkg) => (
+                <div
+                  key={pkg.type}
+                  onClick={() => setSelectedPackage(pkg.type)}
+                  style={{
+                    padding: 16, borderRadius: 8, cursor: 'pointer', textAlign: 'center',
+                    border: selectedPackage === pkg.type ? '2px solid #38bdf8' : '1px solid #333',
+                    background: selectedPackage === pkg.type ? 'rgba(56,189,248,0.1)' : '#111',
+                    transition: 'border-color 0.2s, background 0.2s',
+                  }}
+                >
+                  <p style={{ color: '#fff', fontSize: 16, fontWeight: 700, margin: '0 0 4px' }}>{pkg.label}</p>
+                  <p style={{ color: '#38bdf8', fontSize: 14, fontWeight: 600, margin: 0 }}>{pkg.price}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Payment Info */}
+            {paymentInfo && (
+              <div style={{ ...s.card, marginBottom: 16 }}>
+                <p style={{ color: '#888', fontSize: 11, marginBottom: 4, textTransform: 'uppercase', fontWeight: 600 }}>Pay to</p>
+                <p style={{ color: '#fff', fontSize: 16, fontWeight: 600, margin: '0 0 2px', fontFamily: 'monospace' }}>{paymentInfo.upi_id}</p>
+                <p style={{ color: '#888', fontSize: 12, margin: 0 }}>Account: {paymentInfo.account_holder_name}</p>
+                {paymentInfo.qr_code_url && (
+                  <img src={paymentInfo.qr_code_url} alt="QR Code" style={{ width: 140, height: 140, marginTop: 8, borderRadius: 6, objectFit: 'contain' }} />
+                )}
+              </div>
+            )}
+
+            {paymentInfo?.payment_instructions && (
+              <p style={{ color: '#facc15', fontSize: 12, marginBottom: 12, lineHeight: 1.5 }}>{paymentInfo.payment_instructions}</p>
+            )}
+
+            {/* Transaction Details */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+              <div>
+                <label style={s.label}>Transaction Name *</label>
+                <input value={requestTxnName} onChange={(e) => setRequestTxnName(e.target.value)} placeholder="Name appearing on transaction" style={s.input} />
+              </div>
+              <div>
+                <label style={s.label}>Transaction Reference *</label>
+                <input value={requestTxnRef} onChange={(e) => setRequestTxnRef(e.target.value)} placeholder="UPI reference / UTR number" style={s.input} />
+              </div>
+              <div>
+                <label style={s.label}>Payment Screenshot <span style={{ color: '#666' }}>(optional)</span></label>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <input type="file" accept="image/png,image/jpeg,image/webp" onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) { notify('error', 'Only PNG, JPG, WEBP allowed'); return }
+                    if (file.size > 10 * 1024 * 1024) { notify('error', 'File too large. Max 10MB'); return }
+                    setUploadingRequestScreenshot(true)
+                    try {
+                      const fd = new FormData()
+                      fd.append('file', file)
+                      fd.append('folder', 'screenshots')
+                      const r = await fetch('/api/upload', { method: 'POST', body: fd })
+                      const d = await r.json()
+                      if (!r.ok) throw new Error(d.error || 'Upload failed')
+                      setRequestScreenshotUrl(d.url)
+                    } catch (err) { notify('error', 'Upload failed') }
+                    finally { setUploadingRequestScreenshot(false) }
+                  }} style={{ display: 'none' }} id="req-screenshot-upload" />
+                  <label htmlFor="req-screenshot-upload" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 6, border: '1px solid #333', cursor: 'pointer', fontSize: 12, color: requestScreenshotUrl ? '#4ade80' : '#ccc' }}>
+                    {uploadingRequestScreenshot ? <><Loader2 size={12} className="animate-spin" /> Uploading...</> : requestScreenshotUrl ? '✓ Uploaded' : 'Upload Screenshot'}
+                  </label>
+                  {requestScreenshotUrl && <button onClick={() => setRequestScreenshotUrl('')} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888', fontSize: 11 }}>Remove</button>}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button onClick={() => setShowCreditRequestModal(false)} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+              <button onClick={handleSubmitCreditRequest} disabled={submittingRequest || !selectedPackage} style={{ ...s.btn, padding: '8px 20px', fontSize: 13, ...(submittingRequest || !selectedPackage ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}>
+                {submittingRequest ? <><Loader2 size={12} className="animate-spin" /> Submitting...</> : 'Submit Request'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Screenshot Zoom Modal */}
       {screenshotUrl && (
         <div style={s.overlay} onClick={() => setScreenshotUrl(null)}>
@@ -790,6 +1129,10 @@ export default function EventAdminDashboard() {
                   <option value="Mixed Doubles">Mixed Doubles</option>
                 </select>
                 {editErrors.format && <p style={{ color: '#ff4444', fontSize: 11, marginTop: 4 }}>{editErrors.format}</p>}
+              </div>
+              <div>
+                <label style={s.label}>Time Slot</label>
+                <input value={editForm.time_slot} onChange={(e) => setEditForm((p) => ({ ...p, time_slot: e.target.value }))} style={{ ...s.input, height: 40 }} placeholder="e.g. 10:00 AM" />
               </div>
               {editForm.format.includes('Doubles') && (
                 <>

@@ -15,6 +15,7 @@ import {
   Users,
   XCircle,
   Briefcase,
+  CreditCard,
 } from 'lucide-react'
 
 /* ─── Types ─── */
@@ -102,6 +103,16 @@ const s = {
     justifyContent: 'space-between',
     minHeight: 160,
   } as React.CSSProperties,
+  overlay: {
+    position: 'fixed' as const,
+    inset: 0,
+    background: 'rgba(0,0,0,0.7)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: 24,
+  } as React.CSSProperties,
   th: {
     padding: '12px 16px',
     textAlign: 'left' as const,
@@ -134,6 +145,11 @@ export default function AdminPage() {
     qualified: 0,
     won: 0,
   })
+  const [creditRequests, setCreditRequests] = useState<any[]>([])
+  const [creditRequestsLoading, setCreditRequestsLoading] = useState(false)
+  const [approvingId, setApprovingId] = useState<string | null>(null)
+  const [rejectModal, setRejectModal] = useState<{ id: string; open: boolean }>({ id: '', open: false })
+  const [rejectNotes, setRejectNotes] = useState('')
 
   const notify = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message })
@@ -172,6 +188,16 @@ export default function AdminPage() {
           })
         }
       }
+
+      // Fetch email credit requests
+      try {
+        setCreditRequestsLoading(true)
+        const crRes = await fetch('/api/admin/email-credit-requests', { headers: authHeaders() })
+        if (crRes.ok) {
+          const crData = await crRes.json()
+          setCreditRequests(crData.requests || [])
+        }
+      } catch {} finally { setCreditRequestsLoading(false) }
 
       setLastSync(new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }))
     } catch {
@@ -405,6 +431,39 @@ export default function AdminPage() {
               Open CRM Dashboard <ExternalLink size={12} />
             </div>
           </a>
+
+          <a
+            href="#email-credit-requests"
+            style={s.navCard}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#1a1a1a'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            <div>
+              <CreditCard size={24} style={{ color: '#facc15', marginBottom: 12 }} />
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Email Credit Requests</h3>
+              <p style={{ margin: '6px 0 0 0', color: '#666', fontSize: 13, lineHeight: 1.4 }}>
+                Review and approve/reject event organizer requests for additional email credits.
+              </p>
+              <div style={{ marginTop: 16, borderTop: '1px solid #1a1a1a', paddingTop: 10 }}>
+                {creditRequests.filter(r => r.status === 'Pending').length > 0 ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#facc15', fontSize: 12, fontWeight: 600 }}>
+                    <Clock size={14} /> {creditRequests.filter(r => r.status === 'Pending').length} pending approval
+                  </span>
+                ) : (
+                  <span style={{ color: '#666', fontSize: 12 }}>No pending requests</span>
+                )}
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#facc15', fontSize: 12, fontWeight: 700, marginTop: 16 }}>
+              Manage Requests <ExternalLink size={12} />
+            </div>
+          </a>
         </div>
 
         {/* Live Events Status List */}
@@ -484,6 +543,138 @@ export default function AdminPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Email Credit Requests Management */}
+        <div id="email-credit-requests" style={{ marginTop: 48 }}>
+          <h2 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 18, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#888', marginBottom: 16 }}>
+            Email Credit Requests
+          </h2>
+
+          {creditRequestsLoading && creditRequests.length === 0 ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#666', fontSize: 14, padding: 32, justifyContent: 'center' }}>
+              <Loader2 size={16} className="animate-spin" /> Loading requests...
+            </div>
+          ) : creditRequests.length === 0 ? (
+            <div style={{ padding: 40, textAlign: 'center', color: '#444', border: '1px dashed #222', borderRadius: 12 }}>
+              No email credit requests yet.
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto', borderRadius: 12, border: '1px solid #111', background: '#090909' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1000 }}>
+                <thead>
+                  <tr>
+                    <th style={s.th}>Event</th>
+                    <th style={s.th}>Organizer</th>
+                    <th style={s.th}>Package</th>
+                    <th style={s.th}>Credits</th>
+                    <th style={s.th}>Amount</th>
+                    <th style={s.th}>Txn Name</th>
+                    <th style={s.th}>Txn Ref</th>
+                    <th style={s.th}>Screenshot</th>
+                    <th style={s.th}>Status</th>
+                    <th style={s.th}>Submitted</th>
+                    <th style={{ ...s.th, textAlign: 'center' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {creditRequests.map((cr: any) => (
+                    <tr key={cr.id} style={{ transition: 'background 0.15s' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#0d0d0d')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+                      <td style={s.td}><span style={{ color: '#fff', fontWeight: 600 }}>{cr.event_name || cr.event_id}</span></td>
+                      <td style={s.td}>{cr.admin_name || cr.event_admin_id}</td>
+                      <td style={s.td}>{cr.package_type === '50' ? '+50 Emails' : '+100 Emails'}</td>
+                      <td style={s.td}>{cr.email_credits}</td>
+                      <td style={s.td}>₹{cr.amount}</td>
+                      <td style={s.td}>{cr.transaction_name}</td>
+                      <td style={{ ...s.td, fontFamily: 'monospace', fontSize: 12 }}>{cr.transaction_reference}</td>
+                      <td style={s.td}>
+                        {cr.payment_screenshot_url ? (
+                          <button style={{ ...s.btnSm, background: '#38bdf820', color: '#38bdf8', fontSize: 11 }} onClick={() => window.open(cr.payment_screenshot_url, '_blank')}>View</button>
+                        ) : <span style={{ color: '#555' }}>—</span>}
+                      </td>
+                      <td style={s.td}>
+                        <span style={{
+                          display: 'inline-block', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 700,
+                          background: cr.status === 'Approved' ? 'rgba(74,222,128,0.1)' : cr.status === 'Rejected' ? 'rgba(255,68,68,0.1)' : 'rgba(250,204,21,0.1)',
+                          color: cr.status === 'Approved' ? '#4ade80' : cr.status === 'Rejected' ? '#ff4444' : '#facc15',
+                        }}>{cr.status}</span>
+                      </td>
+                      <td style={{ ...s.td, fontSize: 12 }}>{new Date(cr.created_at).toLocaleDateString('en-IN')}</td>
+                      <td style={{ ...s.td, textAlign: 'center' }}>
+                        {cr.status === 'Pending' ? (
+                          <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
+                            <button
+                              style={{ ...s.btnSm, background: '#4ade80', color: '#000', fontWeight: 700, ...(approvingId === cr.id ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}
+                              disabled={approvingId === cr.id}
+                              onClick={async () => {
+                                setApprovingId(cr.id)
+                                try {
+                                  const res = await fetch(`/api/admin/email-credit-requests/${cr.id}/approve`, { method: 'PUT', headers: authHeaders() })
+                                  if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to approve'); return }
+                                  notify('success', 'Request approved — credits added')
+                                  fetchData()
+                                } catch { notify('error', 'Failed to approve') }
+                                finally { setApprovingId(null) }
+                              }}
+                            >
+                              {approvingId === cr.id ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
+                            </button>
+                            <button
+                              style={{ ...s.btnSm, background: '#ff444420', color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)' }}
+                              onClick={() => { setRejectModal({ id: cr.id, open: true }); setRejectNotes('') }}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        ) : (
+                          <span style={{ color: '#555', fontSize: 12 }}>
+                            {cr.status === 'Approved' ? `Approved ${cr.approved_at ? new Date(cr.approved_at).toLocaleDateString('en-IN') : ''}` : cr.admin_notes || '—'}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Reject Modal */}
+        {rejectModal.open && (
+          <div style={s.overlay as React.CSSProperties} onClick={() => setRejectModal({ id: '', open: false })}>
+            <div style={{ background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 12, padding: 24, maxWidth: 420, width: '100%' }} onClick={(e) => e.stopPropagation()}>
+              <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 600, margin: '0 0 12px' }}>Reject Credit Request</h3>
+              <p style={{ color: '#888', fontSize: 13, marginBottom: 12 }}>Add a note explaining why this request is being rejected (optional).</p>
+              <textarea
+                value={rejectNotes}
+                onChange={(e) => setRejectNotes(e.target.value)}
+                placeholder="e.g. Payment not found, invalid transaction details..."
+                style={{ width: '100%', height: 80, padding: 12, borderRadius: 8, border: '1px solid #222', background: '#111', color: '#fff', fontSize: 13, outline: 'none', resize: 'vertical', marginBottom: 16 }}
+              />
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                <button onClick={() => setRejectModal({ id: '', open: false })} style={{ ...s.btnSm, background: 'transparent', border: '1px solid #333', color: '#888' }}>Cancel</button>
+                <button
+                  style={{ ...s.btnSm, background: '#ff4444', color: '#fff', fontWeight: 700 }}
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(`/api/admin/email-credit-requests/${rejectModal.id}/reject`, {
+                        method: 'PUT',
+                        headers: authHeaders(),
+                        body: JSON.stringify({ admin_notes: rejectNotes || null }),
+                      })
+                      if (!res.ok) { const d = await res.json(); notify('error', d.error || 'Failed to reject'); return }
+                      notify('success', 'Request rejected')
+                      setRejectModal({ id: '', open: false })
+                      fetchData()
+                    } catch { notify('error', 'Failed to reject') }
+                  }}
+                >
+                  Confirm Reject
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

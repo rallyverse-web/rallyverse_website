@@ -35,6 +35,7 @@ export default function EventRegistrationClient({
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     full_name: '', phone_number: '', email: '', city: '', gender: '', format: '',
+    time_slot: '',
     partner_name: '', partner_phone: '',
     payment_upi_id: '', transaction_name: '', transaction_reference: '', screenshot_url: '',
   })
@@ -127,8 +128,8 @@ export default function EventRegistrationClient({
     setSubmitError('')
     setSubmitting(true)
     try {
-      const { screenshot_url, ...rest } = formData
-      const body = screenshot_url ? { ...rest, payment_screenshot_url: screenshot_url } : rest
+      const { screenshot_url, time_slot, ...rest } = formData
+      const body = { ...rest, ...(time_slot ? { time_slot } : {}), ...(screenshot_url ? { payment_screenshot_url: screenshot_url } : {}) }
       const res = await fetch(`/api/events/${event.slug}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -253,19 +254,30 @@ export default function EventRegistrationClient({
         </div>
 
         {step === 1 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <h2 style={{ color: '#fff', fontSize: 18, fontWeight: 600, margin: 0 }}>Select Format</h2>
-            <div>
-              <label style={s.label}>Format *</label>
-              <select value={formData.format} onChange={(e) => updateField('format', e.target.value)} style={s.select}>
-                <option value="">Choose format</option>
-                {availableFormats.map((fmt) => (
-                  <option key={fmt} value={fmt}>{fmt}</option>
-                ))}
-              </select>
-              {errors.format && <p style={{ color: '#ff4444', fontSize: 12, marginTop: 4 }}>{errors.format}</p>}
-            </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <h2 style={{ color: '#fff', fontSize: 18, fontWeight: 600, margin: 0 }}>Select Format & Time</h2>
+        <div>
+          <label style={s.label}>Format *</label>
+          <select value={formData.format} onChange={(e) => updateField('format', e.target.value)} style={s.select}>
+            <option value="">Choose format</option>
+            {availableFormats.map((fmt) => (
+              <option key={fmt} value={fmt}>{fmt}</option>
+            ))}
+          </select>
+          {errors.format && <p style={{ color: '#ff4444', fontSize: 12, marginTop: 4 }}>{errors.format}</p>}
+        </div>
+        {event.time_slots && event.time_slots.length > 0 && (
+          <div>
+            <label style={s.label}>Time Slot</label>
+            <select value={formData.time_slot || ''} onChange={(e) => updateField('time_slot', e.target.value)} style={s.select}>
+              <option value="">Choose time slot</option>
+              {event.time_slots.map((slot) => (
+                <option key={slot} value={slot}>{slot}</option>
+              ))}
+            </select>
           </div>
+        )}
+      </div>
         )}
 
         {step === 2 && (

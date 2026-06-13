@@ -19,6 +19,9 @@ function getFallbackEvent(): EventWithFormats {
       registration_fee: CURRENT_EVENT.registrationFee,
       payment_info: '',
       payment_enabled: false,
+    email_limit: 50,
+    emails_sent: 0,
+    additional_email_credits: 0,
       capacity: 100,
     rally_points: 10,
     poster_url: null,
@@ -27,6 +30,7 @@ function getFallbackEvent(): EventWithFormats {
     whatsapp_group_link: '',
     featured: false,
     status: 'published',
+    time_slots: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     formats: CURRENT_EVENT.categories.map((name, i) => ({
@@ -146,6 +150,7 @@ export async function createEvent(formData: EventFormData): Promise<EventWithFor
       whatsapp_group_link: eventData.whatsapp_group_link || null,
       featured: (eventData as { featured?: boolean }).featured ?? false,
       status: eventData.status || 'draft',
+      time_slots: (eventData as { time_slots?: string[] }).time_slots || null,
     })
     .select()
     .single()
@@ -193,6 +198,7 @@ export async function updateEvent(id: string, formData: Partial<EventFormData>):
   if (eventData.whatsapp_number !== undefined) updatePayload.whatsapp_number = eventData.whatsapp_number
   if (eventData.whatsapp_group_link !== undefined) updatePayload.whatsapp_group_link = eventData.whatsapp_group_link
   if ((eventData as { featured?: boolean }).featured !== undefined) updatePayload.featured = (eventData as { featured?: boolean }).featured ?? false
+  if ((eventData as { time_slots?: string[] }).time_slots !== undefined) updatePayload.time_slots = (eventData as { time_slots?: string[] }).time_slots ?? null
   if (eventData.status !== undefined) updatePayload.status = eventData.status
   updatePayload.updated_at = new Date().toISOString()
 

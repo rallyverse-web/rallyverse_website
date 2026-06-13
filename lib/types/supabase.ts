@@ -27,6 +27,10 @@ export interface Event {
   whatsapp_group_link: string | null
   featured: boolean | null
   status: EventStatus
+  email_limit: number | null
+  emails_sent: number | null
+  additional_email_credits: number | null
+  time_slots: string[] | null
   created_at: string
   updated_at: string | null
 }
@@ -76,6 +80,7 @@ export interface EventFormData {
   featured: boolean
   status: EventStatus
   formats: string[]
+  time_slots?: string[]
 }
 
 // ── Admin metrics ──
@@ -85,6 +90,24 @@ export interface AdminEventMetrics {
   draft: number
   cancelled: number
   completed: number
+}
+
+// ── Attendance metrics ──
+export interface AttendanceMetrics {
+  total_approved: number
+  checked_in: number
+  not_checked_in: number
+  attendance_rate: number
+}
+
+// ── Email quota ──
+export interface EmailQuotaInfo {
+  email_limit: number
+  emails_sent: number
+  additional_email_credits: number
+  effective_limit: number
+  remaining: number
+  percentage_used: number
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -126,6 +149,10 @@ export interface Registration {
   payment_rejected_by: string | null
   payment_rejected_at: string | null
   payment_rejection_reason: string | null
+  time_slot: string | null
+  checked_in: boolean | null
+  checked_in_at: string | null
+  checked_in_by: string | null
 }
 
 // ── Registration audit log ──
@@ -150,6 +177,7 @@ export interface RegistrationFormData {
   city: string
   gender: string
   format: string
+  time_slot?: string
   partner_name: string
   partner_phone: string
   payment_upi_id?: string
@@ -253,6 +281,37 @@ export interface EmailTemplateFormData {
 }
 
 // ── Email Log ──
+// ── Email Credit Request ──
+export type EmailCreditRequestStatus = 'Pending' | 'Approved' | 'Rejected'
+
+export interface EmailCreditRequest {
+  id: string
+  event_id: string
+  event_admin_id: string
+  package_type: '50' | '100'
+  email_credits: number
+  amount: number
+  transaction_name: string
+  transaction_reference: string
+  payment_screenshot_url: string | null
+  status: EmailCreditRequestStatus
+  admin_notes: string | null
+  approved_by: string | null
+  approved_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ── System Config ──
+export interface SystemConfig {
+  id: string
+  upi_id: string
+  account_holder_name: string
+  qr_code_url: string | null
+  payment_instructions: string | null
+  updated_at: string
+}
+
 export interface EmailLog {
   id: string
   event_id: string
